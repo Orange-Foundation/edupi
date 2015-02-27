@@ -1,3 +1,84 @@
 from django.test import TestCase
+from cntapp.models import Document, Directory
 
-# Create your tests here.
+
+class DocumentTestCase(TestCase):
+    def setUp(self):
+        pass
+
+    def test_create_document(self):
+        Document.objects.create(
+            name='manual', type=Document.TYPE_PDF, description='this is a pdf')
+        d = Document.objects.get(name='manual')
+        self.assertEqual(d.type, Document.TYPE_PDF)
+
+
+class DirectoryTestCase(TestCase):
+    def setUp(self):
+        pass
+
+    def create_dir(self, dir_name):
+        d = Directory(name=dir_name)
+        d.save()
+        return d
+
+    def test_create_dir(self):
+        dr = self.create_dir('root')
+        self.assertIsNotNone(dr)
+        self.assertEqual(dr.name, 'root')
+
+    def test_add_dir(self):
+        root = self.create_dir('root')
+        dir_a = self.create_dir('dir_a')
+
+        root.add_sub_dir(dir_a)
+        self.assertIsNotNone(root.sub_dirs.get(name=dir_a.name))
+
+        # test avoid duplicate
+        root.add_sub_dir(dir_a)
+        self.assertEqual(len(root.sub_dirs.filter(name=dir_a.name)), 1)
+
+        # test add multiple sub dirs
+        dir_b = self.create_dir('dir_b')
+        root.add_sub_dir(dir_b)
+        self.assertEqual(len(root.sub_dirs.all()), 2)
+
+    def test_get_parents(self):
+        dir_a = self.create_dir('dir_a')
+        dir_b = self.create_dir('dir_b')
+        final_dir = self.create_dir('final_dir')
+
+        self.assertEqual(len(final_dir.get_parents()), 0)
+        dir_a.add_sub_dir(final_dir)
+        self.assertEqual(len(final_dir.get_parents()), 1)
+        dir_b.add_sub_dir(final_dir)
+        self.assertEqual(len(final_dir.get_parents()), 2)
+
+    def test_remove_sub_dir(self):
+        root = self.create_dir('root')
+        dir_a = self.create_dir('dir_a')
+        root.add_sub_dir(dir_a)
+        self.assertEqual(len(root.get_sub_dirs()), 1)
+        self.assertEqual(len(Directory.objects.all()), 2)
+
+        root.remove_sub_dir(dir_a)
+        self.assertEqual(len(root.get_sub_dirs()), 0)
+        self.assertEqual(len(Directory.objects.all()), 1)
+
+    def test_remove_sub_dir_two_parents(self):
+        p_a = self.create_dir('parent_a')
+        p_b = self.create_dir('parent_b')
+        sub_dir = self.create_dir('dir_a')
+        p_a.add_sub_dir(sub_dir)
+        p_b.add_sub_dir(sub_dir)
+        self.assertEqual(len(sub_dir.get_parents()), 2)
+        self.assertEqual(len(Directory.objects.all()), 3)
+
+        p_a.remove_sub_dir(sub_dir)
+        # sub_dir should not be removed since it still has a parent !
+        self.assertEqual(len(Directory.objects.all()), 3)
+
+        p_b.remove_sub_dir(sub_dir)
+        # sub_dir should be removed since it is isolated !
+        self.assertEqual(len(Directory.objects.all()), 2)
+
