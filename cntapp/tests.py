@@ -1,5 +1,6 @@
 from django.test import TestCase
-from cntapp.models import Document, Directory
+from cntapp.models import Document, Directory, SubDirRelation
+from django.db.models import ObjectDoesNotExist
 
 
 class DocumentTestCase(TestCase):
@@ -82,3 +83,59 @@ class DirectoryTestCase(TestCase):
         # sub_dir should be removed since it is isolated !
         self.assertEqual(len(Directory.objects.all()), 2)
 
+    def test_remove_sub_dir_recursively(self):
+        """
+        create the dir graph:
+            root
+         /   |    \
+       a     b     c
+        \   |      |
+        ab_a      /
+       /   \    /
+    ab_a_a  ab_a_b
+        """
+        root = self.create_dir('root')
+        a = self.create_dir('a')
+        b = self.create_dir('b')
+        c = self.create_dir('c')
+        ab_a = self.create_dir('ab_a')
+        ab_a_a = self.create_dir('ab_a')
+        ab_a_b = self.create_dir('ab_a_b')
+
+        root.add_sub_dir(a).add_sub_dir(b).add_sub_dir(c)
+        a.add_sub_dir(ab_a)
+        b.add_sub_dir(ab_a)
+        ab_a.add_sub_dir(ab_a_a).add_sub_dir(ab_a_b)
+        c.add_sub_dir(ab_a_b)
+        self.assertEqual(len(Directory.objects.all()), 7)
+        self.assertEqual(len(SubDirRelation.objects.all()), 8)
+
+        a.remove_sub_dir(ab_a)
+        # object 'ab_a' not removed because there is a link,
+        # but the there is one link less
+        self.assertEqual(len(Directory.objects.all()), 7)
+        self.assertEqual(len(SubDirRelation.objects.all()), 7)
+
+        # 'ab_a' and 'ab_a_a' are deleted,
+        # 'ab_a_b' is not because it's linked to c
+        b.remove_sub_dir(ab_a)
+        self.assertEqual(len(Directory.objects.all()), 5)
+        self.assertEqual(len(SubDirRelation.objects.all()), 4)
+        try:
+            Directory.objects.get(name=ab_a.name)
+            self.fail("'%s' should not exist!" % ab_a.name)
+        except ObjectDoesNotExist:
+            pass
+        try:
+            Directory.objects.get(name=ab_a_a.name)
+            self.fail("'%s' should not exist!" % ab_a_a.name)
+        except ObjectDoesNotExist:
+            pass
+
+        self.assertIsNotNone(Directory.objects.get(name=ab_a_b.name))
+        c.remove_sub_dir(ab_a_b)
+        try:
+            Directory.objects.get(name=ab_a_b.name)
+            self.fail("'%s' should not exist!" % ab_a_b.name)
+        except ObjectDoesNotExist:
+            pass

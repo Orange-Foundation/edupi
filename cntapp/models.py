@@ -46,16 +46,21 @@ class Directory(models.Model):
 
     def add_sub_dir(self, sub_dir):
         if len(SubDirRelation.objects.filter(parent=self, child=sub_dir)) > 0:
-            return
+            # TODO: warning
+            return self
         SubDirRelation.objects.create(parent=self, child=sub_dir)
+        return self
 
     def remove_sub_dir(self, sub_dir):
         l = SubDirRelation.objects.get(parent=self, child=sub_dir)
-        if l is not None:
-            l.delete()
+        if l is None:
+            # TODO: warning
+            return
+        l.delete()
         if len(sub_dir.get_parents()) == 0:
+            for d in sub_dir.get_sub_dirs():
+                sub_dir.remove_sub_dir(d)
             Directory.objects.get(pk=sub_dir.pk).delete()
-            # TODO: remove recursively
 
     def __str__(self):
         return self.name
