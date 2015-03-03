@@ -28,9 +28,10 @@ class Document(models.Model):
 
 class Directory(models.Model):
     name = models.CharField(max_length=255)
-    documents = models.ManyToManyField(Document)
+    documents = models.ManyToManyField(Document, blank=True)
     sub_dirs = models.ManyToManyField(
         'self',
+        blank=True,
         symmetrical=False,
         through='SubDirRelation',
         through_fields=('parent', 'child'))
