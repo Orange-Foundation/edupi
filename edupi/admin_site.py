@@ -7,3 +7,6 @@ class CMS(AdminSite):
 
 
 cms_site = CMS()
+
+# page settings
+cms_site.site_header = "Fondation Orange"
