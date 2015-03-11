@@ -1,0 +1,20 @@
+{% load staticfiles %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>{% block title %}{{ title | default:"Edupi" }}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'cntapp/bootstrap/css/bootstrap.min.css' %}">
+    {% block extra_stylesheet %}{% endblock %}
+</head>
+
+<body>
+    {% block body %}
+        {% block navbar %}{% endblock %}
+        {% block content %}{% endblock %}
+    {% endblock %}
+    {% block footer %}{% endblock %}
+    <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/bootstrap/js/bootstrap.min.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
