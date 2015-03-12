@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.db.models import ObjectDoesNotExist
 from django.core.urlresolvers import resolve
 from django.http import HttpRequest
+from django.template.loader import render_to_string
 
 from cntapp.models import Document, Directory, SubDirRelation
 from cntapp.views import index
@@ -155,6 +156,6 @@ class IndexPageTestCase(TestCase):
         request = HttpRequest()
         response = index(request)
         # assure it works in mobile device
-        self.assertIn(b'<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">',
-                      response.content)
-        self.assertTrue(response.content.endswith(b'</html>'))
+        self.assertIn('<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">',
+                      response.content.decode())
+        self.assertEqual(response.content.decode(), render_to_string('cntapp/index.html'))

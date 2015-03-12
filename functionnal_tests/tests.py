@@ -1,9 +1,8 @@
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-import unittest
+from django.test import LiveServerTestCase
 
 
-class IndexPageTest(unittest.TestCase):
+class IndexPageTest(LiveServerTestCase):
     def setUp(self):
         super().setUp()
         self.browser = webdriver.Firefox()
@@ -12,11 +11,15 @@ class IndexPageTest(unittest.TestCase):
         self.browser.quit()
         super().tearDown()
 
-    def test_visit_home_page(self):
-        self.browser.get('http://127.0.0.1:8000')
-        self.assertIn('Edupi', self.browser.title)
-        h1_tags = self.browser.find_elements_by_tag_name('h1')
-        self.assertEqual(len(h1_tags), 1)
-        self.assertEqual(h1_tags[0].text, 'Edupi\nWe all need to learn')
-        btn_start = self.browser.find_element_by_tag_name('a')
-        self.assertEqual(btn_start.text, 'Get started')
+    def test_visit_index_page(self):
+        # enter into index page
+        self.browser.get(self.live_server_url)
+
+        # checkout the 'get started' link
+        link = self.browser.find_element_by_id('id_get_started')
+        self.assertEqual(link.get_attribute(name='href'), self.live_server_url + '/dirs/')
+
+        link.click()
+
+        # go to browse the directories
+        self.assertEqual(self.browser.current_url, self.live_server_url + '/dirs/')
