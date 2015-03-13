@@ -1,0 +1,26 @@
+{% extends 'cntapp/custom/base_cms.html' %}
+
+{% block content %}
+    <div class="container">
+        <div>
+            <a id="id_create_dir" href="index.html">create folder</a>
+        </div>
+        <div>
+            <input type="text" id="id_input_new_dir"/>
+        </div>
+        <div>
+            {% if dirs %}
+                <ul id="id_dirs">
+                    {% for dir in dirs %}
+                        <li>
+                            {{ dir.name }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <h4 id="id_empty">this folder is empty</h4>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
