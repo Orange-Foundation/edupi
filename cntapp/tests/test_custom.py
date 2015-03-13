@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from django.core.urlresolvers import resolve
 from django.core.urlresolvers import Resolver404
 
-from cntapp.views.custom import index, first_level, second_level
+from cntapp.views.custom import index, resolve_dirs_structure
 from cntapp.models import Directory
 from cntapp.tests.helpers import create_dir, init_test_dirs
 from cntapp.helpers import get_root_dirs
@@ -65,8 +65,5 @@ class DirsCustomTestCase(TestCase):
 
     def test_levels_url_resolve(self):
         init_test_dirs()
-        found = resolve('/custom/a/')
-        self.assertEqual(found.func, first_level)
-
-        found = resolve('/custom/a/a_a/')
-        self.assertEqual(found.func, second_level)
+        urls = ['/custom/a/', '/custom/a_a/', '/custom/a/a_a_a/']
+        map(self.assertEqual, zip([resolve(u).func for u in urls], [resolve_dirs_structure] * len(urls)))

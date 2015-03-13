@@ -12,15 +12,5 @@ def index(request):
     return render(request, 'cntapp/custom/index.html', {'dirs': dirs})
 
 
-def first_level(request, first=None):
-    if first is not None:
-        if first in get_root_dirs_names():
-            return HttpResponse("Great, dir found!")
-        else:
-            return HttpResponse("404")
-    else:
-        return HttpResponse("hello, some err here?")
-
-
-def second_level(request, first=None, second=None):
-    return HttpResponse("hi")
+def resolve_dirs_structure(request, urls):
+    return HttpResponse("urls:" + urls)

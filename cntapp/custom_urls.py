@@ -4,6 +4,5 @@ from cntapp.views import custom
 
 urlpatterns = patterns('',
                        url(r'^$', custom.index, name="index"),
-                       url(r'^(?P<first>.+)/(?P<second>.+)/$', custom.second_level, name="second_level"),
-                       url(r'^(?P<first>.+)/$', custom.first_level, name="first_level"),
+                       url(r'^(?P<urls>[\w/]*)/$', custom.resolve_dirs_structure, name="resolve_dirs_structure"),
                        )
