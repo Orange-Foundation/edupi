@@ -8,10 +8,17 @@ def index(request):
 
 
 def root(request):
-    return directory(request, dir_id=1)  # TODO fix root dir
+    return directory(request)
 
 
-def directory(request, dir_id):
-    d = get_object_or_404(Directory, pk=dir_id)
-    return render(request, 'cntapp/dir_list.html', {'dirs': (d.get_sub_dirs())})
+def directory(request, dir_id=None):
+    if dir_id is None:
+        dirs = [d for d in (Directory.objects.all()) if d.get_parents().count() == 0]
+    else:
+        d = get_object_or_404(Directory, pk=dir_id)
+        dirs = d.get_sub_dirs()
+
+    return render(request, 'cntapp/dir_list.html', {'dirs': dirs})
+
+
 
