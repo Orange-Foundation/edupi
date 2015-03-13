@@ -35,5 +35,16 @@ class DirsCustomTestCase(TestCase):
         response = index(HttpRequest())
         self.assertEqual(render_to_string('cntapp/custom/index.html', context), response.content.decode())
 
-    def test_create_dir_by_click(self):
-        pass
+    def test_create_dir_by_POST(self):
+        self.assertEqual(render_to_string('cntapp/custom/index.html'), index(HttpRequest()).content.decode())
+
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['new_dir_name'] = 'primary'
+
+        response = index(request)
+
+        all_dirs = Directory.objects.all()
+        self.assertEqual(1, all_dirs.count())
+        self.assertEqual(render_to_string('cntapp/custom/index.html', {'dirs': all_dirs}),
+                         response.content.decode())

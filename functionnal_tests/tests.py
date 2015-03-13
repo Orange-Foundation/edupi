@@ -53,6 +53,6 @@ class CustomSiteTestCase(LiveServerTestCase):
 
         # she sees the name appears
         dirs = self.browser.find_element_by_id('id_dirs')
-        self.assertIn('primary', dirs)
+        self.assertIn('primary', dirs.text)
 
         self.fail("Finish the test!")

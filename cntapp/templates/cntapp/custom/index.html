@@ -3,10 +3,13 @@
 {% block content %}
     <div class="container">
         <div>
-            <a id="id_create_dir" href="index.html">create folder</a>
         </div>
         <div>
-            <input type="text" id="id_input_new_dir"/>
+            <form method="POST">
+                <input name="new_dir_name" type="text" id="id_input_new_dir"/>
+                <input id="id_create_dir" type="submit" value="create folder"/>
+                {% csrf_token %}
+            </form>
         </div>
         <div>
             {% if dirs %}
