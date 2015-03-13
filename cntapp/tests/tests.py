@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from django.template.loader import render_to_string
 
 from cntapp.models import Document, Directory, SubDirRelation
-from cntapp.views import index
+from cntapp.views.views import index
 
 
 class DocumentTestCase(TestCase):

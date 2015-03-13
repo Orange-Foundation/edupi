@@ -14,3 +14,4 @@ def root(request):
 def directory(request, dir_id):
     d = get_object_or_404(Directory, pk=dir_id)
     return render(request, 'cntapp/dir_list.html', {'dirs': (d.get_sub_dirs())})
+
