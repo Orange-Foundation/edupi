@@ -65,7 +65,6 @@ class CustomSiteTestCase(LiveServerTestCase):
         self.assertEqual(custom_page_url + 'primary/', self.browser.current_url)
 
         # type name in input box and click the button to create a folder inside primary
-        self.assertNotIn('CP', self.browser.find_element_by_id('id_dirs').text)
         self.browser.find_element_by_id('id_input_new_dir').send_keys('CP')
         self.browser.find_element_by_id('id_create_dir').click()
         self.assertIn('CP', self.browser.find_element_by_id('id_dirs').text)

@@ -58,11 +58,6 @@ class DirsCustomTestCase(TestCase):
         self.assertEqual(render_to_string('cntapp/custom/index.html', {'dirs': all_dirs}),
                          response.content.decode())
 
-    def test_enter_into_dirs(self):
-        init_test_dirs()
-        response = self.check_index_html(HttpRequest(), context={'dirs': get_root_dirs()})
-        self.fail('please finish this test!')
-
     def test_levels_url_resolve(self):
         init_test_dirs()
         urls = ['/custom/a/', '/custom/a_a/', '/custom/a/a_a_a/']

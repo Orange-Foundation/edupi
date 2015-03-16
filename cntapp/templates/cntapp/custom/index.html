@@ -16,7 +16,7 @@
                 <ul id="id_dirs">
                     {% for dir in dirs %}
                         <li>
-                            {{ dir.name }}
+                            <a href="{{ request.path }}{{ dir.name }}">{{ dir.name }}</a>
                         </li>
                     {% endfor %}
                 </ul>
