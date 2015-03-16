@@ -11,3 +11,9 @@ class FunctionalTest(StaticLiveServerTestCase):
     def tearDown(self):
         self.browser.quit()
         super().tearDown()
+
+    def assertInBody(self, text):
+        self.assertIn(text, self.browser.find_element_by_tag_name('body').text)
+
+    def assertNotInBody(self, text):
+        self.assertNotIn(text, self.browser.find_element_by_tag_name('body').text)

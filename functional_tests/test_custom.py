@@ -14,21 +14,15 @@ class CustomSiteTestCase(FunctionalTest):
         self.browser.get(custom_page_url)
 
         # she is currently in the root dir, it's empty, she has to create a dir here
-        # She types a dir name in the input field
-        self.assertIsNotNone(self.browser.find_element_by_id('id_empty'))
-        self.browser.find_element_by_id('id_input_new_dir').send_keys('primary')
+        self.assertNotInBody('primary')
 
+        # She types a dir name in the input field
         # then she clicks the button "create folder"
+        self.browser.find_element_by_id('id_input_new_dir').send_keys('primary')
         self.browser.find_element_by_id('id_create_dir').click()
 
         # she sees the name appears
-        dirs = self.browser.find_element_by_id('id_dirs')
-        self.assertIn('primary', dirs.text)
-        try:
-            self.browser.find_element_by_id('id_empty')
-            self.fail()
-        except NoSuchElementException:
-            pass
+        self.assertInBody('primary')
 
         # click the primary to go into this folder
         primary_link = self.browser.find_element_by_link_text('primary')
@@ -37,9 +31,10 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertEqual(custom_page_url + 'primary/', self.browser.current_url)
 
         # type name in input box and click the button to create a folder inside primary
+        self.assertNotInBody('CP')
         self.browser.find_element_by_id('id_input_new_dir').send_keys('CP')
         self.browser.find_element_by_id('id_create_dir').click()
-        self.assertIn('CP', self.browser.find_element_by_id('id_dirs').text)
+        self.assertInBody('CP')
 
         # she also create a folder by hitting ENTER directly
         self.assertNotIn('CE1', self.browser.find_element_by_id('id_dirs').text)
