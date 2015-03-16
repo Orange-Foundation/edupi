@@ -8,39 +8,28 @@ from .base import FunctionalTest
 
 class CustomSiteTestCase(FunctionalTest):
 
+    def check_create_dir(self, dir_name):
+        self.assertNotInBody(dir_name)
+        self.browser.find_element_by_id('id_input_new_dir').send_keys(dir_name)
+        self.browser.find_element_by_id('id_input_new_dir').send_keys(Keys.ENTER)
+        self.assertInBody(dir_name)
+
     def test_create_directories(self):
         # Alice wants to customize the web site, she enters into the custom home page
         custom_page_url = self.live_server_url + '/custom/'
         self.browser.get(custom_page_url)
 
         # she is currently in the root dir, it's empty, she has to create a dir here
-        self.assertNotInBody('primary')
-
-        # She types a dir name in the input field
-        # then she clicks the button "create folder"
-        self.browser.find_element_by_id('id_input_new_dir').send_keys('primary')
-        self.browser.find_element_by_id('id_create_dir').click()
-
-        # she sees the name appears
-        self.assertInBody('primary')
+        # she types a dir name in the input field and hit "ENTER", then the name appears
+        self.check_create_dir('primary')
 
         # click the primary to go into this folder
-        primary_link = self.browser.find_element_by_link_text('primary')
-        primary_link.click()
-
+        self.browser.find_element_by_link_text('primary').click()
         self.assertEqual(custom_page_url + 'primary/', self.browser.current_url)
 
-        # type name in input box and click the button to create a folder inside primary
-        self.assertNotInBody('CP')
-        self.browser.find_element_by_id('id_input_new_dir').send_keys('CP')
-        self.browser.find_element_by_id('id_create_dir').click()
-        self.assertInBody('CP')
+        # create two folders in 'primary'
+        self.check_create_dir('CP')
+        self.check_create_dir('CE1')
 
-        # she also create a folder by hitting ENTER directly
-        self.assertNotIn('CE1', self.browser.find_element_by_id('id_dirs').text)
-        input_box = self.browser.find_element_by_id('id_input_new_dir')
-        input_box.send_keys('CE1')
-        input_box.send_keys(Keys.ENTER)
-        self.assertIn('CP', self.browser.find_element_by_id('id_dirs').text)
-
-        self.fail("Finish the test!")
+        # click 'CP' and create another folder inside
+        self.check_create_dir('MATH')
