@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from cntapp.views.views import index
 
 
-class IndexPageTestCase(TestCase):
+class IndexPageTest(TestCase):
 
     def test_root_url_resolves_to_index_page_view(self):
         found = resolve('/')

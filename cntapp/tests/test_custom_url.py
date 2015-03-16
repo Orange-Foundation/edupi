@@ -5,7 +5,7 @@ from cntapp.views.custom import index, resolve_dirs_structure
 from cntapp.tests.helpers import init_test_dirs
 
 
-class CustomUrlsResolveTestCase(TestCase):
+class CustomUrlsResolveTest(TestCase):
 
     def test_index(self):
         found = resolve('/custom/')

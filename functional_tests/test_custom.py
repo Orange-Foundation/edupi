@@ -10,8 +10,8 @@ class CustomSiteTestCase(FunctionalTest):
 
     def check_create_dir(self, dir_name):
         self.assertNotInBody(dir_name)
-        self.browser.find_element_by_id('id_input_new_dir').send_keys(dir_name)
-        self.browser.find_element_by_id('id_input_new_dir').send_keys(Keys.ENTER)
+        self.browser.find_element_by_id('id_name').send_keys(dir_name)
+        self.browser.find_element_by_id('id_name').send_keys(Keys.ENTER)
         self.assertInBody(dir_name)
 
     def test_create_directories(self):

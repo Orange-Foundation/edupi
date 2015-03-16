@@ -4,7 +4,7 @@ from django.db.models import ObjectDoesNotExist
 from cntapp.models import Directory, Document, SubDirRelation
 
 
-class DocumentTestCase(TestCase):
+class DocumentTest(TestCase):
     def setUp(self):
         pass
 
