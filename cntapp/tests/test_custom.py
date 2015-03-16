@@ -8,7 +8,7 @@ from django.core.urlresolvers import Resolver404
 from cntapp.views.custom import index, resolve_dirs_structure
 from cntapp.models import Directory
 from cntapp.tests.helpers import create_dir, init_test_dirs
-from cntapp.helpers import get_root_dirs
+from cntapp.helpers import get_root_dirs, get_dir_by_path
 
 
 class DirsCustomTestCase(TestCase):
@@ -67,3 +67,8 @@ class DirsCustomTestCase(TestCase):
         init_test_dirs()
         urls = ['/custom/a/', '/custom/a_a/', '/custom/a/a_a_a/']
         map(self.assertEqual, zip([resolve(u).func for u in urls], [resolve_dirs_structure] * len(urls)))
+
+    def test_get_url_by_path(self):
+        init_test_dirs()
+        d = get_dir_by_path('a/ab_a/ab_a_a')
+        self.assertEqual('ab_a_a', d.name)
