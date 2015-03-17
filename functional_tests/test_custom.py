@@ -16,7 +16,7 @@ class CustomSiteTestCase(FunctionalTest):
 
     def test_create_directories(self):
         # Alice wants to customize the web site, she enters into the custom home page
-        custom_page_url = self.live_server_url + '/custom/'
+        custom_page_url = self.server_url + '/custom/'
         self.browser.get(custom_page_url)
 
         # she is currently in the root dir, it's empty, she has to create a dir here
