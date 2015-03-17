@@ -1,8 +1,10 @@
 from django.conf.urls import patterns, include, url
-from django.contrib import admin
+
+from edupi.admin_site import cms_site
 
 
 urlpatterns = patterns(
     '',
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(cms_site.urls)),
+    url(r'^', include('cntapp.urls', namespace='cntapp'))
 )

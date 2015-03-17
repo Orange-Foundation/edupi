@@ -1,0 +1,6 @@
+@import "bootstrap/css/bootstrap.min.css";
+
+.jumbotron {
+    margin-top: 5%;
+    text-align: center;
+}

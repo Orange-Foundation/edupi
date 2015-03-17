@@ -1,0 +1,29 @@
+{% extends 'cntapp/custom/base_cms.html' %}
+
+{% block content %}
+    <div class="container">
+        <div>
+        </div>
+        <div>
+            <form method="POST">
+                {{ form }}
+                <input id="id_create_dir" type="submit" value="create folder"/>
+                {% csrf_token %}
+            </form>
+        </div>
+        <div>
+            {% if dirs %}
+                <ul id="id_dirs">
+                    {% for dir in dirs %}
+                        <li>
+                            <a href="{{ request.path }}{{ dir.name }}">{{ dir.name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <h4 id="id_empty">this folder is empty</h4>
+            {% endif %}
+        </div>
+    </div>
+
+{% endblock %}
