@@ -1,10 +1,6 @@
 {% extends 'cntapp/base.html' %}
+{% load staticfiles %}
 
 {% block navbar %}
-{% include 'cntapp/navbar.html' %}
-{% endblock %}
-
-{% block extra_stylesheet %}
-    <script type="text/javascript" charset="utf-8" src="{% static 'js/underscore-min.js' %}"></script>
-    <script type="text/javascript" charset="utf-8" src="{% static 'js/backbone-min.js' %}"></script>
+    {% include 'cntapp/navbar.html' %}
 {% endblock %}

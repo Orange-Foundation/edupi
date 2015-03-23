@@ -1,7 +1,13 @@
 {% extends 'cntapp/base_cntapp.html' %}
 
+{% block extra_head %}
+<script type="text/html" id="home-template">
+<h1>Hello My Home Template</h1>
+</script>
+{% endblock %}
+
 {% block content %}
-    <div class="container">
+    <div id="content" class="container">
         <div class="row">
             <div class="col-md-1"></div>
             {% if dirs %}

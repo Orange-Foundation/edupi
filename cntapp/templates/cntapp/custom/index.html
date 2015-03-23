@@ -1,29 +1,88 @@
-{% extends 'cntapp/custom/base_cms.html' %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{{ title | default:"Edupi" }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+</head>
 
-{% block content %}
-    <div class="container">
-        <div>
-        </div>
-        <div>
-            <form method="POST">
-                {{ form }}
-                <input id="id_create_dir" type="submit" value="create folder"/>
-                {% csrf_token %}
-            </form>
-        </div>
-        <div>
-            {% if dirs %}
-                <ul id="id_dirs">
-                    {% for dir in dirs %}
-                        <li>
-                            <a href="{{ request.path }}{{ dir.name }}">{{ dir.name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <h4 id="id_empty">this folder is empty</h4>
-            {% endif %}
-        </div>
+<body>
+<div class="container">
+    <div id="page">
+        <h1>Content Manager</h1>
+        <hr/>
+        <div id="content"></div>
     </div>
+</div>
 
-{% endblock %}
+<script type="text/template" id="directories-template">
+    <a class="btn btn-primary" href="#create">Create Directory</a>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Directory name</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th><a href="#1">Primary</a></th>
+            <th><a href="#1/edit" class="btn btn-default">Edit</a></th>
+        </tr>
+        <tr>
+            <th><a href="#2">Secondary</a></th>
+            <th><a href="#2/edit" class="btn btn-default">Edit</a></th>
+        </tr>
+        </tbody>
+    </table>
+</script>
+
+<script type="text/template" id="create-directory-template">
+    <h2>Create directory</h2>
+    <form id="directory-edit-form">
+        <label>
+            Name
+            <input type="text" value="Primary"/>
+        </label>
+        <hr />
+        <button type="submit" class="btn btn-primary">Create</button>
+        <button class="btn btn-danger">Cancel</button>
+    </form>
+</script>
+
+<script type="text/template" id="directory-edit-template">
+    <h2>Edit directory</h2>
+    <form id="directory-edit-form">
+        <label>
+            Name
+            <input type="text" value="Primary"/>
+        </label>
+        <input type="hidden" name="id" value="1">
+        <hr />
+        <button type="submit" class="btn btn-primary">OK</button>
+        <button class="btn btn-danger">Delete</button>
+    </form>
+</script>
+
+
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/underscore-min.js' %}"></script>
+<script src="{% static 'js/backbone-min.js' %}"></script>
+
+<script type="text/json" id="config">
+    {
+        "models": {},
+        "collections": {},
+        "views": {},
+        "Router": null
+    }
+</script>
+
+<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/app.js' %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/models.js' %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/views.js' %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/router.js' %}"></script>
+</body>
+</html>
