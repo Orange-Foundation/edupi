@@ -35,7 +35,10 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
-    #Internal apps
+    # Third party apps
+    'rest_framework',
+    'rest_framework.authtoken',
+    # Internal apps
     'cntapp',
 )
 
@@ -44,6 +47,11 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
+
+REST_FRAMEWORK = {
+    # 'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),  # enable on prod
+    'PAGE_SIZE': 10,
+}
 
 ROOT_URLCONF = 'edupi.urls'
 

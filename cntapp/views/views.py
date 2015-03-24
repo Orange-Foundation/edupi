@@ -1,5 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 
+from rest_framework import viewsets, permissions, authentication
+
+from cntapp.serializers import DirectorySerializer
+
 from cntapp.models import Directory
 
 
@@ -21,4 +25,9 @@ def directory(request, dir_id=None):
     return render(request, 'cntapp/dir_list.html', {'dirs': dirs})
 
 
-
+class DirectoryViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint for listing and creating directories
+    """
+    queryset = Directory.objects.all()
+    serializer_class = DirectorySerializer
