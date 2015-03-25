@@ -37,10 +37,10 @@ class DirectoryViewSet(viewsets.ModelViewSet):
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
 
-    def perform_create(self, serializer):
-        super().perform_create(serializer)
-
     def perform_destroy(self, instance):
+        sub_dirs = instance.get_sub_dirs()
+        for d in sub_dirs:
+            instance.remove_sub_dir(d)
         super().perform_destroy(instance)
 
     @detail_route(methods=['post'])
@@ -66,4 +66,17 @@ class DirectoryViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['put'])
     def update(self, request, *args, **kwargs):
         return Response({'status': 'directory updated'})
+
+    @detail_route(methods=['delete'])
+    def delete(self, request, *args, **kwargs):
+        current_dir = self.get_object()
+        serializer = DirectorySerializer(data=request.data)
+        if serializer.is_valid():
+            sub_dir = current_dir.get_sub_dir_by_name(serializer.validated_data.get('name'))
+
+            current_dir.remove_sub_dir(sub_dir)
+            return Response({'status': 'sub directory deleted'})
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 

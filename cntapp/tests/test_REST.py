@@ -68,3 +68,31 @@ class DirectoryRESTTest(TestCase):
         init_test_dirs()
         res = self.client.put('/api/directories/1/update/', {'name': 'Primary'}, format='json')
         self.assertEqual({'status': 'directory updated'}, self.render(res))
+
+    def test_delete_sub_dir(self):
+        init_test_dirs()
+        ab_a = Directory.objects.get(name='ab_a')
+        self.assertEqual(6, Directory.objects.all().count())
+
+        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_a'}, format='json')
+        self.assertEqual({'status': 'sub directory deleted'}, self.render(res))
+        self.assertEqual(5, Directory.objects.all().count())
+
+        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_b'}, format='json')
+        self.assertEqual({'status': 'sub directory deleted'}, self.render(res))
+        self.assertEqual(5, Directory.objects.all().count())
+
+        with self.assertRaises(Directory.DoesNotExist):
+            res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_b'}, format='json')
+
+    def test_delete_root_dir(self):
+        init_test_dirs()
+        a = Directory.objects.get(name='a')
+        b = Directory.objects.get(name='b')
+        self.assertEqual(6, Directory.objects.all().count())
+
+        self.client.delete('/api/directories/%d/' % a.pk)
+        self.assertEqual(5, Directory.objects.all().count())
+
+        self.client.delete('/api/directories/%d/' % b.pk)
+        self.assertEqual(2, Directory.objects.all().count())

@@ -43,6 +43,10 @@ class Directory(models.Model):
     def get_sub_dirs(self):
         return self.sub_dirs.all()
 
+    def get_sub_dir_by_name(self, name):
+        dirs = self.get_sub_dirs()
+        return dirs.get(name=name)
+
     def get_parents(self):
         return self.directory_set.all()
 
