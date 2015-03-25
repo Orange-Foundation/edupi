@@ -27,7 +27,8 @@ class Document(models.Model):
 
 
 class Directory(models.Model):
-    name = models.CharField(max_length=255)
+    MAX_NAME_LEN = 255
+    name = models.CharField(max_length=MAX_NAME_LEN)
     documents = models.ManyToManyField(Document, blank=True)
     sub_dirs = models.ManyToManyField(
         'self',
