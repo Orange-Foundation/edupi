@@ -29,10 +29,11 @@ def directory(request, dir_id=None):
 
 class DirectoryViewSet(viewsets.ModelViewSet):
     """
-    This viewset list `root directories`, and provides `create`, `retrieve`,
+    This viewset list `directories`, and provides `create`, `retrieve`,
     `update` and `destroy` options
 
-    We can also `create_sub_directory`, list `sub_directories`, in detailed objects
+    We can also `create_sub_directory`, list `sub_directories`, in detailed objects.
+    To access root directories, append `?root=true` on the url.
     """
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
@@ -42,6 +43,16 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         for d in sub_dirs:
             instance.remove_sub_dir(d)
         super().perform_destroy(instance)
+
+    def list(self, request, *args, **kwargs):
+        # filter root directories here instead of using get_queryset
+        # because we can't construct a this queryset!
+        is_root = self.request.QUERY_PARAMS.get('root', None)
+        if is_root is not None and is_root == 'true':
+            serializer = DirectorySerializer(get_root_dirs(), many=True, context={'request': request})
+            return Response(serializer.data)
+        else:
+            return super(DirectoryViewSet, self).list(request,*args, **kwargs)
 
     @detail_route(methods=['post'])
     def create_sub_directory(self, request, *args, **kwargs):
@@ -57,10 +68,6 @@ class DirectoryViewSet(viewsets.ModelViewSet):
     def sub_directories(self, request, *args, **kwargs):
         current_dir = self.get_object()
         serializer = DirectorySerializer(current_dir.get_sub_dirs(), many=True, context={'request': request})
-        return Response(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        serializer = DirectorySerializer(get_root_dirs(), many=True, context={'request': request})
         return Response(serializer.data)
 
     @detail_route(methods=['put'])

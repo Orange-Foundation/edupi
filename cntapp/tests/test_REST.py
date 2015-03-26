@@ -25,7 +25,7 @@ class DirectoryRESTTest(TestCase):
 
     def test_get_root_dirs(self):
         init_test_dirs()
-        res = self.client.get('/api/directories/')
+        res = self.client.get('/api/directories/?root=true')
         self.assertEqual([{'name': 'a', 'url': 'http://testserver/api/directories/1/'},
                           {'name': 'b', 'url': 'http://testserver/api/directories/2/'},
                           {'name': 'c', 'url': 'http://testserver/api/directories/3/'}],
