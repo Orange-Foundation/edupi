@@ -27,7 +27,8 @@ class Document(models.Model):
 
 
 class Directory(models.Model):
-    name = models.CharField(max_length=255)
+    MAX_NAME_LEN = 255
+    name = models.CharField(max_length=MAX_NAME_LEN)
     documents = models.ManyToManyField(Document, blank=True)
     sub_dirs = models.ManyToManyField(
         'self',
@@ -41,6 +42,10 @@ class Directory(models.Model):
 
     def get_sub_dirs(self):
         return self.sub_dirs.all()
+
+    def get_sub_dir_by_name(self, name):
+        dirs = self.get_sub_dirs()
+        return dirs.get(name=name)
 
     def get_parents(self):
         return self.directory_set.all()
