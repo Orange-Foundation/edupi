@@ -20,37 +20,35 @@ class DirectoryRESTTest(TestCase):
     def test_get_dir(self):
         init_test_dirs()
         res = self.client.get('/api/directories/1/')
-        self.assertEqual({'url': 'http://testserver/api/directories/1/', 'name': 'a'},
+        self.assertEqual({'id': 1, 'url': 'http://testserver/api/directories/1/', 'name': 'a'},
                          self.render(res))
 
     def test_get_root_dirs(self):
         init_test_dirs()
         res = self.client.get('/api/directories/?root=true')
-        self.assertEqual([{'name': 'a', 'url': 'http://testserver/api/directories/1/'},
-                          {'name': 'b', 'url': 'http://testserver/api/directories/2/'},
-                          {'name': 'c', 'url': 'http://testserver/api/directories/3/'}],
+        self.assertEqual([{'id': 1, 'name': 'a', 'url': 'http://testserver/api/directories/1/'},
+                          {'id': 2, 'name': 'b', 'url': 'http://testserver/api/directories/2/'},
+                          {'id': 3, 'name': 'c', 'url': 'http://testserver/api/directories/3/'}],
                          self.render(res))
 
     def test_get_sub_dirs(self):
         init_test_dirs()
 
         res = self.client.get('/api/directories/1/sub_directories/')
-        self.assertEqual([{'url': 'http://testserver/api/directories/4/', 'name': 'ab_a'}],
+        self.assertEqual([{'id': 4, 'url': 'http://testserver/api/directories/4/', 'name': 'ab_a'}],
                          self.render(res))
 
         res = self.client.get('/api/directories/4/sub_directories/')
-        self.assertEqual([{'url': 'http://testserver/api/directories/5/', 'name': 'ab_a_a'},
-                          {'url': 'http://testserver/api/directories/6/', 'name': 'ab_a_b'}],
+        self.assertEqual([{'id': 5, 'url': 'http://testserver/api/directories/5/', 'name': 'ab_a_a'},
+                          {'id': 6, 'url': 'http://testserver/api/directories/6/', 'name': 'ab_a_b'}],
                          self.render(res))
 
     def test_post_create_root_dir(self):
         res = self.client.post('/api/directories/', {'name': 'Primary'}, format='json')
-        self.assertEqual("{'url': 'http://testserver/api/directories/1/', 'name': 'Primary'}",
-                         str(res.data))
+        self.assertEqual({'id': 1, 'url': 'http://testserver/api/directories/1/', 'name': 'Primary'},
+                         self.render(res))
         d = Directory.objects.first()
         self.assertEqual('Primary', d.name)
-        self.assertEqual({'url': 'http://testserver/api/directories/1/', 'name': 'Primary'},
-                         self.render(res))
 
     def test_post_create_sub_directory(self):
         init_test_dirs()

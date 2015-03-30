@@ -1,10 +1,31 @@
 (function ($, Backbone, _, app) {
-    var DirectoriesView = Backbone.View.extend({
+
+    var RootDirectoriesView = Backbone.View.extend({
         el: "#content",
+        templateName: "#directories-template",
 
         render: function () {
-            var template = _.template($("#directories-template").html());
-            this.$el.html(template({}));
+            var that = this;
+            this.getDirectories().fetch({
+                success: function (directories) {
+                    var template = _.template($(that.templateName).html());
+                    that.$el.html(template({directories: directories.models}));
+                }
+            });
+        },
+
+        getDirectories: function () {
+            return new app.collections.RootDirectories();
+        }
+    });
+
+    var SubDirectoriesView = RootDirectoriesView.extend({
+        initialize: function (options) {
+            this.parentId = options.parentId;
+        },
+
+        getDirectories: function () {
+            return new app.collections.SubDirectories({parentId: this.parentId});
         }
     });
 
@@ -26,7 +47,8 @@
         }
     });
 
-    app.views.DirectoriesView = DirectoriesView;
+    app.views.RootDirectoriesView = RootDirectoriesView;
+    app.views.SubDirectoriesView = SubDirectoriesView;
     app.views.EditDirectoryView = EditDirectoryView;
     app.views.CreateDirectoryView = CreateDirectoryView;
 

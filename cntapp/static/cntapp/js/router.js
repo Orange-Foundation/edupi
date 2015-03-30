@@ -14,11 +14,11 @@
         },
 
         roots: function () {
-            this.render(new app.views.DirectoriesView());
+            this.render(new app.views.RootDirectoriesView());
         },
 
-        subDirectory: function () {
-            this.render(new app.views.DirectoriesView());
+        subDirectory: function (parentId) {
+            this.render(new app.views.SubDirectoriesView({parentId: parentId}));
         },
 
         createRootDirectory: function () {

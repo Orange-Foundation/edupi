@@ -17,6 +17,8 @@
     </div>
 </div>
 
+<!-- ****templates**** -->
+
 <script type="text/template" id="directories-template">
     <a class="btn btn-primary" href="#create">Create Directory</a>
     <table class="table">
@@ -27,14 +29,23 @@
         </tr>
         </thead>
         <tbody>
+
+        <% _.each(directories, function (directory) { %>
         <tr>
-            <th><a href="#1">Primary</a></th>
-            <th><a href="#1/edit" class="btn btn-default">Edit</a></th>
+            <td>
+                <a directory-id='<%= directory.get("id") %>' href='#<%= directory.get("id") %>'
+                   class="sub-directory">
+                   <%= directory.get('name') %>
+                </a>
+            </td>
+            <td>
+                <a href='#<%= directory.get("id") %>/edit' class="btn btn-default">
+                    Edit
+                </a>
+            </td>
         </tr>
-        <tr>
-            <th><a href="#2">Secondary</a></th>
-            <th><a href="#2/edit" class="btn btn-default">Edit</a></th>
-        </tr>
+        <% }); %>
+
         </tbody>
     </table>
 </script>
@@ -66,6 +77,7 @@
     </form>
 </script>
 
+<!-- ****include**** -->
 
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/underscore-min.js' %}"></script>
@@ -76,12 +88,14 @@
         "models": {},
         "collections": {},
         "views": {},
-        "Router": null
+        "Router": null,
+        "collections": {}
     }
 </script>
 
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/app.js' %}"></script>
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/models.js' %}"></script>
+<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/collections.js' %}"></script>
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/views.js' %}"></script>
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/router.js' %}"></script>
 </body>
