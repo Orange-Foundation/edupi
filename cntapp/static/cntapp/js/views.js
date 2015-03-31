@@ -1,4 +1,19 @@
 (function ($, Backbone, _, app) {
+    $.fn.serializeObject = function () {
+        var o = {};
+        var a = this.serializeArray();
+        $.each(a, function () {
+            if (o[this.name] !== undefined) {
+                if (!o[this.name].push) {
+                    o[this.name] = [o[this.name]];
+                }
+                o[this.name].push(this.value || '');
+            } else {
+                o[this.name] = this.value || '';
+            }
+        });
+        return o;
+    };
 
     var RootDirectoriesView = Backbone.View.extend({
         el: "#content",
@@ -40,6 +55,31 @@
 
     var CreateDirectoryView = Backbone.View.extend({
         el: "#content",
+
+        events: {
+            'submit #directory-create-form': 'create',
+            'click #cancel': 'cancel'
+        },
+
+        create: function (ev) {
+            var dirDetails = $(ev.currentTarget).serializeObject();
+            var roots = new app.collections.RootDirectories();
+            roots.fetch({
+                type: 'POST',
+                data: JSON.stringify(dirDetails),
+                beforeSend: function (xhr) {
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+                },
+                success: function () {
+                    app.router.navigate('', {trigger: true});
+                }
+            });
+            return false;
+        },
+
+        cancel: function () {
+            window.history.back();
+        },
 
         render: function () {
             var template = _.template($("#create-directory-template").html());

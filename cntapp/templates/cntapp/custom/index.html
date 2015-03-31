@@ -52,14 +52,15 @@
 
 <script type="text/template" id="create-directory-template">
     <h2>Create directory</h2>
-    <form id="directory-edit-form">
+    <form id="directory-create-form">
+        {% csrf_token %}
         <label>
             Name
-            <input type="text" value="Primary"/>
+            <input type="text" name="name" value="Primary"/>
         </label>
         <hr />
         <button type="submit" class="btn btn-primary">Create</button>
-        <button class="btn btn-danger">Cancel</button>
+        <a id="cancel" class="btn btn-danger">Cancel</a>
     </form>
 </script>
 
