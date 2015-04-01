@@ -6,5 +6,9 @@ var Directory = Backbone.Model.extend({
 
     initialize: function () {
         console.log("New Directory.")
+    },
+
+    url: function () {
+        return '/api/directories/' + this.id + '/';
     }
 });

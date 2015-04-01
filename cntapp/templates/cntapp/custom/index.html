@@ -67,14 +67,15 @@
 <script type="text/template" id="directory-edit-template">
     <h2>Edit directory</h2>
     <form id="directory-edit-form">
+        {% csrf_token %}
         <label>
             Name
-            <input type="text" value="Primary"/>
+            <input type='text' name='name' value='<%= directory.get("name") %>'/>
         </label>
-        <input type="hidden" name="id" value="1">
+        <input type="hidden" name="id" value='<%= directory.get("id") %>'>
         <hr />
         <button type="submit" class="btn btn-primary">OK</button>
-        <button class="btn btn-danger">Delete</button>
+        <a id="dir-delete" class="btn btn-danger">Delete</a>
     </form>
 </script>
 
@@ -83,6 +84,7 @@
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/underscore-min.js' %}"></script>
 <script src="{% static 'js/backbone-min.js' %}"></script>
+<script src="{% static 'js/backbone.marionette.min.js' %}"></script>
 
 <script type="text/json" id="config">
     {

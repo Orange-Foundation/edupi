@@ -22,6 +22,7 @@
         },
 
         createRootDirectory: function () {
+            //this.render(new app.views.CreateDirectoryView());
             this.render(new app.views.CreateDirectoryView());
         },
 
@@ -29,12 +30,13 @@
             this.render(new app.views.CreateDirectoryView());
         },
 
-        editDirectory: function () {
-            this.render(new app.views.EditDirectoryView());
+        editDirectory: function (id) {
+            this.render(new app.views.EditDirectoryView({id: id}));
         },
 
         render: function (view) {
             if (this.crtView) {
+                this.crtView.stopListening();
                 this.crtView.$el = $();
                 this.crtView.remove();
             }

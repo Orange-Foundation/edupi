@@ -44,16 +44,40 @@
         }
     });
 
-    var EditDirectoryView = Backbone.View.extend({
+    var EditDirectoryView = Marionette.View.extend({
         el: "#content",
 
+        initialize: function (options) {
+            this.directory = new Directory({id: options.id});
+        },
+
         render: function () {
-            var template = _.template($("#directory-edit-template").html());
-            this.$el.html(template({}))
+            var that = this;
+            that.directory.fetch({
+                success: function (directory) {
+                    var template = _.template($("#directory-edit-template").html());
+                    that.$el.html(template({directory: directory}));
+                }
+            });
+        },
+
+        events: {
+            'click #dir-delete': 'delete'
+        },
+
+        delete: function (ev) {
+            console.warn('deleting!!');
+            ev.stopPropagation();
+            this.directory.destroy({
+                success: function () {
+                    app.router.navigate('', {trigger: true});
+                }
+            });
+            return true;
         }
     });
 
-    var CreateDirectoryView = Backbone.View.extend({
+    var CreateDirectoryView = Marionette.View.extend({
         el: "#content",
 
         events: {
@@ -62,6 +86,7 @@
         },
 
         create: function (ev) {
+            ev.stopPropagation();
             var dirDetails = $(ev.currentTarget).serializeObject();
             var roots = new app.collections.RootDirectories();
             roots.fetch({
