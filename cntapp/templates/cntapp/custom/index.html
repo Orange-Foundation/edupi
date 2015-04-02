@@ -20,7 +20,7 @@
 <!-- ****templates**** -->
 
 <script type="text/template" id="directories-template">
-    <a class="btn btn-primary" href="#create">Create Directory</a>
+    <a id="create-directory" class="btn btn-primary">Create Directory</a>
     <table class="table">
         <thead>
         <tr>
@@ -52,11 +52,11 @@
 
 <script type="text/template" id="create-directory-template">
     <h2>Create directory</h2>
-    <form id="directory-create-form">
+    <form id="directory-create-form" action="" method="post">
         {% csrf_token %}
         <label>
             Name
-            <input type="text" name="name" value="Primary"/>
+            <input type="text" name="name" value=""/>
         </label>
         <hr />
         <button type="submit" class="btn btn-primary">Create</button>
@@ -66,8 +66,7 @@
 
 <script type="text/template" id="directory-edit-template">
     <h2>Edit directory</h2>
-    <form id="directory-edit-form">
-        {% csrf_token %}
+    <form id="directory-edit-form" action="" method="put">
         <label>
             Name
             <input type='text' name='name' value='<%= directory.get("name") %>'/>
@@ -83,22 +82,19 @@
 
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/underscore-min.js' %}"></script>
-<script src="{% static 'js/backbone-min.js' %}"></script>
-<script src="{% static 'js/backbone.marionette.min.js' %}"></script>
+<script src="{% static 'js/backbone.js' %}"></script>
 
 <script type="text/json" id="config">
     {
         "models": {},
         "collections": {},
         "views": {},
-        "Router": null,
-        "collections": {}
+        "Router": null
     }
 </script>
 
+
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/app.js' %}"></script>
-<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/models.js' %}"></script>
-<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/collections.js' %}"></script>
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/views.js' %}"></script>
 <script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/router.js' %}"></script>
 </body>

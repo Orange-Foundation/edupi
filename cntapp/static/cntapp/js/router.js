@@ -9,40 +9,42 @@
         },
 
         initialize: function (options) {
-            this.crtView = null;
             Backbone.history.start();
         },
 
         roots: function () {
-            this.render(new app.views.RootDirectoriesView());
+            var view = new app.views.DirectoriesView({el: "#content"});
+            view.fetchAndRefresh();
         },
 
         subDirectory: function (parentId) {
-            this.render(new app.views.SubDirectoriesView({parentId: parentId}));
+            var view = new app.views.DirectoriesView({
+                el: "#content",
+                parentId: parentId
+            });
+            view.fetchAndRefresh();
         },
+
+        /* Form views */
 
         createRootDirectory: function () {
-            //this.render(new app.views.CreateDirectoryView());
-            this.render(new app.views.CreateDirectoryView());
+            this.renderToContent(new app.views.CreateDirectoryView());
         },
 
-        createSubDirectory: function () {
-            this.render(new app.views.CreateDirectoryView());
+        createSubDirectory: function (parentId) {
+            this.renderToContent(new app.views.CreateDirectoryView({parentId: parentId}));
         },
 
         editDirectory: function (id) {
-            this.render(new app.views.EditDirectoryView({id: id}));
+            this.renderToContent(new app.views.EditDirectoryView({
+                directory: app.currentDirectories.get(id)
+            }));
         },
 
-        render: function (view) {
-            if (this.crtView) {
-                this.crtView.stopListening();
-                this.crtView.$el = $();
-                this.crtView.remove();
-            }
-            this.crtView = view;
-            this.crtView.render();
+        renderToContent: function (view) {
+            $("#content").html(view.render().$el);
         }
+
     });
 
     app.Router = AppRouter;

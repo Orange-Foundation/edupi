@@ -24,112 +24,164 @@
             var context = this.getContext(),
                 html = this.template(context);
             this.$el.html(html);
+            return this;
         },
         getContext: function () {
             return {};
         }
     });
 
-    var RootDirectoriesView = Backbone.View.extend({
-        el: "#content",
+    var DirectoriesView = TemplateView.extend({
         templateName: "#directories-template",
 
-        render: function () {
-            var that = this;
-            this.getDirectories().fetch({
-                success: function (directories) {
-                    var template = _.template($(that.templateName).html());
-                    that.$el.html(template({directories: directories.models}));
-                }
-            });
-        },
-
-        getDirectories: function () {
-            return new app.collections.RootDirectories();
-        }
-    });
-
-    var SubDirectoriesView = RootDirectoriesView.extend({
         initialize: function (options) {
-            this.parentId = options.parentId;
-        },
-
-        getDirectories: function () {
-            return new app.collections.SubDirectories({parentId: this.parentId});
-        }
-    });
-
-    var EditDirectoryView = Marionette.View.extend({
-        el: "#content",
-
-        initialize: function (options) {
-            this.directory = new Directory({id: options.id});
+            TemplateView.prototype.initialize.apply(this, arguments);
+            this.listenTo(this, 'render', this.render);
+            if (options.parentId) {
+                this.parentId = options.parentId;
+            }
         },
 
         render: function () {
             var that = this;
-            that.directory.fetch({
-                success: function (directory) {
-                    var template = _.template($("#directory-edit-template").html());
-                    that.$el.html(template({directory: directory}));
+            FormView.prototype.render.apply(this);
+            $("#create-directory").attr("href", function () {
+                if (that.parentId) {
+                    return "#" + that.parentId + "/create";
+                } else {
+                    return "#create";
                 }
             });
+            return this;
         },
 
-        events: {
-            'click #dir-delete': 'delete'
+        fetchAndRefresh: function () {
+            var that = this;
+            var url = "http://127.0.0.1:8000/api/directories";
+            url = url + (this.parentId ? "/" + this.parentId + "/sub_directories" : "?root=true");
+
+            $.getJSON(url)
+                .done(function (data) {
+                    that.directories = new Backbone.Collection(data);
+                    app.currentDirectories = that.directories;
+                    that.trigger('render');
+                });
         },
 
-        delete: function (ev) {
-            console.warn('deleting!!');
-            ev.stopPropagation();
-            this.directory.destroy({
-                success: function () {
-                    app.router.navigate('', {trigger: true});
-                }
-            });
-            return true;
+        getContext: function () {
+            return {directories: (this.directories && this.directories.models) || null};
         }
     });
 
-    var CreateDirectoryView = Marionette.View.extend({
-        el: "#content",
 
+    var FormView = TemplateView.extend({
         events: {
-            'submit #directory-create-form': 'create',
-            'click #cancel': 'cancel'
+            'submit form': 'submit'
         },
 
-        create: function (ev) {
-            ev.stopPropagation();
-            var dirDetails = $(ev.currentTarget).serializeObject();
-            var roots = new app.collections.RootDirectories();
-            roots.fetch({
-                type: 'POST',
-                data: JSON.stringify(dirDetails),
-                beforeSend: function (xhr) {
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                },
-                success: function () {
-                    app.router.navigate('', {trigger: true});
-                }
-            });
-            return false;
+        submit: function (event) {
+            event.preventDefault();
+            this.form = $(event.currentTarget);
         },
 
-        cancel: function () {
+        done: function (event) {
+            if (event) {
+                event.preventDefault();
+            }
+            this.remove();
+        },
+
+        serializeForm: function (form) {
+            return _.object(_.map(form.serializeArray(), function (item) {
+                return [item.name, item.value];
+            }));
+        }
+    });
+
+    var CreateDirectoryView = FormView.extend({
+        templateName: "#create-directory-template",
+
+        initialize: function (options) {
+            FormView.prototype.initialize.apply(this, options);
+            if (options && options.parentId) {
+                this.parentId = options.parentId;
+            }
+        },
+
+        submit: function (event) {
+            FormView.prototype.submit.apply(this, arguments);
+            var data = this.serializeForm(this.form);
+            var url = "http://127.0.0.1:8000/api/directories";
+            if (this.parentId) {
+                url = url + "/" + this.parentId + "/create_sub_directory";
+            }
+
+            $.post(url, data)
+                .success($.proxy(this.createSuccess, this))
+                .fail($.proxy(this.failure, this));
+        },
+
+        createSuccess: function () {
+            console.log("create success");
+            this.done();
             window.history.back();
         },
 
-        render: function () {
-            var template = _.template($("#create-directory-template").html());
-            this.$el.html(template({}))
+        failure: function () {
+            console.warn("fail to create");
         }
     });
 
-    app.views.RootDirectoriesView = RootDirectoriesView;
-    app.views.SubDirectoriesView = SubDirectoriesView;
-    app.views.EditDirectoryView = EditDirectoryView;
+    var EditDirectoryView = FormView.extend({
+        templateName: "#directory-edit-template",
+
+        initialize: function (options) {
+            FormView.prototype.initialize.apply(this, options);
+            this.directory = options.directory;
+        },
+
+        getContext: function () {
+            return {directory: this.directory};
+        },
+
+        submit: function (event) {
+            FormView.prototype.submit.apply(this, arguments);
+            var data = this.serializeForm(this.form);
+            console.log(JSON.stringify(data));
+            var url = "http://127.0.0.1:8000/api/directories/" + this.directory.id + "/update";
+            $.ajax({
+                type: "PUT",
+                url: url,
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (result) {
+                    console.log("updated");
+                    window.history.back();
+                }
+            });
+        },
+
+        events: {
+            'submit form': 'submit',
+            'click #dir-delete': 'deleteDirectory'
+        },
+
+        deleteDirectory: function (ev) {
+            var that = this;
+            $.ajax({
+                url: "http://127.0.0.1:8000/api/directories/" + this.directory.id,
+                type: 'DELETE',
+                success: function (result) {
+                    console.log("element deleted:" + result);
+                    that.done();
+                    window.history.back();
+                }
+            });
+        }
+    });
+
+    app.views.DirectoriesView = DirectoriesView;
     app.views.CreateDirectoryView = CreateDirectoryView;
+    app.views.EditDirectoryView = EditDirectoryView;
 
 })(jQuery, Backbone, _, app);
