@@ -72,6 +72,11 @@ class DirectoryViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['put'])
     def update(self, request, *args, **kwargs):
+        current_dir = self.get_object()
+        serializer = DirectorySerializer(data=request.data)
+        if serializer.is_valid():
+            current_dir.name = serializer.validated_data.get('name')
+            current_dir.save()
         return Response({'status': 'directory updated'})
 
     @detail_route(methods=['delete'])
