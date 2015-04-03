@@ -5,18 +5,11 @@ from django.template import RequestContext
 from cntapp.models import Directory
 
 from cntapp.helpers import get_dir_by_path
-from cntapp.forms import DirectoryForm
 
 
 def index(request):
-    if request.method == 'POST':
-        form = DirectoryForm(request.POST)
-        if form.is_valid():
-            Directory.objects.create(name=form.cleaned_data['name'])
-        else:
-            pass  # TODO
     dirs = [d for d in (Directory.objects.all()) if d.get_parents().count() == 0]
-    return render(request, 'cntapp/custom/index.html', {'dirs': dirs, 'form': DirectoryForm()})
+    return render(request, 'cntapp/custom/index.html', {'dirs': dirs})
 
 
 def create_dir(request, path):

@@ -4,7 +4,8 @@ from rest_framework.routers import DefaultRouter
 from cntapp.views import views
 
 
-router = DefaultRouter()
+# Backbone's model URL does expect trailing slash
+router = DefaultRouter(trailing_slash=False)
 router.register(r'directories', views.DirectoryViewSet)
 
 urlpatterns = patterns(
