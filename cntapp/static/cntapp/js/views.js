@@ -59,7 +59,7 @@
 
         fetchAndRefresh: function () {
             var that = this;
-            var url = "http://127.0.0.1:8000/api/directories";
+            var url = app.apiRoot + "directories";
             url = url + (this.parentId ? "/" + this.parentId + "/sub_directories" : "?root=true");
 
             $.getJSON(url)
@@ -111,7 +111,7 @@
         submit: function (event) {
             FormView.prototype.submit.apply(this, arguments);
             var data = this.serializeForm(this.form);
-            var url = "http://127.0.0.1:8000/api/directories";
+            var url = app.apiRoot + "directories";
             if (this.parentId) {
                 url = url + "/" + this.parentId + "/create_sub_directory";
             }
@@ -148,7 +148,7 @@
             FormView.prototype.submit.apply(this, arguments);
             var data = this.serializeForm(this.form);
             console.log(JSON.stringify(data));
-            var url = "http://127.0.0.1:8000/api/directories/" + this.directory.id + "/update";
+            var url = app.apiRoot + "directories/" + this.directory.id + "/update";
             $.ajax({
                 type: "PUT",
                 url: url,
@@ -169,7 +169,7 @@
         deleteDirectory: function (ev) {
             var that = this;
             $.ajax({
-                url: "http://127.0.0.1:8000/api/directories/" + this.directory.id,
+                url: app.apiRoot + "directories/" + this.directory.id,
                 type: 'DELETE',
                 success: function (result) {
                     console.log("element deleted:" + result);
