@@ -39,7 +39,7 @@
                 </a>
             </td>
             <td>
-                <a href='#<%= directory.get("id") %>/edit' class="btn btn-default">
+                <a name="edit" href='#<%= directory.get("id") %>/edit' class="btn btn-default">
                     Edit
                 </a>
             </td>
@@ -56,10 +56,10 @@
         {% csrf_token %}
         <label>
             Name
-            <input type="text" name="name" value=""/>
+            <input id="directory-name" type="text" name="name" value=""/>
         </label>
         <hr />
-        <button type="submit" class="btn btn-primary">Create</button>
+        <button id="btn-create" type="submit" class="btn btn-primary">Create</button>
         <a id="cancel" class="btn btn-danger">Cancel</a>
     </form>
 </script>
@@ -73,7 +73,7 @@
         </label>
         <input type="hidden" name="id" value='<%= directory.get("id") %>'>
         <hr />
-        <button type="submit" class="btn btn-primary">OK</button>
+        <button id="submit" type="submit" class="btn btn-primary">OK</button>
         <a id="dir-delete" class="btn btn-danger">Delete</a>
     </form>
 </script>
