@@ -1,37 +1,29 @@
 (function ($, Backbone, _, app) {
     var AppRouter = Backbone.Router.extend({
         routes: {
-            '': 'roots',
-            'create': 'createRootDirectory',
-            ':id': 'subDirectory',
+            '': 'listDirectories',
+            'create': 'createDirectory',
+            ':id': 'listDirectories',
             ':id/edit': 'editDirectory',
-            ':id/create': 'createSubDirectory'
+            ':id/create': 'createDirectory'
         },
 
         initialize: function (options) {
             Backbone.history.start();
         },
 
-        roots: function () {
-            var view = new app.views.DirectoriesView({el: "#content"});
-            view.fetchAndRefresh();
-        },
-
-        subDirectory: function (parentId) {
+        listDirectories: function (parentId) {
             var view = new app.views.DirectoriesView({
                 el: "#content",
                 parentId: parentId
             });
+            app.currentDirectories = view.collection;
             view.fetchAndRefresh();
         },
 
         /* Form views */
 
-        createRootDirectory: function () {
-            this.renderToContent(new app.views.CreateDirectoryView());
-        },
-
-        createSubDirectory: function (parentId) {
+        createDirectory: function (parentId) {
             this.renderToContent(new app.views.CreateDirectoryView({parentId: parentId}));
         },
 

@@ -36,7 +36,9 @@
 
         initialize: function (options) {
             TemplateView.prototype.initialize.apply(this, arguments);
-            this.listenTo(this, 'render', this.render);
+            this.collection = new Backbone.Collection();
+            this.listenTo(this.collection, 'reset', this.render);
+
             if (options.parentId) {
                 this.parentId = options.parentId;
             }
@@ -45,7 +47,7 @@
         render: function () {
             var that = this;
             FormView.prototype.render.apply(this);
-            $("#create-directory").attr("href", function () {
+            this.$("#create-directory").attr("href", function () {
                 if (that.parentId) {
                     return "#" + that.parentId + "/create";
                 } else {
@@ -62,14 +64,12 @@
 
             $.getJSON(url)
                 .done(function (data) {
-                    that.directories = new Backbone.Collection(data);
-                    app.currentDirectories = that.directories;
-                    that.trigger('render');
+                    that.collection.reset(data);
                 });
         },
 
         getContext: function () {
-            return {directories: (this.directories && this.directories.models) || null};
+            return {directories: (this.collection && this.collection.models) || null};
         }
     });
 
