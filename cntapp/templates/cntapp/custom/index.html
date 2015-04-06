@@ -18,65 +18,7 @@
 </div>
 
 <!-- ****templates**** -->
-
-<script type="text/template" id="directories-template">
-    <a id="create-directory" class="btn btn-primary">Create Directory</a>
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Directory name</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-
-        <% _.each(directories, function (directory) { %>
-        <tr>
-            <td>
-                <a directory-id='<%= directory.get("id") %>' href='#<%= directory.get("id") %>'
-                   class="sub-directory">
-                   <%= directory.get('name') %>
-                </a>
-            </td>
-            <td>
-                <a name="edit" href='#<%= directory.get("id") %>/edit' class="btn btn-default">
-                    Edit
-                </a>
-            </td>
-        </tr>
-        <% }); %>
-
-        </tbody>
-    </table>
-</script>
-
-<script type="text/template" id="create-directory-template">
-    <h2>Create directory</h2>
-    <form id="directory-create-form" action="" method="post">
-        {% csrf_token %}
-        <label>
-            Name
-            <input id="directory-name" type="text" name="name" value=""/>
-        </label>
-        <hr />
-        <button id="btn-create" type="submit" class="btn btn-primary">Create</button>
-        <a id="cancel" class="btn btn-danger">Cancel</a>
-    </form>
-</script>
-
-<script type="text/template" id="directory-edit-template">
-    <h2>Edit directory</h2>
-    <form id="directory-edit-form" action="" method="put">
-        <label>
-            Name
-            <input type='text' name='name' value='<%= directory.get("name") %>'/>
-        </label>
-        <input type="hidden" name="id" value='<%= directory.get("id") %>'>
-        <hr />
-        <button id="submit" type="submit" class="btn btn-primary">OK</button>
-        <a id="dir-delete" class="btn btn-danger">Delete</a>
-    </form>
-</script>
+{% include 'cntapp/custom/templ.html' %}
 
 <!-- ****include**** -->
 
