@@ -36,11 +36,12 @@
 
         initialize: function (options) {
             TemplateView.prototype.initialize.apply(this, arguments);
-            this.collection = new Backbone.Collection();
+            this.collection = new Backbone.Collection({model: app.models.Directory});
             this.listenTo(this.collection, 'reset', this.render);
 
             if (options.parentId) {
                 this.parentId = options.parentId;
+                this.current_path = options.path;
             }
         },
 
@@ -54,6 +55,7 @@
                     return "#create";
                 }
             });
+
             return this;
         },
 
@@ -69,7 +71,10 @@
         },
 
         getContext: function () {
-            return {directories: (this.collection && this.collection.models) || null};
+            return {
+                directories: (this.collection && this.collection.models) || null,
+                current_path: this.current_path || null
+            };
         }
     });
 
