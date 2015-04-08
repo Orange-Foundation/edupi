@@ -7,6 +7,8 @@ before_install:
   - sleep 3 # give xvfb some time to start
 install:
   - pip install -r requirements.txt
-script: 
-  - python manage.py test cntapp/tests
-  - python manage.py test functional_tests
+  - pip install -r requirements-dev.txt
+script:
+  - coverage run --source=cntapp manage.py test
+after_success:
+  - coveralls
