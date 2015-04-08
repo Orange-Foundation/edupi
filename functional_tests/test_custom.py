@@ -35,6 +35,12 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertEqual(base_url, self.browser.current_url)
         self.assertInBody(dir_name)
 
+    def assertNotInDirectoryTable(self, text):
+        self.assertNotIn(text, self.browser.find_element_by_css_selector('.table tbody').text)
+
+    def assertInDirectoryTable(self, text):
+        self.assertIn(text, self.browser.find_element_by_css_selector('.table tbody').text)
+
     def test_create_directories(self):
         # Alice wants to customize the web site, she enters into the custom home page
         self.browser.get(self.custom_page_url)
@@ -50,23 +56,57 @@ class CustomSiteTestCase(FunctionalTest):
         # click the primary to go into this folder
         self.browser.find_element_by_link_text('primary').click()
 
-        self.assertNotInBody("primary")
-        self.assertNotInBody("secondary")
+        self.assertNotInDirectoryTable("primary")
+        self.assertNotInDirectoryTable("secondary")
 
         self.create_dir("CP")
         self.create_dir("CE1")
 
         # enter in the next level
         self.browser.find_element_by_link_text('CP').click()
-        self.assertNotInBody("CP")
+        self.assertNotInDirectoryTable("CP")
 
         self.create_dir("Math")
         self.create_dir("English")
         self.create_dir("French")
 
         self.browser.get(self.custom_page_url)
-        self.assertInBody("primary")
-        self.assertNotInBody("Math")
+        self.assertInDirectoryTable("primary")
+        self.assertNotInDirectoryTable("Math")
+
+    def test_navigate_directory_path(self):
+        from cntapp.tests.helpers import init_test_dirs
+        init_test_dirs()
+        self.assertEqual(6, Directory.objects.count())
+        check_path = lambda path: self.assertEqual(path, self.browser.find_element_by_id("path").text)
+
+        def enter_into_dir(dir_name):
+            table = self.browser.find_element_by_class_name("table")
+            table.find_element_by_link_text(dir_name).click()
+
+        def back_to_dir(dir_name):
+            path = self.browser.find_element_by_id("path")
+            path.find_element_by_link_text(dir_name).click()
+
+        self.browser.get(self.custom_page_url)
+        enter_into_dir("a")
+        check_path("> home > a")
+        enter_into_dir("ab_a")
+        check_path("> home > a > ab_a")
+        enter_into_dir("ab_a_a")
+        check_path("> home > a > ab_a > ab_a_a")
+        self.browser.refresh()
+        check_path("> home > a > ab_a > ab_a_a")
+
+        back_to_dir("ab_a")
+        check_path("> home > a > ab_a")
+        back_to_dir("a")
+        check_path("> home > a")
+        back_to_dir("home")
+        check_path("")
+        enter_into_dir("a")
+        check_path("> home > a")
+        self.assertEqual(6, Directory.objects.count())
 
     def test_edit_directory(self):
         from cntapp.tests.helpers import init_test_dirs
