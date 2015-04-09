@@ -1,18 +1,43 @@
+import sys
+
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.db.models import ObjectDoesNotExist
+import factory
 
 from cntapp.models import Directory, Document, SubDirRelation
 
+DOCUMENT_BASE_NAME = '__test_document__'
+DESCRIPTION_BASE_TEXT = '__description__'
+
+
+class DocumentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Document
+
+
+class PdfDocumentFactory(DocumentFactory):
+    name = factory.Sequence(lambda n: '%s%d.pdf' % (DOCUMENT_BASE_NAME, n))
+    description = factory.Sequence(lambda n: '%s%d' % (DESCRIPTION_BASE_TEXT, n))
+    type = Document.TYPE_PDF
+    file = factory.LazyAttribute(lambda a: SimpleUploadedFile(a.name, a.description.encode('utf-8')))
+
 
 class DocumentTest(TestCase):
-    def setUp(self):
-        pass
 
-    def test_create_document(self):
-        Document.objects.create(
-            name='manual', type=Document.TYPE_PDF, description='this is a pdf')
-        d = Document.objects.get(name='manual')
-        self.assertEqual(d.type, Document.TYPE_PDF)
+    def setUp(self):
+        super(DocumentTest, self).setUp()
+        DocumentFactory.reset_sequence(force=True)
+
+    def test_create_and_delete_document(self):
+        d = PdfDocumentFactory()
+        self.assertEqual(DOCUMENT_BASE_NAME + '0.pdf', d.name)
+        self.assertEqual(1, len(Document.objects.all()))
+
+        d = Document.objects.get(id=1)
+        self.assertEqual(DOCUMENT_BASE_NAME + '0.pdf', d.name)
+        d.delete()
+        self.assertEqual(0, len(Document.objects.all()))
 
 
 class DirectoryTestCase(TestCase):

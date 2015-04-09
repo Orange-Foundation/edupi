@@ -91,6 +91,8 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "../static/")
 
+MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")
+
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "libs/static"),
 )
@@ -99,3 +101,5 @@ STATICFILES_DIRS = (
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',
 )
+
+TEST_RUNNER = 'edupi.runner.CustomTestSuiteRunner'

@@ -1,3 +1,4 @@
+factory-boy==2.5.1
 selenium==2.45.0
 python-coveralls==2.5.0
 coverage==3.7.1
