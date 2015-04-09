@@ -5,8 +5,8 @@ from rest_framework.response import Response
 from rest_framework import viewsets
 
 from cntapp.helpers import get_root_dirs
-from cntapp.serializers import DirectorySerializer
-from cntapp.models import Directory
+from cntapp.serializers import DirectorySerializer, DocumentSerializer
+from cntapp.models import Directory, Document
 
 
 def index(request):
@@ -25,6 +25,15 @@ def directory(request, dir_id=None):
         dirs = d.get_sub_dirs()
 
     return render(request, 'cntapp/dir_list.html', {'dirs': dirs})
+
+
+class DocumentViewSet(viewsets.ModelViewSet):
+    """
+    This viewset list `documents`, and provides `create`, `retrieve`,
+    `update` and `destroy` options
+    """
+    queryset = Document.objects.all()
+    serializer_class = DocumentSerializer
 
 
 class DirectoryViewSet(viewsets.ModelViewSet):

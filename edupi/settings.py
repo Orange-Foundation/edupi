@@ -91,12 +91,13 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "../static/")
 
-MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")
-
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, "libs/static"),
 )
 
+MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")
+
+MEDIA_URL = '/media/'
 
 TEMPLATE_CONTEXT_PROCESSORS = TCP + (
     'django.core.context_processors.request',

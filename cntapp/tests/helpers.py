@@ -1,4 +1,7 @@
-from cntapp.models import Directory
+from django.core.files.uploadedfile import SimpleUploadedFile
+
+from cntapp.models import Directory, Document
+import factory
 
 
 def create_dir(name):
@@ -27,3 +30,19 @@ ab_a_a  ab_a_b
     b.add_sub_dir(ab_a)
     ab_a.add_sub_dir(ab_a_a).add_sub_dir(ab_a_b)
     c.add_sub_dir(ab_a_b)
+
+
+DOCUMENT_BASE_NAME = '__test_document__'
+DESCRIPTION_BASE_TEXT = '__description__'
+
+
+class DocumentFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Document
+
+
+class PdfDocumentFactory(DocumentFactory):
+    name = factory.Sequence(lambda n: '%s%d.pdf' % (DOCUMENT_BASE_NAME, n))
+    description = factory.Sequence(lambda n: '%s%d' % (DESCRIPTION_BASE_TEXT, n))
+    type = Document.TYPE_PDF
+    file = factory.LazyAttribute(lambda a: SimpleUploadedFile(a.name, a.description.encode('utf-8')))

@@ -1,30 +1,13 @@
-import sys
-
-from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
+
 from django.db.models import ObjectDoesNotExist
-import factory
 
 from cntapp.models import Directory, Document, SubDirRelation
-
-DOCUMENT_BASE_NAME = '__test_document__'
-DESCRIPTION_BASE_TEXT = '__description__'
-
-
-class DocumentFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Document
-
-
-class PdfDocumentFactory(DocumentFactory):
-    name = factory.Sequence(lambda n: '%s%d.pdf' % (DOCUMENT_BASE_NAME, n))
-    description = factory.Sequence(lambda n: '%s%d' % (DESCRIPTION_BASE_TEXT, n))
-    type = Document.TYPE_PDF
-    file = factory.LazyAttribute(lambda a: SimpleUploadedFile(a.name, a.description.encode('utf-8')))
+from .helpers import DocumentFactory, PdfDocumentFactory
+from .helpers import DOCUMENT_BASE_NAME
 
 
 class DocumentTest(TestCase):
-
     def setUp(self):
         super(DocumentTest, self).setUp()
         DocumentFactory.reset_sequence(force=True)

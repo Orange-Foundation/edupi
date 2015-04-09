@@ -1,22 +1,65 @@
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.six import BytesIO
 from rest_framework.renderers import JSONRenderer
-from rest_framework import status
 from django.test import TestCase
 from rest_framework.parsers import JSONParser
 from rest_framework.test import APIClient
+from rest_framework import status
 
-from cntapp.models import Directory
-from .helpers import init_test_dirs
+from cntapp.models import Directory, Document
+from .helpers import init_test_dirs, PdfDocumentFactory
 
 
-class DirectoryRESTTest(TestCase):
+class BaseRESTTest(TestCase):
     def setUp(self):
         self.client = APIClient()
+        PdfDocumentFactory.reset_sequence(force=True)
 
     def render(self, res):
         content = JSONRenderer().render(res.data)
         return JSONParser().parse(BytesIO(content))
 
+
+class DocumentRESTTest(BaseRESTTest):
+    def test_create_document(self):
+        # good example
+        file = SimpleUploadedFile('book.pdf', 'book content'.encode('utf-8'))
+        res = self.client.post('/api/documents', {'name': 'book.pdf', 'file': file})
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        self.assertEqual({'id': 1,
+                          'name': 'book.pdf',
+                          'description': '',
+                          'file': 'http://testserver/media/book.pdf'},
+                         self.render(res))
+
+        # bad example
+        res = self.client.post('/api/documents', {})
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'name': ['This field is required.'], 'file': ['No file was submitted.']},
+                         self.render(res))
+
+    def test_get_document(self):
+        PdfDocumentFactory.create(name="hello.pdf")
+        res = self.client.get('/api/documents/1')
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual({'id': 1,
+                          'name': 'hello.pdf',
+                          'description': '__description__0',
+                          'file': 'http://testserver/media/hello.pdf'},
+                         self.render(res))
+
+        # update document's name & description, & keep using the same file
+        res = self.client.patch('/api/documents/1',
+                                {'name': 'not just hello.pdf', 'description': 'detailed description'})
+        self.assertEqual({
+            'id': 1,
+            'name': 'not just hello.pdf',
+            'description': 'detailed description',
+            'file': 'http://testserver/media/hello.pdf',
+        }, self.render(res))
+
+
+class DirectoryRESTTest(BaseRESTTest):
     def test_get_dir(self):
         init_test_dirs()
         res = self.client.get('/api/directories/1')
