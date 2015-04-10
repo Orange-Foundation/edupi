@@ -20,9 +20,6 @@ class Document(models.Model):
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
 
-    def get_parents(self):
-        pass
-
     def __str__(self):
         return self.name
 
@@ -37,9 +34,6 @@ class Directory(models.Model):
         symmetrical=False,
         through='SubDirRelation',
         through_fields=('parent', 'child'))
-
-    def get_documents(self):
-        return self.documents.all()
 
     def get_sub_dirs(self):
         return self.sub_dirs.all()

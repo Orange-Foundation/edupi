@@ -32,6 +32,7 @@ ab_a_a  ab_a_b
     c.add_sub_dir(ab_a_b)
 
 
+DIRECTORY_BASE_NAME = '__test_directory__'
 DOCUMENT_BASE_NAME = '__test_document__'
 DESCRIPTION_BASE_TEXT = '__description__'
 
@@ -46,3 +47,10 @@ class PdfDocumentFactory(DocumentFactory):
     description = factory.Sequence(lambda n: '%s%d' % (DESCRIPTION_BASE_TEXT, n))
     type = Document.TYPE_PDF
     file = factory.LazyAttribute(lambda a: SimpleUploadedFile(a.name, a.description.encode('utf-8')))
+
+
+class DirectoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Directory
+
+    name = factory.Sequence(lambda n: '%s%d' % (DIRECTORY_BASE_NAME, n))
