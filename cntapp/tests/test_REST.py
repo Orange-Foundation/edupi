@@ -7,7 +7,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from cntapp.models import Directory, Document
-from .helpers import init_test_dirs, PdfDocumentFactory
+from .helpers import init_test_dirs, PdfDocumentFactory, DocumentFactory, DirectoryFactory
 
 
 class BaseRESTTest(TestCase):
@@ -139,3 +139,95 @@ class DirectoryRESTTest(BaseRESTTest):
 
         self.client.delete('/api/directories/%d' % b.pk)
         self.assertEqual(2, Directory.objects.all().count())
+
+
+class DirDocRelationRESTTest(BaseRESTTest):
+    def test_get_documents_from_directory(self):
+        d = DirectoryFactory()
+        # empty directory
+        res = self.client.get('/api/directories/%d/documents' % d.pk)
+        self.assertEqual([], self.render(res))
+
+        pdf_0 = PdfDocumentFactory()
+        pdf_1 = PdfDocumentFactory()
+        d.documents.add(pdf_0)
+        d.documents.add(pdf_1)
+        self.assertEqual(2, len(d.documents.all()))
+
+        res = self.client.get('/api/directories/%d/documents' % d.pk)
+        self.assertEqual(
+            [
+                {'description': pdf_0.description,
+                 'id': pdf_0.id,
+                 'file': 'http://testserver' + pdf_0.file.url,
+                 'name': pdf_0.name},
+                {'description': pdf_1.description,
+                 'id': pdf_1.id,
+                 'file': 'http://testserver' + pdf_1.file.url,
+                 'name': pdf_1.name},
+            ],
+            self.render(res))
+
+    def test_add_document_to_directory(self):
+        d = DirectoryFactory()
+        pdf = PdfDocumentFactory()
+        res = self.client.post('/api/directories/%d/documents' % d.pk)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'documents': 'This field should contain a list of document id'},
+                         self.render(res))
+
+        # add a single document
+        res = self.client.post('/api/directories/%d/documents' % d.pk, data={'documents': [pdf.pk]}, format='json')
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        self.assertEqual(pdf, d.documents.first())
+
+    def test_add_documents_to_directory(self):
+        # add a list of documents
+        d = DirectoryFactory()
+        pdf_0 = PdfDocumentFactory()
+        pdf_1 = PdfDocumentFactory()
+
+        res = self.client.post('/api/directories/%d/documents' % d.pk,
+                               data={'documents': [pdf_0.id, pdf_1.id]}, format='json')
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        d = Directory.objects.get(pk=d.pk)
+        self.assertEqual(2, d.documents.count())
+        self.assertEqual(pdf_0, d.documents.get(pk=pdf_0.pk))
+        self.assertEqual(pdf_1, d.documents.get(pk=pdf_1.pk))
+
+    def test_add_not_exist_documents_to_directory(self):
+        d = DirectoryFactory()
+        pdf_0 = PdfDocumentFactory()
+        res = self.client.post('/api/directories/%d/documents' % d.pk,
+                               data={'documents': [pdf_0.id, '100']}, format='json')
+        self.assertEqual(status.HTTP_404_NOT_FOUND, res.status_code)
+        self.assertEqual(0, d.documents.count())
+
+    def test_remove_documents_from_directory(self):
+        d = DirectoryFactory()
+        pdf_0 = PdfDocumentFactory()
+        pdf_1 = PdfDocumentFactory()
+        pdf_2 = PdfDocumentFactory()
+        pdf_3 = PdfDocumentFactory()
+        d.documents.add(pdf_0)
+        d.documents.add(pdf_1)
+        d.documents.add(pdf_2)
+        d.documents.add(pdf_3)
+
+        res = self.client.delete('/api/directories/%d/documents' % d.pk)
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+
+        res = self.client.delete('/api/directories/%d/documents' % d.pk,
+                                 data={'documents': [pdf_0.id]}, format='json')
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual(3, d.documents.count())
+
+        res = self.client.delete('/api/directories/%d/documents' % d.pk,
+                                 data={'documents': [pdf_0.id, pdf_1.id]}, format='json')
+        self.assertEqual(status.HTTP_404_NOT_FOUND, res.status_code)
+        self.assertEqual(3, d.documents.count())
+
+        res = self.client.delete('/api/directories/%d/documents' % d.pk,
+                                 data={'documents': [pdf_1.id, pdf_2.id]}, format='json')
+        self.assertEqual(1, d.documents.count())
+        self.assertEqual(4, Document.objects.count())
