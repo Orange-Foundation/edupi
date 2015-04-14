@@ -7,4 +7,9 @@
         }
     });
 
+    app.models.Document = Backbone.Model.extend({
+        urlRoot: app.apiRoot + 'documents'
+    });
+
+
 })(jQuery, Backbone, _, app);

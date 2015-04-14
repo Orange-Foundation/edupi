@@ -1,3 +1,28 @@
+<script type="text/template" id="documents-template">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+        <tbody>
+            <% _.each(documents, function (document) { %>
+            <tr>
+                <td>
+                    <a href='<%= document.get("file") %>' target="_blank">
+                        <%= document.get("name") %>
+                    </a>
+                </td>
+                <td>
+                    <%= document.get("description") %>
+                </td>
+            </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</script>
+
 <script type="text/template" id="directories-template">
     <a id="create-directory" class="btn btn-primary">Create Directory</a>
     <br/>
