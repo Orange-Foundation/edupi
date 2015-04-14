@@ -1,25 +1,19 @@
 <script type="text/template" id="documents-template">
-    <table class="table">
+    <table id="table"
+            data-search="true"
+            data-show-refresh="true"
+            data-show-toggle="true"
+            data-url="/api/documents"
+            data-pagination="true"
+            data-show-columns="true"
+            data-side-pagination="server"
+            data-height="519">
         <thead>
         <tr>
-            <th>Name</th>
-            <th>Description</th>
+            <th data-field="name" data-sortable="true">Name</th>
+            <th data-field="description" data-sortable="true">Description</th>
         </tr>
         </thead>
-        <tbody>
-            <% _.each(documents, function (document) { %>
-            <tr>
-                <td>
-                    <a href='<%= document.get("file") %>' target="_blank">
-                        <%= document.get("name") %>
-                    </a>
-                </td>
-                <td>
-                    <%= document.get("description") %>
-                </td>
-            </tr>
-            <% }); %>
-        </tbody>
     </table>
 </script>
 

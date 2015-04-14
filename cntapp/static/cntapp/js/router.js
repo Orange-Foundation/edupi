@@ -109,8 +109,7 @@
         },
 
         listDocuments: function() {
-            var view = new app.views.DocumentsView({el: "#content"});
-            view.fetchAndRefresh();
+            new app.views.DocumentsView({el: "#content"}).render();
         },
 
         renderToContent: function (view) {

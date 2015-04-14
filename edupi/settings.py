@@ -50,7 +50,7 @@ MIDDLEWARE_CLASSES = (
 
 REST_FRAMEWORK = {
     # 'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),  # enable on prod
-    'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': 'edupi.pagination.SimpleLimitOffsetPagination',
 }
 
 ROOT_URLCONF = 'edupi.urls'

@@ -188,29 +188,13 @@
     var DocumentsView = TemplateView.extend({
         templateName: "#documents-template",
 
-        initialize: function (options) {
-            TemplateView.prototype.initialize.apply(this, options);
-            this.collection = new Backbone.Collection({
-                model: app.models.Document,
-                url: app.models.Document.urlRoot
-            });
-            this.listenTo(this.collection, 'reset', this.render);
-        },
-
-        fetchAndRefresh: function () {
-            var that = this;
-            var url = app.apiRoot + 'documents';
-            $.getJSON(url)
-                .done(function (data) {
-                    console.log('fetched:' + data);
-                    that.collection.reset(data.results);
-                });
-        },
-
-        getContext: function () {
-            return {
-                documents: (this.collection && this.collection.models) || null
-            };
+        render: function (data) {
+            TemplateView.prototype.render.apply(this);
+            // convert Document models to native JSON objects and pass to table
+            $('#table').bootstrapTable();
+            // adjust the header
+            $('#table').bootstrapTable('resetView');
+            return this;
         }
     });
 

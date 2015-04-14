@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import NoSuchElementException
 
 from .base import FunctionalTest
+from cntapp.tests.helpers import DocumentFactory
 
 
 class CustomSiteTestCase(FunctionalTest):
@@ -139,4 +140,11 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.assertEqual(self.custom_page_url, self.browser.current_url)
         self.assertInBody("primary")
+
+    def test_list_documents(self):
+        for i in range(10):
+            DocumentFactory()
+        # ensure that the table is loaded with data
+        self.browser.get(self.custom_page_url + '#documents')
+        self.assertInBody('Showing 1 to 10 of 10 rows')
 
