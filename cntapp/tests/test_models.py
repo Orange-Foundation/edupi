@@ -1,18 +1,59 @@
 from django.test import TestCase
+
 from django.db.models import ObjectDoesNotExist
 
 from cntapp.models import Directory, Document, SubDirRelation
+from .helpers import DocumentFactory, PdfDocumentFactory, DirectoryFactory
+from .helpers import DOCUMENT_BASE_NAME, DIRECTORY_BASE_NAME
 
 
 class DocumentTest(TestCase):
     def setUp(self):
-        pass
+        super(DocumentTest, self).setUp()
+        DocumentFactory.reset_sequence(force=True)
 
-    def test_create_document(self):
-        Document.objects.create(
-            name='manual', type=Document.TYPE_PDF, description='this is a pdf')
-        d = Document.objects.get(name='manual')
-        self.assertEqual(d.type, Document.TYPE_PDF)
+    def test_create_and_delete_document(self):
+        d = PdfDocumentFactory()
+        self.assertEqual(DOCUMENT_BASE_NAME + '0.pdf', d.name)
+        self.assertEqual(1, len(Document.objects.all()))
+
+        d = Document.objects.get(id=1)
+        self.assertEqual(DOCUMENT_BASE_NAME + '0.pdf', d.name)
+        d.delete()
+        self.assertEqual(0, len(Document.objects.all()))
+
+    def test_add_and_delete_document_in_dir(self):
+        """
+        d1      d0
+        |     __|_________
+        \    |     |     |
+         -->f_1   f_2   f_3
+        """
+        d0 = DirectoryFactory()
+        d1 = DirectoryFactory()
+        f_1 = PdfDocumentFactory()
+        f_2 = PdfDocumentFactory()
+        f_3 = PdfDocumentFactory()
+
+        d0.documents.add(f_1)
+        d0.documents.add(f_2)
+        d0.documents.add(f_3)
+        d1.documents.add(f_1)
+
+        self.assertEqual(3, len(d0.documents.all()))
+        self.assertEqual(1, len(d1.documents.all()))
+        self.assertEquals(3, len(Document.objects.all()))
+        self.assertEquals(2, len(f_1.directory_set.all()))
+
+        d0.documents.remove(f_1)
+        self.assertEqual(2, len(d0.documents.all()))
+        self.assertEqual(1, len(d1.documents.all()))
+        self.assertEquals(1, len(f_1.directory_set.all()))
+
+        d1.documents.remove(f_1)
+        self.assertEqual(0, len(d1.documents.all()))
+        self.assertEquals(0, len(f_1.directory_set.all()))
+        self.assertEquals(3, len(Document.objects.all()))
 
 
 class DirectoryTestCase(TestCase):

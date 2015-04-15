@@ -6,8 +6,10 @@ before_install:
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3 # give xvfb some time to start
 install:
+  - npm install -g bower
   - pip install -r requirements.txt
   - pip install -r requirements-dev.txt
+  - python manage.py bower install
 script:
   - coverage run --source=cntapp manage.py test
 after_success:

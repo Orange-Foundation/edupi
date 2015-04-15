@@ -58,6 +58,7 @@
         routes: {
             '': 'listDirectories',
             'create': 'createDirectory',
+            'documents': 'listDocuments',
             ':id': 'listDirectories',
             ':id/edit': 'editDirectory',
             ':id/create': 'createDirectory'
@@ -105,6 +106,10 @@
             this.renderToContent(new app.views.EditDirectoryView({
                 directory: app.currentDirectories.get(id)
             }));
+        },
+
+        listDocuments: function() {
+            new app.views.DocumentsView({el: "#content"}).render();
         },
 
         renderToContent: function (view) {
