@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
+    'djangobower',
     # Internal apps
     'cntapp',
 )
@@ -91,8 +92,24 @@ TEMPLATE_DIRS = [os.path.join(BASE_DIR, 'templates')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "../static/")
 
+BOWER_COMPONENTS_ROOT = os.path.abspath(os.path.join(BASE_DIR, "libs"))
+
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "libs/static"),
+    os.path.join(BASE_DIR, "libs/bower_components"),
+)
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
+BOWER_INSTALLED_APPS = (
+    'jquery#2.1.3',
+    'bootstrap#3.3.4',
+    'bootstrap-table#1.6.0',
+    'underscore#1.8.3',
+    'backbone#1.1.2',
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")
