@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'views/template',
-    'text!/static/cntapp/templates/documents_table.html',
+    'text!templates/documents_table.html',
 
     'bootstrap_table'
 ], function ($, _, Backbone, TemplateView, documentsTableTemplate) {

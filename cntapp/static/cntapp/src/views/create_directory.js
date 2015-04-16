@@ -4,7 +4,7 @@ define([
     'backbone',
     'models/directory',
     'views/form',
-    'text!/static/cntapp/templates/create_directory.html'
+    'text!templates/create_directory.html'
 ], function ($, _, Backbone, Directory, FormView, createDirectoryTemplate) {
 
     var CreateDirectoryView = FormView.extend({

@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'models/directory',
-    'text!/static/cntapp/templates/directories.html'
+    'text!templates/directories.html'
 ], function ($, _, Backbone, Directory, directoriesTemplate) {
 
     var DirectoriesView = Backbone.View.extend({

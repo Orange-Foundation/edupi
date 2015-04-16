@@ -3,7 +3,7 @@ define([
     'underscore',
     'backbone',
     'views/form',
-    'text!/static/cntapp/templates/edit_directory.html'
+    'text!templates/edit_directory.html'
 ], function ($, _, Backbone, FormView, editDirectoryTemplate) {
 
     var EditDirectoryView = FormView.extend({
