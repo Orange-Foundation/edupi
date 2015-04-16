@@ -2,14 +2,14 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'models/directory'
-], function ($, _, Backbone, Directory) {
+    'models/directory',
+    'text!/static/cntapp/templates/directories.html'
+], function ($, _, Backbone, Directory, directoriesTemplate) {
 
     var DirectoriesView = Backbone.View.extend({
-        templateName: "#directories-template",
 
         initialize: function (options) {
-            this.template = _.template($(this.templateName).html());
+            this.template = _.template(directoriesTemplate);
             this.collection = new Backbone.Collection({model: Directory});
             this.listenTo(this.collection, 'reset', this.render);
 

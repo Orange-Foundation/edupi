@@ -2,14 +2,14 @@ define([
     'jquery',
     'underscore',
     'backbone',
-    'views/form'
-], function ($, _, Backbone, FormView) {
+    'views/form',
+    'text!/static/cntapp/templates/edit_directory.html'
+], function ($, _, Backbone, FormView, editDirectoryTemplate) {
 
     var EditDirectoryView = FormView.extend({
-        templateName: "#directory-edit-template",
 
         initialize: function (options) {
-            FormView.prototype.initialize.apply(this, options);
+            this.template = _.template(editDirectoryTemplate);
             this.directory = options.directory;
         },
 
@@ -21,7 +21,7 @@ define([
             FormView.prototype.submit.apply(this, arguments);
             var data = this.serializeForm(this.form);
             console.log(JSON.stringify(data));
-            var url = "/api/directories/" + this.directory.id + "/update";
+            var url = "/api/directories/" + this.directory.id + "/update/";
             $.ajax({
                 type: "PUT",
                 url: url,

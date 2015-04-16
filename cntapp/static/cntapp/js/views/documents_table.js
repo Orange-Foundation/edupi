@@ -3,10 +3,15 @@ define([
     'underscore',
     'backbone',
     'views/template',
+    'text!/static/cntapp/templates/documents_table.html',
+
     'bootstrap_table'
-], function ($, _, Backbone, TemplateView) {
+], function ($, _, Backbone, TemplateView, documentsTableTemplate) {
     var DocumentsTableView = TemplateView.extend({
-        templateName: "#documents-template",
+        initialize: function () {
+            console.log(documentsTableTemplate);
+            this.template = _.template(documentsTableTemplate);
+        },
         render: function () {
             TemplateView.prototype.render.apply(this);
             // convert Document models to native JSON objects and pass to table

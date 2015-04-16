@@ -3,14 +3,13 @@ define([
     'underscore',
     'backbone',
     'models/directory',
-    'views/form'
-], function ($, _, Backbone, Directory, FormView) {
+    'views/form',
+    'text!/static/cntapp/templates/create_directory.html'
+], function ($, _, Backbone, Directory, FormView, createDirectoryTemplate) {
 
     var CreateDirectoryView = FormView.extend({
-        templateName: "#create-directory-template",
-
         initialize: function (options) {
-            FormView.prototype.initialize.apply(this, options);
+            this.template = _.template(createDirectoryTemplate);
             if (options && options.parentId) {
                 this.parentId = options.parentId;
             }
