@@ -1,7 +1,7 @@
 define([
     'backbone',
     'views/list_directories',
-    'views/create_directories',
+    'views/create_directory',
     'views/edit_directory',
     'views/documents_table',
     'models/directory'
