@@ -9,7 +9,6 @@ define([
 ], function ($, _, Backbone, TemplateView, documentsTableTemplate) {
     var DocumentsTableView = TemplateView.extend({
         initialize: function () {
-            console.log(documentsTableTemplate);
             this.template = _.template(documentsTableTemplate);
         },
         render: function () {

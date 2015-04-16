@@ -1,9 +1,8 @@
 define([
-    'jquery',
     'underscore',
     'backbone',
     'views/template'
-], function ($, _, Backbone, TemplateView) {
+], function (_, Backbone, TemplateView) {
 
     var FormView = TemplateView.extend({
         events: {

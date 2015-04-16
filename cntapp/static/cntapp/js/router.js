@@ -1,13 +1,11 @@
 define([
-    'jquery',
-    'underscore',
     'backbone',
     'views/list_directories',
     'views/create_directories',
     'views/edit_directory',
     'views/documents_table',
     'models/directory'
-], function ($, _, Backbone,
+], function (Backbone,
              ListDirectoriesView, CreateDirectoryView,
              EditDirectoryView, DocumentsTableView,
              Directory) {

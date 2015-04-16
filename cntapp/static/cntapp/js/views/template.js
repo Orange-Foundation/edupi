@@ -1,8 +1,7 @@
 define([
-    'jquery',
     'underscore',
     'backbone'
-], function ($, _, Backbone) {
+], function (_, Backbone) {
     var TemplateView = Backbone.View.extend({
         render: function () {
             var context = this.getContext(),

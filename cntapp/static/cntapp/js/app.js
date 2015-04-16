@@ -1,9 +1,7 @@
 define([
-    'jquery',
-    'underscore',
     'backbone',
     'router'
-], function ($, _, Backbone, router) {
+], function (Backbone, router) {
     return {
         initialize: function () {
             router.initialize();
