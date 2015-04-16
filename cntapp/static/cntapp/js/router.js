@@ -1,12 +1,44 @@
-(function ($, Backbone, _, app) {
+define([
+    'jquery',
+    'underscore',
+    'backbone',
+    'views/list_directories',
+    'views/create_directories',
+    'views/edit_directory',
+    'views/documents_table',
+    'models/directory'
+], function ($, _, Backbone,
+             ListDirectoriesView, CreateDirectoryView,
+             EditDirectoryView, DocumentsTableView,
+             Directory) {
 
-    app.currentPath = function () {
+    var AppRouter,
+        currentDirectories,
+        currentPath,
+        initialize;
+
+    AppRouter = Backbone.Router.extend({
+        routes: {
+            '': 'listDirectories',
+            'create': 'createDirectory',
+            'documents': 'listDocuments',
+            ':id': 'listDirectories',
+            ':id/edit': 'editDirectory',
+            ':id/create': 'createDirectory'
+        },
+
+        renderToContent: function (view) {
+            $("#content").html(view.render().$el);
+        }
+    });
+
+    currentPath = function () {
         var path = [];
         if (sessionStorage.getItem('current_path')) {
             var objects = JSON.parse(sessionStorage.getItem('current_path'));
             var i;
             for (i = 0; i < objects.length; i++) {
-                path.push(new app.models.Directory(objects[i]));
+                path.push(new Directory(objects[i]));
             }
         }
         return {
@@ -49,74 +81,60 @@
     }();
 
     window.onbeforeunload = function (evt) {
-        if (app.currentPath) {
-            sessionStorage.setItem("current_path", JSON.stringify(app.currentPath.getPath()));
+        if (currentPath) {
+            sessionStorage.setItem("current_path", JSON.stringify(currentPath.getPath()));
         }
     };
 
-    var AppRouter = Backbone.Router.extend({
-        routes: {
-            '': 'listDirectories',
-            'create': 'createDirectory',
-            'documents': 'listDocuments',
-            ':id': 'listDirectories',
-            ':id/edit': 'editDirectory',
-            ':id/create': 'createDirectory'
-        },
 
-        initialize: function (options) {
-            Backbone.history.start();
-        },
+    // let's wire up everything
+    initialize = function () {
+        var appRouter = new AppRouter();
 
-        listDirectories: function (parentId) {
+        appRouter.on("route:listDirectories", function (parentId) {
+            var view;
             if (!parentId) {
-                app.currentPath.clear();
+                currentPath.clear(); // back to home
             } else {
-                if (!app.currentPath.popToDirectory(parentId)) {
+                if (!currentPath.popToDirectory(parentId)) {
                     // push
-                    if (app.currentDirectories && app.currentDirectories.get(parentId)) {
-                        app.currentPath.push(app.currentDirectories.get(parentId))
+                    if (currentDirectories && currentDirectories.get(parentId)) {
+                        currentPath.push(currentDirectories.get(parentId))
                     } else {
-                        var d = new app.models.Directory({id: parentId});
+                        var d = new Directory({id: parentId});
                         d.fetch({
                             success: function (directory) {
-                                app.currentPath.push(directory);
+                                currentPath.push(directory);
                             }
                         });
                     }
                 }
             }
-
-            var view = new app.views.DirectoriesView({
+            view = new ListDirectoriesView({
                 el: "#content",
                 parentId: parentId,
-                path: app.currentPath.getPath()
+                path: currentPath.getPath()
             });
-            app.currentDirectories = view.collection;
+            currentDirectories = view.collection;
             view.fetchAndRefresh();
-        },
+        });
 
-        /* Form views */
+        appRouter.on("route:createDirectory", function (parentId) {
+            this.renderToContent(new CreateDirectoryView({parentId: parentId}));
+        });
 
-        createDirectory: function (parentId) {
-            this.renderToContent(new app.views.CreateDirectoryView({parentId: parentId}));
-        },
-
-        editDirectory: function (id) {
-            this.renderToContent(new app.views.EditDirectoryView({
-                directory: app.currentDirectories.get(id)
+        appRouter.on("route:editDirectory", function (id) {
+            this.renderToContent(new EditDirectoryView({
+                directory: currentDirectories.get(id)
             }));
-        },
+        });
 
-        listDocuments: function() {
-            new app.views.DocumentsView({el: "#content"}).render();
-        },
+        appRouter.on("route:listDocuments", function () {
+            new DocumentsTableView({el: "#content"}).render();
+        })
+    };
 
-        renderToContent: function (view) {
-            $("#content").html(view.render().$el);
-        }
-
-    });
-
-    app.Router = AppRouter;
-})(jQuery, Backbone, _, app);
+    return {
+        initialize: initialize
+    }
+});

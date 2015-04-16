@@ -1,10 +1,13 @@
-var app = (function($) {
-    var config = $('#config'),
-        app = JSON.parse(config.text());
-
-    $(document).ready(function () {
-        app.router = new app.Router();
-    });
-
-    return app;
-})(jQuery);
+define([
+    'jquery',
+    'underscore',
+    'backbone',
+    'router'
+], function ($, _, Backbone, router) {
+    return {
+        initialize: function () {
+            router.initialize();
+            Backbone.history.start();
+        }
+    };
+});

@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>{{ title | default:"Edupi" }}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.css' %}">
-
     <link rel="stylesheet" href="{% static 'bootstrap-table/dist/bootstrap-table.min.css' %}">
 
 </head>
@@ -44,33 +43,9 @@
     </div>
 </div>
 
-<!-- ****templates**** -->
 {% include 'cntapp/custom/templ.html' %}
 
-<!-- ****include**** -->
+<script data-main="{% static 'cntapp/js/main.js' %}" src="{% static 'requirejs/require.js' %}"></script>
 
-<script src="{% static 'jquery/dist/jquery.js' %}"></script>
-<script src="{% static 'bootstrap/dist/js/bootstrap.js' %}"></script>
-<script src="{% static 'underscore/underscore.js' %}"></script>
-<script src="{% static 'backbone/backbone.js' %}"></script>
-
-<script src="{% static 'bootstrap-table/dist/bootstrap-table.min.js' %}"></script>
-<script src="{% static 'bootstrap-table/dist/locale/bootstrap-table-en-US.min.js' %}"></script>
-
-<script type="text/json" id="config">
-    {
-        "models": {},
-        "collections": {},
-        "views": {},
-        "Router": null,
-        "apiRoot": "http://{{ request.get_host }}{% url 'api-root' %}"
-    }
-</script>
-
-
-<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/app.js' %}"></script>
-<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/models.js' %}"></script>
-<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/views.js' %}"></script>
-<script type="text/javascript" charset="utf-8" src="{% static 'cntapp/js/router.js' %}"></script>
 </body>
 </html>
