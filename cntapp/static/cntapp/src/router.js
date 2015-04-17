@@ -16,13 +16,13 @@ define([
         initialize;
 
     AppRouter = Backbone.Router.extend({
-        routes: {
-            '': 'listDirectories',
-            'create': 'createDirectory',
-            'documents': 'listDocuments',
-            ':id': 'listDirectories',
-            ':id/edit': 'editDirectory',
-            ':id/create': 'createDirectory'
+        initialize: function () {
+            this.route(/^$/, 'listDirectories');
+            this.route(/^create$/, 'createDirectory');
+            this.route(/^(\d+)\/create$/, 'createDirectory');
+            this.route(/^(\d+)$/, 'listDirectories');
+            this.route(/^(\d+)\/edit$/, 'editDirectory');
+            this.route(/^documents$/, 'listDocuments');
         },
 
         renderToContent: function (view) {
