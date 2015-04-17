@@ -5,8 +5,7 @@ from cntapp.views import views
 from edupi import settings
 
 
-# Backbone's model URL does expect trailing slash
-router = DefaultRouter(trailing_slash=False)
+router = DefaultRouter()
 router.register(r'directories', views.DirectoryViewSet)
 router.register(r'documents', views.DocumentViewSet)
 

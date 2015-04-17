@@ -1,0 +1,38 @@
+<a id="create-directory" class="btn btn-primary">Create Directory</a>
+<br/>
+<div id="path">
+    <% if (current_path) { %>
+    > <span class="directory-path"><a href="#">home</a></span>
+    <% _.each(current_path.slice(0, -1), function (directory) { %>
+    > <span><a href='#<%= directory.get("id") %>'><%= directory.get("name") %></a></span>
+    <% }); %>
+    > <span><%= current_path[current_path.length - 1].get("name") %></span>
+    <% }; %>
+</div>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Directory name</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <% _.each(directories, function (directory) { %>
+    <tr>
+        <td>
+            <a directory-id='<%= directory.get("id") %>' href='#<%= directory.get("id") %>'
+               class="sub-directory">
+                <%= directory.get('name') %>
+            </a>
+        </td>
+        <td>
+            <a name="edit" href='#<%= directory.get("id") %>/edit' class="btn btn-default">
+                Edit
+            </a>
+        </td>
+    </tr>
+    <% }); %>
+
+    </tbody>
+</table>

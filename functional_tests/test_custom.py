@@ -1,9 +1,9 @@
-from cntapp.models import Directory
-from selenium import webdriver
-from django.test import LiveServerTestCase
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import NoSuchElementException
 
+from cntapp.models import Directory
 from .base import FunctionalTest
 from cntapp.tests.helpers import DocumentFactory
 
@@ -42,9 +42,16 @@ class CustomSiteTestCase(FunctionalTest):
     def assertInDirectoryTable(self, text):
         self.assertIn(text, self.browser.find_element_by_css_selector('.table tbody').text)
 
+    def go_to_custom_page(self):
+        self.browser.get(self.custom_page_url)
+        # need some time to load the page
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "table"))
+        )
+
     def test_create_directories(self):
         # Alice wants to customize the web site, she enters into the custom home page
-        self.browser.get(self.custom_page_url)
+        self.go_to_custom_page()
         self.assertInBody("Content Manager")
 
         # she is currently in the root dir, it's empty, she has to create a dir here
@@ -71,7 +78,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.create_dir("English")
         self.create_dir("French")
 
-        self.browser.get(self.custom_page_url)
+        self.go_to_custom_page()
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
 
@@ -89,14 +96,20 @@ class CustomSiteTestCase(FunctionalTest):
             path = self.browser.find_element_by_id("path")
             path.find_element_by_link_text(dir_name).click()
 
-        self.browser.get(self.custom_page_url)
+        self.go_to_custom_page()
+
         enter_into_dir("a")
         check_path("> home > a")
         enter_into_dir("ab_a")
         check_path("> home > a > ab_a")
         enter_into_dir("ab_a_a")
         check_path("> home > a > ab_a > ab_a_a")
+
         self.browser.refresh()
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "table"))
+        )
+
         check_path("> home > a > ab_a > ab_a_a")
 
         back_to_dir("ab_a")
@@ -115,7 +128,7 @@ class CustomSiteTestCase(FunctionalTest):
         ## Let's get edit dir "a", and change it's name to primary
 
         # go into the root dirs page
-        self.browser.get(self.custom_page_url)
+        self.go_to_custom_page()
         self.assertNotInBody("primary")
 
         edit_elements = self.browser.find_elements_by_name("edit")
