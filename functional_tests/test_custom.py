@@ -54,7 +54,6 @@ class CustomSiteTestCase(FunctionalTest):
     def test_create_directories(self):
         # Alice wants to customize the web site, she enters into the custom home page
         self.go_to_custom_page()
-        self.assertInBody("Content Manager")
 
         # she is currently in the root dir, it's empty, she has to create a dir here
         # she clicks "Create Directory" to enter the create page,

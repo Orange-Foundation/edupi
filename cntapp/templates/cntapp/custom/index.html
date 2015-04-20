@@ -7,43 +7,11 @@
     <title>{{ title | default:"Edupi" }}</title>
     <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'bootstrap-table/dist/bootstrap-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'cntapp/css/sb-admin-2.css' %}">
 
 </head>
 
 <body>
-<nav class="navbar navbar-default">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand">
-                <img alt="Brand" style="max-width:100px; margin-top: -7px;"
-                     src="{% static 'cntapp/images/logo-fondation-orange_en.png' %}">
-            </a>
-        </div>
-
-        <div class="collapse navbar-collapse" id="navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="#">Structure</a></li>
-                <li><a href="#documents">Documents</a></li>
-                <li><a href="#documents/upload">Upload</a></li>
-                <li><a href="{% url 'cntapp:root' %}">Test</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<div class="container">
-    <div id="page">
-        <h1>Content Manager</h1>
-        <hr/>
-        <div id="content"></div>
-    </div>
-</div>
-
 <script data-main="{% static 'cntapp/src/main.js' %}" src="{% static 'requirejs/require.js' %}"></script>
 </body>
 </html>

@@ -11,6 +11,7 @@ define([
              EditDirectoryView, DocumentsTableView,
              DocumentsUploadView,
              Directory) {
+    var PAGE_WRAPPER = "#page-wrapper";
 
     var AppRouter,
         currentDirectories,
@@ -33,7 +34,7 @@ define([
         },
 
         renderToContent: function (view) {
-            $("#content").html(view.render().$el);
+            $(PAGE_WRAPPER).html(view.render().$el);
         },
 
         listDirectories: function (parentId) {
@@ -56,7 +57,7 @@ define([
                 }
             }
             view = new ListDirectoriesView({
-                el: "#content",
+                el: PAGE_WRAPPER,
                 parentId: parentId,
                 path: currentPath.getPath()
             });
@@ -75,7 +76,7 @@ define([
         },
 
         listDocuments: function () {
-            new DocumentsTableView({el: "#content"}).render();
+            new DocumentsTableView({el: PAGE_WRAPPER}).render();
         },
 
         uploadDocuments: function () {
