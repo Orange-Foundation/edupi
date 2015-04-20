@@ -6,6 +6,7 @@ require.config({
         'jquery': '/static/jquery/dist/jquery',
         'underscore': '/static/underscore/underscore',
         'backbone': '/static/backbone/backbone',
+        'bootstrap': '/static/bootstrap/dist/js/bootstrap',
         'bootstrap_table': '/static/bootstrap-table/src/bootstrap-table',
         'text': '/static/requirejs-text/text'
     },
@@ -21,6 +22,9 @@ require.config({
 });
 
 define('kickstart', function (require) {
+    // import external js modules
+    require('bootstrap');
+
     // define global variables here if needed
     var app = require('app');
     Backbone.history.start();
