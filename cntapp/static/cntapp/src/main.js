@@ -20,10 +20,14 @@ require.config({
     }
 });
 
-require([
-    'app'
-], function(app) {
+define('kickstart', function (require) {
+    // define global variables here if needed
+    var app = require('app');
+    Backbone.history.start();
+});
+
+require(['jquery'], function($) {
     $(document).ready(function () {
-        app.initialize();
+        require(['kickstart']);
     });
 });

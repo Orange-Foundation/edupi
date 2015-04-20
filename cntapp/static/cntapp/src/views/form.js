@@ -21,6 +21,19 @@ define([
             this.remove();
         },
 
+        /* turn a form into an Object
+
+        Example:
+             <input name='name' value='Javascript:The Good Part'>
+             <input name='description' value='computer science'>
+             ...
+        =>
+            {
+                ['name', 'Javascript:The Good Part'],
+                ['description', 'computer science'],
+                ...
+            }
+         */
         serializeForm: function (form) {
             return _.object(_.map(form.serializeArray(), function (item) {
                 return [item.name, item.value];

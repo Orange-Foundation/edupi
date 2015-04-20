@@ -4,10 +4,12 @@ define([
     'views/create_directory',
     'views/edit_directory',
     'views/documents_table',
+    'views/documents_upload',
     'models/directory'
 ], function (Backbone,
              ListDirectoriesView, CreateDirectoryView,
              EditDirectoryView, DocumentsTableView,
+             DocumentsUploadView,
              Directory) {
 
     var AppRouter,
@@ -23,10 +25,61 @@ define([
             this.route(/^(\d+)$/, 'listDirectories');
             this.route(/^(\d+)\/edit$/, 'editDirectory');
             this.route(/^documents$/, 'listDocuments');
+            this.route(/^documents\/upload$/, 'uploadDocuments');
+        },
+
+        go: function () {
+            return this.navigate(_.toArray(arguments).join("/"), true);
         },
 
         renderToContent: function (view) {
             $("#content").html(view.render().$el);
+        },
+
+        listDirectories: function (parentId) {
+            var view;
+            if (!parentId) {
+                currentPath.clear(); // back to home
+            } else {
+                if (!currentPath.popToDirectory(parentId)) {
+                    // push
+                    if (currentDirectories && currentDirectories.get(parentId)) {
+                        currentPath.push(currentDirectories.get(parentId))
+                    } else {
+                        var d = new Directory({id: parentId});
+                        d.fetch({
+                            success: function (directory) {
+                                currentPath.push(directory);
+                            }
+                        });
+                    }
+                }
+            }
+            view = new ListDirectoriesView({
+                el: "#content",
+                parentId: parentId,
+                path: currentPath.getPath()
+            });
+            currentDirectories = view.collection;
+            view.fetchAndRefresh();
+        },
+
+        createDirectory: function (parentId) {
+            this.renderToContent(new CreateDirectoryView({parentId: parentId}));
+        },
+
+        editDirectory: function (id) {
+            this.renderToContent(new EditDirectoryView({
+                directory: currentDirectories.get(id)
+            }));
+        },
+
+        listDocuments: function () {
+            new DocumentsTableView({el: "#content"}).render();
+        },
+
+        uploadDocuments: function () {
+            this.renderToContent(new DocumentsUploadView());
         }
     });
 
@@ -84,55 +137,5 @@ define([
         }
     };
 
-
-    // let's wire up everything
-    initialize = function () {
-        var appRouter = new AppRouter();
-
-        appRouter.on("route:listDirectories", function (parentId) {
-            var view;
-            if (!parentId) {
-                currentPath.clear(); // back to home
-            } else {
-                if (!currentPath.popToDirectory(parentId)) {
-                    // push
-                    if (currentDirectories && currentDirectories.get(parentId)) {
-                        currentPath.push(currentDirectories.get(parentId))
-                    } else {
-                        var d = new Directory({id: parentId});
-                        d.fetch({
-                            success: function (directory) {
-                                currentPath.push(directory);
-                            }
-                        });
-                    }
-                }
-            }
-            view = new ListDirectoriesView({
-                el: "#content",
-                parentId: parentId,
-                path: currentPath.getPath()
-            });
-            currentDirectories = view.collection;
-            view.fetchAndRefresh();
-        });
-
-        appRouter.on("route:createDirectory", function (parentId) {
-            this.renderToContent(new CreateDirectoryView({parentId: parentId}));
-        });
-
-        appRouter.on("route:editDirectory", function (id) {
-            this.renderToContent(new EditDirectoryView({
-                directory: currentDirectories.get(id)
-            }));
-        });
-
-        appRouter.on("route:listDocuments", function () {
-            new DocumentsTableView({el: "#content"}).render();
-        })
-    };
-
-    return {
-        initialize: initialize
-    }
+    return AppRouter;
 });

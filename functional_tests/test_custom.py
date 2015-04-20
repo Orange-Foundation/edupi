@@ -1,9 +1,11 @@
+import os
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from cntapp.models import Directory
+from cntapp.models import Directory, Document
 from .base import FunctionalTest
 from cntapp.tests.helpers import DocumentFactory
 
@@ -159,5 +161,21 @@ class CustomSiteTestCase(FunctionalTest):
             DocumentFactory()
         # ensure that the table is loaded with data
         self.browser.get(self.custom_page_url + '#documents')
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "table"))
+        )
         self.assertInBody('Showing 1 to 10 of 10 rows')
 
+    def test_upload_file(self):
+        self.assertEqual(0, len(Document.objects.all()))
+        self.browser.get(self.custom_page_url + '#documents/upload')
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.ID, "btn-upload"))
+        )
+        upload_file = os.path.join(os.getcwd(), 'functional_tests/upload/test file.txt')
+        self.assertTrue(os.path.exists(upload_file))
+
+        file_input = self.browser.find_element_by_tag_name('input')
+        file_input.send_keys(upload_file)
+        self.browser.find_element_by_id('btn-upload').click()
+        self.assertEqual(1, len(Document.objects.all()))
