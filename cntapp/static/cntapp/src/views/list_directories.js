@@ -2,9 +2,11 @@ define([
     'jquery',
     'underscore',
     'backbone',
+    'views/document_list',
     'models/directory',
     'text!templates/directories.html'
-], function ($, _, Backbone, Directory, directoriesTemplate) {
+], function ($, _, Backbone,
+             DocumentListView, Directory, directoriesTemplate) {
 
     var DirectoriesView = Backbone.View.extend({
 
@@ -20,10 +22,10 @@ define([
         },
 
         render: function () {
-            var context = this.getContext(),
-                html = this.template(context);
+            var context = this.getContext();
             var that = this;
-            this.$el.html(html);
+            this.$el.html('<div id="directories_table" class="col-md-12"></div>');
+            this.$("#directories_table").html(this.template(context));
             this.$("#create-directory").attr("href", function () {
                 if (that.parentId) {
                     return "#directories/" + that.parentId + "/create";
@@ -31,6 +33,16 @@ define([
                     return "#directories/create";
                 }
             });
+
+            // show documents
+            if (this.parentId) {
+                this.$el.append('<div id="documents_table" class="col-md-12"></div>');
+                var documentListView = new DocumentListView({
+                    el: "#documents_table",
+                    parentId: this.parentId
+                });
+                documentListView.render();
+            }
 
             return this;
         },

@@ -130,7 +130,8 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         if res is not None:
             return res
 
-        documents = Document.objects.filter(pk__in=request.data['documents'])
+        documents_id = [int(d) for d in request.data['documents']]
+        documents = Document.objects.filter(pk__in=documents_id)
         if documents.count() != len(request.data['documents']):
             return Response({'status': 'document objects not exist!'}, status=status.HTTP_404_NOT_FOUND)
         self.get_object().documents.add(*documents)

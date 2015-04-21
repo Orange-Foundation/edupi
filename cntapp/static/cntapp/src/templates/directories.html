@@ -1,5 +1,16 @@
+<h2>Content Structure</h2>
+<hr/>
+
 <a id="create-directory" class="btn btn-primary">Create Directory</a>
+
+<% if (current_path) { %>
+<a href="#directories/<%= current_path[current_path.length - 1].get('id') %>/upload"
+   class="btn btn-primary">Upload</a>
+<% }; %>
+
 <br/>
+
+
 <div id="path">
     <% if (current_path) { %>
     > <span class="directory-path"><a href="#directories">home</a></span>
@@ -9,6 +20,7 @@
     > <span><%= current_path[current_path.length - 1].get("name") %></span>
     <% }; %>
 </div>
+
 <table class="table">
     <thead>
     <tr>
@@ -17,6 +29,12 @@
     </tr>
     </thead>
     <tbody>
+
+    <% if (directories.length == 0) { %>
+    <tr>
+        <td>no sub directory</td>
+    </tr>
+    <% } %>
 
     <% _.each(directories, function (directory) { %>
     <tr>

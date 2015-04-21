@@ -5,11 +5,13 @@ define([
     'views/edit_directory',
     'views/documents_table',
     'views/documents_upload',
+    'views/upload_document_to_directory',
     'models/directory'
 ], function (Backbone,
              ListDirectoriesView, CreateDirectoryView,
              EditDirectoryView, DocumentsTableView,
              DocumentsUploadView,
+             UploadDocumentToDirectoryView,
              Directory) {
     var PAGE_WRAPPER = "#page-wrapper";
 
@@ -29,6 +31,7 @@ define([
             this.route(/^directories\/(\d+)\/create$/, 'createDirectory');
             this.route(/^directories\/(\d+)$/, 'listDirectories');
             this.route(/^directories\/(\d+)\/edit$/, 'editDirectory');
+            this.route(/^directories\/(\d+)\/upload$/, 'uploadFileToDirectory');
 
             // documents
             this.route(/^documents$/, 'listDocuments');
@@ -41,6 +44,10 @@ define([
 
         renderToContent: function (view) {
             $(PAGE_WRAPPER).html(view.render().$el);
+        },
+
+        uploadFileToDirectory: function (parentId) {
+            this.renderToContent(new UploadDocumentToDirectoryView({parentId: parentId}));
         },
 
         listDirectories: function (parentId) {
