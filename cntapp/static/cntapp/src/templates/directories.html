@@ -4,7 +4,7 @@
 <a id="create-directory" class="btn btn-primary">Create Directory</a>
 
 <% if (current_path) { %>
-<a href="#directories/<%= current_path[current_path.length - 1].get('id') %>/upload"
+<a id="btn-upload-to-directory" href="#directories/<%= current_path[current_path.length - 1].get('id') %>/upload"
    class="btn btn-primary">Upload</a>
 <% }; %>
 
@@ -21,7 +21,7 @@
     <% }; %>
 </div>
 
-<table class="table">
+<table id="directories-table" class="table">
     <thead>
     <tr>
         <th>Directory name</th>

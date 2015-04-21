@@ -7,7 +7,7 @@ from selenium.webdriver.common.keys import Keys
 
 from cntapp.models import Directory, Document
 from .base import FunctionalTest
-from cntapp.tests.helpers import DocumentFactory
+from cntapp.tests.helpers import DocumentFactory, init_test_dirs, PdfDocumentFactory
 
 
 class CustomSiteTestCase(FunctionalTest):
@@ -81,15 +81,14 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
 
+    def enter_into_dir(self, dir_name):
+        table = self.browser.find_element_by_id("directories-table")
+        table.find_element_by_link_text(dir_name).click()
+
     def test_navigate_directory_path(self):
-        from cntapp.tests.helpers import init_test_dirs
         init_test_dirs()
         self.assertEqual(6, Directory.objects.count())
         check_path = lambda path: self.assertEqual(path, self.browser.find_element_by_id("path").text)
-
-        def enter_into_dir(dir_name):
-            table = self.browser.find_element_by_class_name("table")
-            table.find_element_by_link_text(dir_name).click()
 
         def back_to_dir(dir_name):
             path = self.browser.find_element_by_id("path")
@@ -97,11 +96,11 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.go_to_directories()
 
-        enter_into_dir("a")
+        self.enter_into_dir("a")
         check_path("> home > a")
-        enter_into_dir("ab_a")
+        self.enter_into_dir("ab_a")
         check_path("> home > a > ab_a")
-        enter_into_dir("ab_a_a")
+        self.enter_into_dir("ab_a_a")
         check_path("> home > a > ab_a > ab_a_a")
 
         self.browser.refresh()
@@ -117,12 +116,11 @@ class CustomSiteTestCase(FunctionalTest):
         check_path("> home > a")
         back_to_dir("home")
         check_path("")
-        enter_into_dir("a")
+        self.enter_into_dir("a")
         check_path("> home > a")
         self.assertEqual(6, Directory.objects.count())
 
     def test_edit_directory(self):
-        from cntapp.tests.helpers import init_test_dirs
         init_test_dirs()
         ## Let's get edit dir "a", and change it's name to primary
 
@@ -163,16 +161,32 @@ class CustomSiteTestCase(FunctionalTest):
         )
         self.assertInBody('Showing 1 to 10 of 10 rows')
 
-    def test_upload_file(self):
-        self.assertEqual(0, len(Document.objects.all()))
-        self.browser.get(self.custom_page_url + '#documents/upload')
-        WebDriverWait(self.browser, 2).until(
-            EC.presence_of_element_located((By.ID, "btn-upload"))
-        )
+    def upload_check(self):
+        before = len(Document.objects.all())
         upload_file = os.path.join(os.getcwd(), 'functional_tests/upload/test file.txt')
         self.assertTrue(os.path.exists(upload_file))
 
         file_input = self.browser.find_element_by_tag_name('input')
         file_input.send_keys(upload_file)
         self.browser.find_element_by_id('btn-upload').click()
-        self.assertEqual(1, len(Document.objects.all()))
+        self.assertEqual(before + 1, len(Document.objects.all()))
+
+    def test_upload_file(self):
+        self.assertEqual(0, len(Document.objects.all()))
+        self.browser.get(self.custom_page_url + '#documents/upload')
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.ID, "btn-upload"))
+        )
+        self.upload_check()
+
+    def test_upload_file_to_directory(self):
+        init_test_dirs()
+        # suppose there is already a lot of documents
+        for i in range(10):
+            PdfDocumentFactory()
+
+        self.go_to_directories()
+        self.enter_into_dir("a")
+        self.browser.find_element_by_id('btn-upload-to-directory').click()
+        self.upload_check()
+        self.assertInBody('test file.txt')
