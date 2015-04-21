@@ -20,11 +20,17 @@ define([
 
     AppRouter = Backbone.Router.extend({
         initialize: function () {
-            this.route(/^$/, 'listDirectories');
-            this.route(/^create$/, 'createDirectory');
-            this.route(/^(\d+)\/create$/, 'createDirectory');
-            this.route(/^(\d+)$/, 'listDirectories');
-            this.route(/^(\d+)\/edit$/, 'editDirectory');
+
+            // root directories
+            this.route(/^directories$/, 'listDirectories');
+            this.route(/^directories\/create$/, 'createDirectory');
+
+            // sub directories
+            this.route(/^directories\/(\d+)\/create$/, 'createDirectory');
+            this.route(/^directories\/(\d+)$/, 'listDirectories');
+            this.route(/^directories\/(\d+)\/edit$/, 'editDirectory');
+
+            // documents
             this.route(/^documents$/, 'listDocuments');
             this.route(/^documents\/upload$/, 'uploadDocuments');
         },

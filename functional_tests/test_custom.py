@@ -15,6 +15,7 @@ class CustomSiteTestCase(FunctionalTest):
     def setUp(self):
         super().setUp()
         self.custom_page_url = self.server_url + '/custom/'
+        self.directories_root_url = self.custom_page_url + '#directories'
 
     def create_dir(self, dir_name):
         self.assertNotInBody(dir_name)
@@ -23,10 +24,7 @@ class CustomSiteTestCase(FunctionalTest):
         # entered into a create page
         self.browser.find_element_by_id("create-directory").click()
 
-        if base_url == self.custom_page_url:
-            self.assertEqual(base_url + "#create", self.browser.current_url)
-        else:
-            self.assertEqual(base_url + "/create", self.browser.current_url)
+        self.assertEqual(base_url + "/create", self.browser.current_url)
 
         self.assertInBody("Create directory")
 
@@ -44,8 +42,8 @@ class CustomSiteTestCase(FunctionalTest):
     def assertInDirectoryTable(self, text):
         self.assertIn(text, self.browser.find_element_by_css_selector('.table tbody').text)
 
-    def go_to_custom_page(self):
-        self.browser.get(self.custom_page_url)
+    def go_to_directories(self):
+        self.browser.get(self.custom_page_url + "#directories")
         # need some time to load the page
         WebDriverWait(self.browser, 2).until(
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
@@ -53,7 +51,7 @@ class CustomSiteTestCase(FunctionalTest):
 
     def test_create_directories(self):
         # Alice wants to customize the web site, she enters into the custom home page
-        self.go_to_custom_page()
+        self.go_to_directories()
 
         # she is currently in the root dir, it's empty, she has to create a dir here
         # she clicks "Create Directory" to enter the create page,
@@ -79,7 +77,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.create_dir("English")
         self.create_dir("French")
 
-        self.go_to_custom_page()
+        self.go_to_directories()
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
 
@@ -97,7 +95,7 @@ class CustomSiteTestCase(FunctionalTest):
             path = self.browser.find_element_by_id("path")
             path.find_element_by_link_text(dir_name).click()
 
-        self.go_to_custom_page()
+        self.go_to_directories()
 
         enter_into_dir("a")
         check_path("> home > a")
@@ -129,7 +127,7 @@ class CustomSiteTestCase(FunctionalTest):
         ## Let's get edit dir "a", and change it's name to primary
 
         # go into the root dirs page
-        self.go_to_custom_page()
+        self.go_to_directories()
         self.assertNotInBody("primary")
 
         edit_elements = self.browser.find_elements_by_name("edit")
@@ -152,7 +150,7 @@ class CustomSiteTestCase(FunctionalTest):
         name_input.send_keys("primary")
         self.browser.find_element_by_id("submit").click()
 
-        self.assertEqual(self.custom_page_url, self.browser.current_url)
+        self.assertEqual(self.directories_root_url, self.browser.current_url)
         self.assertInBody("primary")
 
     def test_list_documents(self):

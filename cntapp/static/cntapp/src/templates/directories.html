@@ -2,9 +2,9 @@
 <br/>
 <div id="path">
     <% if (current_path) { %>
-    > <span class="directory-path"><a href="#">home</a></span>
+    > <span class="directory-path"><a href="#directories">home</a></span>
     <% _.each(current_path.slice(0, -1), function (directory) { %>
-    > <span><a href='#<%= directory.get("id") %>'><%= directory.get("name") %></a></span>
+    > <span><a href='#directories/<%= directory.get("id") %>'><%= directory.get("name") %></a></span>
     <% }); %>
     > <span><%= current_path[current_path.length - 1].get("name") %></span>
     <% }; %>
@@ -21,13 +21,13 @@
     <% _.each(directories, function (directory) { %>
     <tr>
         <td>
-            <a directory-id='<%= directory.get("id") %>' href='#<%= directory.get("id") %>'
+            <a directory-id='<%= directory.get("id") %>' href='#directories/<%= directory.get("id") %>'
                class="sub-directory">
                 <%= directory.get('name') %>
             </a>
         </td>
         <td>
-            <a name="edit" href='#<%= directory.get("id") %>/edit' class="btn btn-default">
+            <a name="edit" href='#directories/<%= directory.get("id") %>/edit' class="btn btn-default">
                 Edit
             </a>
         </td>

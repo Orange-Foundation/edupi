@@ -26,9 +26,9 @@ define([
             this.$el.html(html);
             this.$("#create-directory").attr("href", function () {
                 if (that.parentId) {
-                    return "#" + that.parentId + "/create";
+                    return "#directories/" + that.parentId + "/create";
                 } else {
-                    return "#create";
+                    return "#directories/create";
                 }
             });
 
