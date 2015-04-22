@@ -1,6 +1,6 @@
 require.config({
     // for development purpose, ensure the newest version js at each time
-    //urlArgs: "bust=" + (new Date()).getTime(),
+    urlArgs: "bust=" + (new Date()).getTime(),
 
     paths: {
         'jquery': '/static/jquery/dist/jquery',
@@ -26,7 +26,9 @@ define('kickstart', function (require) {
     require('bootstrap');
 
     // define global variables here if needed
-    var app = require('app');
+    // `cntapp` contains the current state of the application
+    cntapp = require('app');
+
     Backbone.history.start();
 });
 

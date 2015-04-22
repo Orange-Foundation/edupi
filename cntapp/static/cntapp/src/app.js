@@ -18,9 +18,8 @@ define([
         initHtml();
 
         return {
-            getRouter: function () {
-                return router;
-            }
+            router: router,
+            views: {}
         };
     }();
 

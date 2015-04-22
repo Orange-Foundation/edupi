@@ -51,7 +51,7 @@ define([
         },
 
         listDirectories: function (parentId) {
-            var view;
+            var view = cntapp.views.directories;
             if (!parentId) {
                 currentPath.clear(); // back to home
             } else {
@@ -69,13 +69,15 @@ define([
                     }
                 }
             }
-            view = new ListDirectoriesView({
-                el: PAGE_WRAPPER,
-                parentId: parentId,
-                path: currentPath.getPath()
-            });
-            currentDirectories = view.collection;
-            view.fetchAndRefresh();
+
+            if (typeof view == "undefined") {
+                view = new ListDirectoriesView({el: PAGE_WRAPPER});
+                cntapp.views.directories = view;
+                currentDirectories = view.collection;
+            }
+
+            // update the view
+            view.fetchAndRefresh({parentId: parentId, path: currentPath.getPath()});
         },
 
         createDirectory: function (parentId) {

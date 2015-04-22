@@ -14,11 +14,6 @@ define([
             this.template = _.template(directoriesTemplate);
             this.collection = new Backbone.Collection({model: Directory});
             this.listenTo(this.collection, 'reset', this.render);
-
-            if (options.parentId) {
-                this.parentId = options.parentId;
-                this.current_path = options.path;
-            }
         },
 
         render: function () {
@@ -47,7 +42,15 @@ define([
             return this;
         },
 
-        fetchAndRefresh: function () {
+        fetchAndRefresh: function (options) {
+            if (options.parentId) {
+                this.parentId = options.parentId;
+                this.current_path = options.path;
+            } else {
+                this.parentId = undefined;
+                this.current_path = undefined;
+            }
+
             var that = this;
             var url = "/api/directories/";
             url += (this.parentId ? this.parentId + "/sub_directories/" : "?root=true");
