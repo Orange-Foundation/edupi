@@ -33,17 +33,14 @@ define([
 
         setStateBarView: function (stateBarView) {
             this.stateBarView = stateBarView;
-            this.render();
         },
 
         setActionBarView: function (actionBarView) {
             this.actionBarView = actionBarView;
-            this.render();
         },
 
         setContentView: function (contentView) {
             this.contentView = contentView;
-            this.render();
         },
 
         getContentView: function () {

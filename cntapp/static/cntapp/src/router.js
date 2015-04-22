@@ -1,6 +1,7 @@
 define([
     'backbone',
-    'views/list_directories',
+    'views/state_bar',
+    'views/structure_content',
     'views/create_directory',
     'views/edit_directory',
     'views/documents_table',
@@ -8,7 +9,8 @@ define([
     'views/upload_document_to_directory',
     'models/directory'
 ], function (Backbone,
-             ListDirectoriesView, CreateDirectoryView,
+             StateBarView,
+             StructureContentView, CreateDirectoryView,
              EditDirectoryView, DocumentsTableView,
              DocumentsUploadView,
              UploadDocumentToDirectoryView,
@@ -23,12 +25,12 @@ define([
         initialize: function () {
 
             // root directories
-            this.route(/^directories$/, 'listDirectories');
+            this.route(/^directories$/, 'structure');
             this.route(/^directories\/create$/, 'createDirectory');
 
             // sub directories
             this.route(/^directories\/(\d+)\/create$/, 'createDirectory');
-            this.route(/^directories\/(\d+)$/, 'listDirectories');
+            this.route(/^directories\/(\d+)$/, 'structure');
             this.route(/^directories\/(\d+)\/edit$/, 'editDirectory');
             this.route(/^directories\/(\d+)\/upload$/, 'uploadFileToDirectory');
 
@@ -37,6 +39,10 @@ define([
             this.route(/^documents\/upload$/, 'uploadDocuments');
 
             this.route(/^$/, 'indexRoute');
+
+            if (!currentDirectories) {
+                currentDirectories = new Backbone.Collection({model: Directory});
+            }
         },
 
         go: function () {
@@ -44,7 +50,8 @@ define([
         },
 
         renderToContent: function (view) {
-            cntapp.views.pageWrapper.setContentView(view)
+            cntapp.views.pageWrapper.setContentView(view);
+            cntapp.views.pageWrapper.render();
         },
 
         uploadFileToDirectory: function (parentId) {
@@ -71,19 +78,30 @@ define([
             }
         },
 
-        listDirectories: function (parentId) {
-            var view = cntapp.views.directories;
-            if (typeof view == "undefined") {
-                view = new ListDirectoriesView();
-                cntapp.views.directories = view;
-                currentDirectories = view.collection;
+        structure: function (parentId) {
+            var contentView = cntapp.views.structureContentView;
+
+            if (typeof contentView == "undefined") {
+                contentView = new StructureContentView({
+                    currentDirectories: currentDirectories
+                });
+                cntapp.views.structureContentView = contentView;
             }
-            cntapp.views.pageWrapper.setContentView(view);
+
+            var stateBarView = cntapp.views.stateBarView;
+            if (typeof stateBarView == "undefined") {
+                stateBarView = new StateBarView();
+                cntapp.views.stateBarView = stateBarView;
+            }
 
             this.updatePath(parentId, currentPath, currentDirectories);
 
-            // update the view
-            view.fetchAndRefresh({parentId: parentId, path: currentPath.getPath()});
+            contentView.setParentId(parentId);
+            stateBarView.setCurrentPath(currentPath.getPath());
+
+            cntapp.views.pageWrapper.setStateBarView(stateBarView);
+            cntapp.views.pageWrapper.setContentView(contentView);
+            cntapp.views.pageWrapper.render();
         },
 
         createDirectory: function (parentId) {
@@ -91,9 +109,23 @@ define([
         },
 
         editDirectory: function (id) {
-            this.renderToContent(new EditDirectoryView({
-                directory: currentDirectories.get(id)
-            }));
+            var directory = currentDirectories.get(id);
+            var that = this;
+
+            if (directory) {
+                this.renderToContent(new EditDirectoryView({
+                    directory: directory
+                }));
+            } else {
+                directory = new Directory({id: id});
+                directory.fetch({
+                    success: function () {
+                        that.renderToContent(new EditDirectoryView({
+                            directory: directory
+                        }));
+                    }
+                });
+            }
         },
 
         listDocuments: function () {

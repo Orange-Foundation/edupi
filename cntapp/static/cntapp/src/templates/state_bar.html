@@ -1,0 +1,14 @@
+<div id="path">
+    <% if (current_path && current_path.length > 0) { %>
+        > <span class="directory-path"><a href="#directories">home</a></span>
+
+        <% _.each(current_path.slice(0, -1), function (directory) { %>
+        > <span><a href='#directories/<%= directory.get("id") %>'><%= directory.get("name") %></a></span>
+        <% }); %>
+
+        > <span><%= current_path[current_path.length - 1].get("name") %></span>
+    <% } else { %>
+    <h3>Root Directories</h3>
+    <% }; %>
+
+</div>

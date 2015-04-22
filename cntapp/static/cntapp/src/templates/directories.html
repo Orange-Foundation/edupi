@@ -1,26 +1,3 @@
-<h2>Content Structure</h2>
-<hr/>
-
-<a id="create-directory" class="btn btn-primary">Create Directory</a>
-
-<% if (current_path) { %>
-<a id="btn-upload-to-directory" href="#directories/<%= current_path[current_path.length - 1].get('id') %>/upload"
-   class="btn btn-primary">Upload</a>
-<% }; %>
-
-<br/>
-
-
-<div id="path">
-    <% if (current_path) { %>
-    > <span class="directory-path"><a href="#directories">home</a></span>
-    <% _.each(current_path.slice(0, -1), function (directory) { %>
-    > <span><a href='#directories/<%= directory.get("id") %>'><%= directory.get("name") %></a></span>
-    <% }); %>
-    > <span><%= current_path[current_path.length - 1].get("name") %></span>
-    <% }; %>
-</div>
-
 <table id="directories-table" class="table">
     <thead>
     <tr>
