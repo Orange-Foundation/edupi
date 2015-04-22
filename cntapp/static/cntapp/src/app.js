@@ -1,25 +1,29 @@
 define([
     'backbone',
     'router',
-    'views/nav'
-], function (Backbone, AppRouter, NavbarView) {
+    'views/nav',
+    'views/page_wrapper'
+], function (Backbone, AppRouter, NavbarView, PageWrapperView) {
 
-    var initHtml, app;
-
-    initHtml = function () {
-        $("body").append("<div id='wrapper'></div>");
-        $("#wrapper").append("<div id='navbar'></div><div id='page-wrapper'></div>");
-        new NavbarView({el: "#navbar"});
-    };
+    var app;
 
     app = function () {
         // initialization
         var router = new AppRouter();
-        initHtml();
+        var navbar, pageWrapper;
+
+        // create the basic page structure
+        $("body").append("<div id='wrapper'></div>");
+        $("#wrapper").append("<div id='navbar'></div><div id='page-wrapper'></div>");
+        navbar = new NavbarView({el: "#navbar"});
+        pageWrapper = new PageWrapperView({el: "#page-wrapper"}).render();
 
         return {
             router: router,
-            views: {}
+            views: {
+                navbar: navbar,
+                pageWrapper: pageWrapper
+            }
         };
     }();
 

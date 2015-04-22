@@ -17,8 +17,7 @@ define([
 
     var AppRouter,
         currentDirectories,
-        currentPath,
-        initialize;
+        currentPath;
 
     AppRouter = Backbone.Router.extend({
         initialize: function () {
@@ -36,6 +35,8 @@ define([
             // documents
             this.route(/^documents$/, 'listDocuments');
             this.route(/^documents\/upload$/, 'uploadDocuments');
+
+            this.route(/^$/, 'indexRoute');
         },
 
         go: function () {
@@ -43,15 +44,14 @@ define([
         },
 
         renderToContent: function (view) {
-            $(PAGE_WRAPPER).html(view.render().$el);
+            cntapp.views.pageWrapper.setContentView(view)
         },
 
         uploadFileToDirectory: function (parentId) {
             this.renderToContent(new UploadDocumentToDirectoryView({parentId: parentId}));
         },
 
-        listDirectories: function (parentId) {
-            var view = cntapp.views.directories;
+        updatePath: function (parentId, currentPath, currentDirectories) {
             if (!parentId) {
                 currentPath.clear(); // back to home
             } else {
@@ -69,12 +69,18 @@ define([
                     }
                 }
             }
+        },
 
+        listDirectories: function (parentId) {
+            var view = cntapp.views.directories;
             if (typeof view == "undefined") {
-                view = new ListDirectoriesView({el: PAGE_WRAPPER});
+                view = new ListDirectoriesView();
                 cntapp.views.directories = view;
                 currentDirectories = view.collection;
             }
+            cntapp.views.pageWrapper.setContentView(view);
+
+            this.updatePath(parentId, currentPath, currentDirectories);
 
             // update the view
             view.fetchAndRefresh({parentId: parentId, path: currentPath.getPath()});
@@ -96,6 +102,10 @@ define([
 
         uploadDocuments: function () {
             this.renderToContent(new DocumentsUploadView());
+        },
+
+        indexRoute: function () {
+            this.navigate('#directories', {trigger: true});
         }
     });
 
