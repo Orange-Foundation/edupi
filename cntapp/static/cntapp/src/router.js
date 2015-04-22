@@ -1,6 +1,7 @@
 define([
     'backbone',
     'views/state_bar',
+    'views/action_bar',
     'views/structure_content',
     'views/create_directory',
     'views/edit_directory',
@@ -10,6 +11,7 @@ define([
     'models/directory'
 ], function (Backbone,
              StateBarView,
+             ActionBarView,
              StructureContentView, CreateDirectoryView,
              EditDirectoryView, DocumentsTableView,
              DocumentsUploadView,
@@ -94,12 +96,20 @@ define([
                 cntapp.views.stateBarView = stateBarView;
             }
 
+            var actionBarView = cntapp.views.actionBarView;
+            if (typeof actionBarView == "undefined") {
+                actionBarView = new ActionBarView();
+                cntapp.views.actionBarView = actionBarView;
+            }
+
             this.updatePath(parentId, currentPath, currentDirectories);
 
             contentView.setParentId(parentId);
+            actionBarView.setParentId(parentId);
             stateBarView.setCurrentPath(currentPath.getPath());
 
             cntapp.views.pageWrapper.setStateBarView(stateBarView);
+            cntapp.views.pageWrapper.setActionBarView(actionBarView);
             cntapp.views.pageWrapper.setContentView(contentView);
             cntapp.views.pageWrapper.render();
         },

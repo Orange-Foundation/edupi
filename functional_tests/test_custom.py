@@ -115,7 +115,6 @@ class CustomSiteTestCase(FunctionalTest):
         back_to_dir("a")
         check_path("> home > a")
         back_to_dir("home")
-        check_path("")
         self.enter_into_dir("a")
         check_path("> home > a")
         self.assertEqual(6, Directory.objects.count())

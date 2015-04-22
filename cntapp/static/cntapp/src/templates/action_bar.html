@@ -1,0 +1,8 @@
+<a id="create-directory" class="btn btn-primary">
+    Create Directory
+</a>
+
+<% if (parentId) { %>
+<a id="btn-upload-to-directory" href="#directories/<%= parentId %>/upload"
+   class="btn btn-primary">Upload</a>
+<% }; %>

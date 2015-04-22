@@ -1,5 +1,5 @@
-<div id="path">
     <% if (current_path && current_path.length > 0) { %>
+<div id="path">
         > <span class="directory-path"><a href="#directories">home</a></span>
 
         <% _.each(current_path.slice(0, -1), function (directory) { %>
@@ -7,8 +7,8 @@
         <% }); %>
 
         > <span><%= current_path[current_path.length - 1].get("name") %></span>
+</div>
     <% } else { %>
     <h3>Root Directories</h3>
     <% }; %>
 
-</div>
