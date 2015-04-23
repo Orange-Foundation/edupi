@@ -88,7 +88,13 @@ class CustomSiteTestCase(FunctionalTest):
     def test_navigate_directory_path(self):
         init_test_dirs()
         self.assertEqual(6, Directory.objects.count())
-        check_path = lambda path: self.assertEqual(path, self.browser.find_element_by_id("path").text)
+        # check_path = lambda path: self.assertEqual(path, self.browser.find_element_by_id("path").text)
+
+        def check_path(path_list):
+            pe = self.browser.find_element_by_css_selector("div#path ol")
+            links_text = pe.find_elements_by_css_selector('li')
+            for i in range(len(path_list)):
+                self.assertEqual(path_list[i], links_text[i].text)
 
         def back_to_dir(dir_name):
             path = self.browser.find_element_by_id("path")
@@ -97,26 +103,26 @@ class CustomSiteTestCase(FunctionalTest):
         self.go_to_directories()
 
         self.enter_into_dir("a")
-        check_path("> home > a")
+        check_path(['home', 'a'])
         self.enter_into_dir("ab_a")
-        check_path("> home > a > ab_a")
+        check_path(['home', 'a', 'ab_a'])
         self.enter_into_dir("ab_a_a")
-        check_path("> home > a > ab_a > ab_a_a")
+        check_path(['home', 'a', 'ab_a', 'ab_a_a'])
 
         self.browser.refresh()
         WebDriverWait(self.browser, 2).until(
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
         )
 
-        check_path("> home > a > ab_a > ab_a_a")
+        check_path(['home', 'a', 'ab_a', 'ab_a_a'])
 
         back_to_dir("ab_a")
-        check_path("> home > a > ab_a")
+        check_path(['home', 'a', 'ab_a'])
         back_to_dir("a")
-        check_path("> home > a")
+        check_path(['home', 'a'])
         back_to_dir("home")
         self.enter_into_dir("a")
-        check_path("> home > a")
+        check_path(['home', 'a'])
         self.assertEqual(6, Directory.objects.count())
 
     def test_edit_directory(self):
