@@ -1,14 +1,11 @@
 define([
-    'backbone'
-], function (Backbone) {
-    var Directory = Backbone.Model.extend({
+    'backbone',
+    'models/base_model'
+], function (Backbone, BaseModel) {
+
+    var Directory = BaseModel.extend({
 
         urlRoot: '/api/directories',
-
-        url: function () {
-            var origUrl = Backbone.Model.prototype.url.call(this);
-            return origUrl + (origUrl.charAt(origUrl.length - 1) == '/' ? '' : '/');
-        },
 
         defaults: {
             id: -1

@@ -1,10 +1,23 @@
 define([
     'underscore',
     'backbone',
+    'models/document',
+    'views/document',
     'text!templates/document_list.html'
-], function (_, Backbone, documentListTemplate) {
+], function (_, Backbone,
+             Document,
+             DocumentView,
+             documentListTemplate) {
 
-    var DocumentList = Backbone.View.extend({
+    var DocumentList = Backbone.Collection.extend({
+        model: Document
+    });
+
+    var DocumentListView = Backbone.View.extend({
+        tagName: "ul",
+        className: "list-group",
+        id: "document-list",
+
         initialize: function (options) {
             if (!options.parentId) {
                 console.error("no directory id specified");
@@ -13,6 +26,7 @@ define([
 
             this.parentId = options.parentId;
             this.template = _.template(documentListTemplate);
+            this.collection = new DocumentList();
         },
 
         render: function () {
@@ -20,11 +34,16 @@ define([
             var url = '/api/directories/' + this.parentId + '/documents/';
             $.get(url)
                 .done(function (data) {
-                    var context = {documents: data};
-                    that.$el.html(that.template(context))
+                    _(data).each(function (obj) {
+                        var m = new Document(obj);
+                        that.$el.append(
+                            new DocumentView({model: m, id: "document-" + m.id}).render().el);
+                        that.collection.add(m);
+                    });
                 });
+            return this;
         }
     });
 
-    return DocumentList;
+    return DocumentListView;
 });

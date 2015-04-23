@@ -30,12 +30,10 @@ define([
 
             // show documents
             if (this.parentId) {
+                this.documentListView = new DocumentListView({parentId: this.parentId});
                 this.$el.append('<div id="documents_table" class="col-md-12"></div>');
-                var documentListView = new DocumentListView({
-                    el: this.$("#documents_table"),
-                    parentId: this.parentId
-                });
-                documentListView.render();
+
+                this.$("#documents_table").html(this.documentListView.render().el);
             }
 
             return this;
