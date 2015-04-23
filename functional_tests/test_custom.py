@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 
 from cntapp.models import Directory, Document
 from .base import FunctionalTest
@@ -195,3 +196,44 @@ class CustomSiteTestCase(FunctionalTest):
         self.browser.find_element_by_id('btn-upload-to-directory').click()
         self.upload_check()
         self.assertInBody('test file.txt')
+
+    def test_edit_document(self):
+        # prepare env
+        init_test_dirs()
+        d_a = Directory.objects.get(name="a")
+        self.assertEqual('a', d_a.name)
+        pdf = PdfDocumentFactory()
+        d_a.documents.add(pdf)
+
+        self.go_to_directories()
+        self.enter_into_dir(d_a.name)
+        document_li = self.browser.find_element_by_css_selector('li#document-1')
+
+        # hover on the document item
+        actions = ActionChains(self.browser)
+        actions.move_to_element(document_li)
+        actions.move_to_element(document_li.find_element_by_css_selector(".glyphicon-pencil"))
+        actions.click()
+        actions.perform()
+
+        # clear the name and try to save it
+        name_input = document_li.find_element_by_css_selector("input[name='name']")
+        name_input.clear()
+        document_li.find_element_by_css_selector(".btn-save").click()
+        self.assertInBody('name must not be empty')
+
+        # enter a new name
+        name_input.send_keys("new file name")
+        # enter a Description
+        desc = "this is a good description for the file"
+        desc_input = document_li.find_element_by_css_selector("textarea[name='description']")
+        desc_input.clear()
+        desc_input.send_keys(desc)
+
+        document_li.find_element_by_css_selector(".btn-save").click()
+
+        self.assertInBody('new file name')
+        self.assertInBody(desc)
+        doc = Document.objects.get(pk=1)
+        self.assertEqual("new file name", doc.name)
+        self.assertEqual(desc, doc.description)
