@@ -19,27 +19,49 @@ define([
             this.model.on('invalid', function (model, error) {
                 this.$('.error-msg').html(error);
             }, this)
+
+
         },
 
         render: function () {
             this.$el.html(TEMPLATE({model: this.model}));
-            this.$(".glyphicon-pencil").hide();
+            this.$(".glyphicon").hide();
             this.$(".error-msg").hide();
+
+            this.$('span[data-toggle="popover"]').popover({
+                html: true,
+                content: function () {
+                    return "<button class='btn btn-danger btn-block btn-delete-confirmed'>\
+                        DELETE</button>";
+                }
+            });
             return this;
         },
 
         events: {
             'mouseenter': function () {
-                this.$(".glyphicon-pencil").show();
+                this.$(".glyphicon").show();
             },
             'mouseleave': function () {
-                this.$(".glyphicon-pencil").hide();
+                this.$(".glyphicon").hide();
             },
             'click .glyphicon-pencil': function () {
                 this.$el.html(EDIT_TEMPLATE({model: this.model}));
             },
             'click .btn-cancel': function () {
                 this.render();
+            },
+            'click .btn-delete-confirmed': function () {
+                var that = this;
+                this.model.destroy({
+                    success: function (model, response) {
+                        console.log('model destroyed');
+                        console.log(response);
+                        that.$el.fadeOut(200, function () {
+                            $(this).remove();
+                        })
+                    }
+                });
             },
             'click .btn-save': 'saveDocument',
             'keypress': function (e) {
