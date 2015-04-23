@@ -11,6 +11,8 @@ define([
         initialize: function (options) {
             this.template = _.template(editDirectoryTemplate);
             this.directory = options.directory;
+            console.log('init...');
+            console.log(this.directory)
         },
 
         getContext: function () {

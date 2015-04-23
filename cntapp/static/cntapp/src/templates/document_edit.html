@@ -1,0 +1,21 @@
+<div class="form-group">
+    <label>Name</label>
+    <input type='text'
+           class="form-control name-text"
+           name='name' value='<%= model.get("name") %>' placeholder="name"/>
+</div>
+
+<div class="form-group">
+    <label>Description</label>
+    <textarea name="description"
+              class="form-control"
+              rows="3"
+              maxlength="250"
+              placeholder="add description here"><%= model.get('description') %></textarea>
+</div>
+
+<div class="form-group">
+    <button class="btn btn-primary btn-save">Save</button>
+    <button class="btn btn-default btn-cancel">Cancel</button>
+    <span class="error-msg"></span>
+</div>

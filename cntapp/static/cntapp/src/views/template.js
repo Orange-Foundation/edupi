@@ -7,6 +7,7 @@ define([
             var context = this.getContext(),
                 html = this.template(context);
             this.$el.html(html);
+
             return this;
         },
         getContext: function () {

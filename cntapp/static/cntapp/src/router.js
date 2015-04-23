@@ -1,32 +1,153 @@
 define([
     'backbone',
-    'views/list_directories',
+    'views/state_bar',
+    'views/action_bar',
+    'views/structure_content',
     'views/create_directory',
     'views/edit_directory',
     'views/documents_table',
+    'views/documents_upload',
+    'views/upload_document_to_directory',
     'models/directory'
 ], function (Backbone,
-             ListDirectoriesView, CreateDirectoryView,
+             StateBarView,
+             ActionBarView,
+             StructureContentView, CreateDirectoryView,
              EditDirectoryView, DocumentsTableView,
+             DocumentsUploadView,
+             UploadDocumentToDirectoryView,
              Directory) {
+    var PAGE_WRAPPER = "#page-wrapper";
 
     var AppRouter,
         currentDirectories,
-        currentPath,
-        initialize;
+        currentPath;
 
     AppRouter = Backbone.Router.extend({
-        routes: {
-            '': 'listDirectories',
-            'create': 'createDirectory',
-            'documents': 'listDocuments',
-            ':id': 'listDirectories',
-            ':id/edit': 'editDirectory',
-            ':id/create': 'createDirectory'
+        initialize: function () {
+
+            // root directories
+            this.route(/^directories$/, 'structure');
+            this.route(/^directories\/create$/, 'createDirectory');
+
+            // sub directories
+            this.route(/^directories\/(\d+)\/create$/, 'createDirectory');
+            this.route(/^directories\/(\d+)$/, 'structure');
+            this.route(/^directories\/(\d+)\/edit$/, 'editDirectory');
+            this.route(/^directories\/(\d+)\/upload$/, 'uploadFileToDirectory');
+
+            // documents
+            this.route(/^documents$/, 'listDocuments');
+            this.route(/^documents\/upload$/, 'uploadDocuments');
+
+            this.route(/^$/, 'indexRoute');
+
+            if (!currentDirectories) {
+                currentDirectories = new Backbone.Collection({model: Directory});
+            }
+        },
+
+        go: function () {
+            return this.navigate(_.toArray(arguments).join("/"), true);
         },
 
         renderToContent: function (view) {
-            $("#content").html(view.render().$el);
+            cntapp.views.pageWrapper.setContentView(view);
+            cntapp.views.pageWrapper.render();
+        },
+
+        uploadFileToDirectory: function (parentId) {
+            this.renderToContent(new UploadDocumentToDirectoryView({parentId: parentId}));
+        },
+
+        updatePath: function (parentId, currentPath, currentDirectories) {
+            if (!parentId) {
+                currentPath.clear(); // back to home
+            } else {
+                if (!currentPath.popToDirectory(parentId)) {
+                    // push
+                    if (currentDirectories && currentDirectories.get(parentId)) {
+                        currentPath.push(currentDirectories.get(parentId))
+                    } else {
+                        var d = new Directory({id: parentId});
+                        d.fetch({
+                            success: function (directory) {
+                                currentPath.push(directory);
+                            }
+                        });
+                    }
+                }
+            }
+        },
+
+        structure: function (parentId) {
+            var contentView = cntapp.views.structureContentView;
+
+            if (typeof contentView == "undefined") {
+                contentView = new StructureContentView({
+                    currentDirectories: currentDirectories
+                });
+                cntapp.views.structureContentView = contentView;
+            }
+
+            var stateBarView = cntapp.views.stateBarView;
+            if (typeof stateBarView == "undefined") {
+                stateBarView = new StateBarView();
+                cntapp.views.stateBarView = stateBarView;
+            }
+
+            var actionBarView = cntapp.views.actionBarView;
+            if (typeof actionBarView == "undefined") {
+                actionBarView = new ActionBarView();
+                cntapp.views.actionBarView = actionBarView;
+            }
+
+            this.updatePath(parentId, currentPath, currentDirectories);
+
+            contentView.setParentId(parentId);
+            actionBarView.setParentId(parentId);
+            stateBarView.setCurrentPath(currentPath.getPath());
+
+            cntapp.views.pageWrapper.setStateBarView(stateBarView);
+            cntapp.views.pageWrapper.setActionBarView(actionBarView);
+            cntapp.views.pageWrapper.setContentView(contentView);
+            cntapp.views.pageWrapper.render();
+        },
+
+        createDirectory: function (parentId) {
+            this.renderToContent(new CreateDirectoryView({parentId: parentId}));
+        },
+
+        editDirectory: function (id) {
+            var directory = currentDirectories.get(id);
+            var that = this;
+
+            if (directory) {
+                this.renderToContent(new EditDirectoryView({
+                    directory: directory
+                }));
+            } else {
+                directory = new Directory({id: id});
+                directory.fetch({
+                    success: function () {
+                        that.renderToContent(new EditDirectoryView({
+                            directory: directory
+                        }));
+                    }
+                });
+            }
+        },
+
+        listDocuments: function () {
+            new DocumentsTableView({el: PAGE_WRAPPER}).render();
+        },
+
+        uploadDocuments: function () {
+            this.renderToContent(new DocumentsUploadView());
+        },
+
+        indexRoute: function () {
+            this.navigate('#directories', {trigger: true});
         }
     });
 
@@ -84,55 +205,5 @@ define([
         }
     };
 
-
-    // let's wire up everything
-    initialize = function () {
-        var appRouter = new AppRouter();
-
-        appRouter.on("route:listDirectories", function (parentId) {
-            var view;
-            if (!parentId) {
-                currentPath.clear(); // back to home
-            } else {
-                if (!currentPath.popToDirectory(parentId)) {
-                    // push
-                    if (currentDirectories && currentDirectories.get(parentId)) {
-                        currentPath.push(currentDirectories.get(parentId))
-                    } else {
-                        var d = new Directory({id: parentId});
-                        d.fetch({
-                            success: function (directory) {
-                                currentPath.push(directory);
-                            }
-                        });
-                    }
-                }
-            }
-            view = new ListDirectoriesView({
-                el: "#content",
-                parentId: parentId,
-                path: currentPath.getPath()
-            });
-            currentDirectories = view.collection;
-            view.fetchAndRefresh();
-        });
-
-        appRouter.on("route:createDirectory", function (parentId) {
-            this.renderToContent(new CreateDirectoryView({parentId: parentId}));
-        });
-
-        appRouter.on("route:editDirectory", function (id) {
-            this.renderToContent(new EditDirectoryView({
-                directory: currentDirectories.get(id)
-            }));
-        });
-
-        appRouter.on("route:listDocuments", function () {
-            new DocumentsTableView({el: "#content"}).render();
-        })
-    };
-
-    return {
-        initialize: initialize
-    }
+    return AppRouter;
 });

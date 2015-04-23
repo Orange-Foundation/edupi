@@ -1,0 +1,18 @@
+<a href="<%= model.get('file') %>" target="_blank">
+    <%= model.get('name') %>
+</a>
+
+<span class="glyphicon glyphicon-pencil"></span>
+
+<span tabindex="0"
+      class="glyphicon glyphicon-trash"
+      role="button"
+      data-toggle="popover"
+      data-trigger="focus"
+      title="Delete this document ?">
+</span>
+
+<br>
+<p>
+    <%= model.get('description') %>
+</p>
