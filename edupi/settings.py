@@ -112,6 +112,7 @@ BOWER_INSTALLED_APPS = (
     'backbone#1.1.2',
     'requirejs#2.1.17',
     'requirejs-text#2.0.14',
+    'dropzone#4.0.1',
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")

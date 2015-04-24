@@ -1,9 +1,11 @@
 define([
+    'underscore',
     'backbone',
     'router',
     'views/nav',
-    'views/page_wrapper'
-], function (Backbone, AppRouter, NavbarView, PageWrapperView) {
+    'views/page_wrapper',
+    'text!templates/container.html'
+], function (_, Backbone, AppRouter, NavbarView, PageWrapperView, containerTemplate) {
 
     var app;
 
@@ -12,9 +14,8 @@ define([
         var router = new AppRouter();
         var navbar, pageWrapper;
 
-        // create the basic page structure
-        $("body").append("<div id='wrapper'></div>");
-        $("#wrapper").append("<div id='navbar'></div><div id='page-wrapper'></div>");
+        $("body").html(_.template(containerTemplate)());
+
         navbar = new NavbarView({el: "#navbar"});
         pageWrapper = new PageWrapperView({el: "#page-wrapper"}).render();
 

@@ -185,18 +185,6 @@ class CustomSiteTestCase(FunctionalTest):
         )
         self.upload_check()
 
-    def test_upload_file_to_directory(self):
-        init_test_dirs()
-        # suppose there is already a lot of documents
-        for i in range(10):
-            PdfDocumentFactory()
-
-        self.go_to_directories()
-        self.enter_into_dir("a")
-        self.browser.find_element_by_id('btn-upload-to-directory').click()
-        self.upload_check()
-        self.assertInBody('test file.txt')
-
     def test_edit_document(self):
         # prepare env
         init_test_dirs()
