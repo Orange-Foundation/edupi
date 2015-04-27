@@ -1,5 +1,9 @@
+import os
+import tempfile
 import copy
 
+from django.core.files.uploadedfile import SimpleUploadedFile
+from wand.image import Image
 from rest_framework import serializers
 
 from .models import Directory, Document
@@ -28,7 +32,15 @@ class DocumentSerializer(serializers.ModelSerializer):
             validated_data['thumbnail'] = copy.deepcopy(validated_data['file'])
 
         elif content_type in ['application/pdf']:
-            print('pdf uploaded, todo')
+            file_name = None
+            # use page[0] as thumbnail
+            with Image(filename=validated_data['file'].temporary_file_path() + '[0]') as img:
+                file_name = tempfile.mktemp(suffix='.png')
+                img.save(filename=file_name)
+            if file_name is not None:
+                file_path = os.path.join('/tmp', file_name)
+                with open(file_name, 'rb') as f:
+                    validated_data['thumbnail'] = SimpleUploadedFile(file_name, f.read())
 
         elif content_type in ['video/mp4']:
             print('mp4 uploaded, todo')

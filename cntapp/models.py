@@ -22,9 +22,9 @@ class Document(models.Model):
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
     thumbnail = ProcessedImageField(upload_to='thumbnails', blank=True, null=True,
-                                    processors=[ResizeToFill(100, 50)],
+                                    processors=[ResizeToFill(400, 400)],
                                     format='JPEG',
-                                    options={'quality': 60})
+                                    options={'quality': 99})
 
     def __str__(self):
         return self.name
