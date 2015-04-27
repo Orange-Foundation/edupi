@@ -29,13 +29,26 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual({'id': 1,
                           'name': 'book.pdf',
                           'description': '',
-                          'file': 'http://testserver/media/book.pdf'},
+                          'file': 'http://testserver/media/book.pdf',
+                          'thumbnail': None},
                          self.render(res))
 
         # bad example
         res = self.client.post('/api/documents/', {})
         self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
         self.assertEqual({'name': ['This field is required.'], 'file': ['No file was submitted.']},
+                         self.render(res))
+
+    def test_create_document_with_thumbnail(self):
+        file = SimpleUploadedFile('book-1.pdf', 'book content'.encode('utf-8'))
+        thumbnail = SimpleUploadedFile('thumbnail.jpg', 'content'.encode())
+        res = self.client.post('/api/documents/', {'name': 'book-1.pdf', 'file': file, 'thumbnail': thumbnail})
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        self.assertEqual({'id': 1,
+                          'name': 'book-1.pdf',
+                          'description': '',
+                          'file': 'http://testserver/media/book-1.pdf',
+                          'thumbnail': 'http://testserver/media/thumbnails/thumbnail.jpg'},
                          self.render(res))
 
     def test_get_document(self):
@@ -45,7 +58,8 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual({'id': 1,
                           'name': 'hello.pdf',
                           'description': '__description__0',
-                          'file': 'http://testserver/media/hello.pdf'},
+                          'file': 'http://testserver/media/hello.pdf',
+                          'thumbnail': None},
                          self.render(res))
 
         # update document's name & description, & keep using the same file
@@ -56,6 +70,7 @@ class DocumentRESTTest(BaseRESTTest):
             'name': 'not just hello.pdf',
             'description': 'detailed description',
             'file': 'http://testserver/media/hello.pdf',
+            'thumbnail': None
         }, self.render(res))
 
 
@@ -160,11 +175,13 @@ class DirDocRelationRESTTest(BaseRESTTest):
                 {'description': pdf_0.description,
                  'id': pdf_0.id,
                  'file': 'http://testserver' + pdf_0.file.url,
-                 'name': pdf_0.name},
+                 'name': pdf_0.name,
+                 'thumbnail': None},
                 {'description': pdf_1.description,
                  'id': pdf_1.id,
                  'file': 'http://testserver' + pdf_1.file.url,
-                 'name': pdf_1.name},
+                 'name': pdf_1.name,
+                 'thumbnail': None},
             ],
             self.render(res))
 

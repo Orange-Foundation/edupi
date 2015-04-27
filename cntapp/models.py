@@ -19,6 +19,7 @@ class Document(models.Model):
     type = models.CharField(max_length=2, choices=TYPES)
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
+    thumbnail = models.FileField(upload_to='thumbnails', blank=True, null=True)
 
     def __str__(self):
         return self.name

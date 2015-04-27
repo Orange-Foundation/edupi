@@ -12,4 +12,4 @@ class DirectorySerializer(serializers.ModelSerializer):
 class DocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Document
-        fields = ('id', 'name', 'description', 'file')
+        fields = ('id', 'name', 'description', 'file', 'thumbnail')
