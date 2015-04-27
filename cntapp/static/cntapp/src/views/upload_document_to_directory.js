@@ -23,9 +23,6 @@ define([
                     this.on('addedfile', function (file) {
                         console.log(file);
                     });
-                    this.on('drop', function (file) {
-
-                    });
                     this.on("sending", function (file, xhr, formData) {
                         // TODO: change file name here
                         formData.append("name", file.name);

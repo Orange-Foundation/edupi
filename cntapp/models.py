@@ -1,4 +1,6 @@
 from django.db import models
+from imagekit.models import ImageSpecField, ProcessedImageField
+from imagekit.processors import ResizeToFill
 
 
 class Document(models.Model):
@@ -19,7 +21,10 @@ class Document(models.Model):
     type = models.CharField(max_length=2, choices=TYPES)
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
-    thumbnail = models.FileField(upload_to='thumbnails', blank=True, null=True)
+    thumbnail = ProcessedImageField(upload_to='thumbnails', blank=True, null=True,
+                                    processors=[ResizeToFill(100, 50)],
+                                    format='JPEG',
+                                    options={'quality': 60})
 
     def __str__(self):
         return self.name
