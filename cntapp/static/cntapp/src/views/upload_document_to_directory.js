@@ -17,6 +17,7 @@ define([
                 paramName: "file",
                 maxFilesize: 1024,  // MB
                 maxThumbnailFilesize: 5,  // MB
+                acceptedFiles: "image/*,audio/*,video/*,application/pdf,.apk",
 
                 init: function () {
                     this.on('addedfile', function (file) {
@@ -60,6 +61,12 @@ define([
                 this.$el.html(this.template());
                 initDropzone(this);
                 return this;
+            },
+
+            events: {
+                'click .btn-finish': function () {
+                    window.history.back();
+                }
             }
         });
 
