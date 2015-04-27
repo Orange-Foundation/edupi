@@ -17,7 +17,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'description', 'file', 'thumbnail')
 
     def create(self, validated_data):
-        if validated_data['thumbnail']:
+        if 'thumbnail' in validated_data:
             return super().create(validated_data)
 
         # generate thumbnail here

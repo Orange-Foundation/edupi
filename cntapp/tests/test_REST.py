@@ -1,3 +1,5 @@
+import os
+
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.six import BytesIO
 from rest_framework.renderers import JSONRenderer
@@ -7,7 +9,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from cntapp.models import Directory, Document
-from .helpers import init_test_dirs, PdfDocumentFactory, DocumentFactory, DirectoryFactory
+from .helpers import init_test_dirs, PdfDocumentFactory, DirectoryFactory
 
 
 class BaseRESTTest(TestCase):
@@ -41,14 +43,16 @@ class DocumentRESTTest(BaseRESTTest):
 
     def test_create_document_with_thumbnail(self):
         file = SimpleUploadedFile('book-1.pdf', 'book content'.encode('utf-8'))
-        thumbnail = SimpleUploadedFile('thumbnail.jpg', 'content'.encode())
-        res = self.client.post('/api/documents/', {'name': 'book-1.pdf', 'file': file, 'thumbnail': thumbnail})
+        img_path = os.path.join(os.getcwd(), 'cntapp/tests/images/wiki_logo_test.png')
+        with open(img_path, 'rb') as thumbnail:
+            res = self.client.post('/api/documents/', {'name': 'book-1.pdf', 'file': file, 'thumbnail': thumbnail})
+
         self.assertEqual(status.HTTP_201_CREATED, res.status_code)
         self.assertEqual({'id': 1,
                           'name': 'book-1.pdf',
                           'description': '',
                           'file': 'http://testserver/media/book-1.pdf',
-                          'thumbnail': 'http://testserver/media/thumbnails/thumbnail.jpg'},
+                          'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.jpg'},
                          self.render(res))
 
     def test_get_document(self):
@@ -66,12 +70,12 @@ class DocumentRESTTest(BaseRESTTest):
         res = self.client.patch('/api/documents/1/',
                                 {'name': 'not just hello.pdf', 'description': 'detailed description'})
         self.assertEqual({
-            'id': 1,
-            'name': 'not just hello.pdf',
-            'description': 'detailed description',
-            'file': 'http://testserver/media/hello.pdf',
-            'thumbnail': None
-        }, self.render(res))
+                             'id': 1,
+                             'name': 'not just hello.pdf',
+                             'description': 'detailed description',
+                             'file': 'http://testserver/media/hello.pdf',
+                             'thumbnail': None
+                         }, self.render(res))
 
 
 class DirectoryRESTTest(BaseRESTTest):
