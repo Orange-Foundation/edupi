@@ -2,12 +2,16 @@ define([
     'underscore',
     'backbone',
     'text!templates/document.html',
-    'text!templates/document_edit.html'
+    'text!templates/document_edit.html',
+    'text!templates/video_play_modal.html'
 ], function (_, Backbone,
-             documentTemplate, documentEditTemplate) {
+             documentTemplate,
+             documentEditTemplate,
+             videoPlayModalTemplate) {
 
     var TEMPLATE = _.template(documentTemplate);
     var EDIT_TEMPLATE = _.template(documentEditTemplate);
+    var VIDEO_MODAL_TEMPLATE = _.template(videoPlayModalTemplate);
 
     var DocumentView = Backbone.View.extend({
         tagName: "li",
@@ -18,8 +22,7 @@ define([
 
             this.model.on('invalid', function (model, error) {
                 this.$('.error-msg').html(error);
-            }, this)
-
+            }, this);
 
         },
 
@@ -62,6 +65,22 @@ define([
                         })
                     }
                 });
+            },
+            'click .btn-play-video': function () {
+                var that, modal_id, video_id;
+                this.$el.append(VIDEO_MODAL_TEMPLATE({model: this.model}));
+                that = this;
+                modal_id = '#video-modal-' + this.model.get('id');
+                video_id = '#video-' + that.model.get('id');
+
+                this.$(modal_id).on('hidden.bs.modal', function () {
+                    that.$(video_id).get(0).pause();
+                });
+
+                this.$(modal_id).on('shown.bs.modal', function() {
+                    that.$(video_id).get(0).play();
+                })
+
             },
             'click .btn-save': 'saveDocument',
             'keypress': function (e) {

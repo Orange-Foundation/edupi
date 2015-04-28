@@ -24,7 +24,6 @@
                 imageFileName = 'default-file.png'
             }
             %>
-
             <img src="/static/cntapp/images/<%= imageFileName %>" height="100" width="100">
         <% } %>
     </a>
@@ -34,6 +33,11 @@
         <a href="<%= model.get('file') %>" target="_blank">
             <%= model.get('name') %>
         </a>
+        <% if (dType === 'v') { %>
+            <a type="button" class="glyphicon btn-play-video" data-toggle="modal" data-target="#video-modal-<%= model.get('id') %>">
+                play
+            </a>
+        <% } %>
         <span class="glyphicon glyphicon-pencil"></span>
         <span tabindex="0"
               class="glyphicon glyphicon-trash"
@@ -42,6 +46,7 @@
               data-trigger="focus"
               title="Delete this document ?">
         </span>
+
         <br>
         <p>
             <%= model.get('description') %>
