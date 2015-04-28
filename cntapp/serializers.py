@@ -29,7 +29,9 @@ class DocumentSerializer(serializers.ModelSerializer):
         content_type = uploaded_file.content_type
 
         if content_type in ['image/jpeg', 'image/png']:
-            validated_data['thumbnail'] = copy.deepcopy(validated_data['file'])
+            # copy the image for thumbnail
+            with open(uploaded_file.temporary_file_path(), 'rb') as f:
+                validated_data['thumbnail'] = SimpleUploadedFile(uploaded_file.name, f.read())
 
         elif content_type in ['application/pdf']:
             file_name = None
