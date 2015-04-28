@@ -36,19 +36,10 @@ class DocumentSerializer(serializers.ModelSerializer):
             # use page[0] as thumbnail
             with Image(filename=validated_data['file'].temporary_file_path() + '[0]') as img:
                 file_name = tempfile.mktemp(suffix='.png')
-                img.save(filename=file_name)
+                img.save(filename=file_name)  # save to /tmp
             if file_name is not None:
                 file_path = os.path.join('/tmp', file_name)
                 with open(file_name, 'rb') as f:
                     validated_data['thumbnail'] = SimpleUploadedFile(file_name, f.read())
-
-        elif content_type in ['video/mp4']:
-            print('mp4 uploaded, todo')
-
-        elif content_type in ['audio/mpeg']:
-            print('mp3 uploaded, todo')
-
-        else:
-            pass
 
         return super().create(validated_data)

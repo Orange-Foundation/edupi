@@ -23,7 +23,7 @@ class Document(models.Model):
     file = models.FileField()
     thumbnail = ProcessedImageField(upload_to='thumbnails', blank=True, null=True,
                                     processors=[ResizeToFill(400, 400)],
-                                    format='JPEG',
+                                    format='PNG',
                                     options={'quality': 99})
 
     def __str__(self):

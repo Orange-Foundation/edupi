@@ -41,9 +41,12 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual({'name': ['This field is required.'], 'file': ['No file was submitted.']},
                          self.render(res))
 
+    def get_sample_file_path(self, path):
+        return os.path.join(os.getcwd(), path)
+
     def test_create_document_with_thumbnail(self):
         file = SimpleUploadedFile('book-1.pdf', 'book content'.encode('utf-8'))
-        img_path = os.path.join(os.getcwd(), 'cntapp/tests/images/wiki_logo_test.png')
+        img_path = self.get_sample_file_path('cntapp/tests/images/wiki_logo_test.png')
         with open(img_path, 'rb') as thumbnail:
             res = self.client.post('/api/documents/', {'name': 'book-1.pdf', 'file': file, 'thumbnail': thumbnail})
 
@@ -52,8 +55,20 @@ class DocumentRESTTest(BaseRESTTest):
                           'name': 'book-1.pdf',
                           'description': '',
                           'file': 'http://testserver/media/book-1.pdf',
-                          'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.jpg'},
+                          'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.png'},
                          self.render(res))
+
+    def test_create_pdf_document_with_thumbnail(self):
+        file_path = self.get_sample_file_path('cntapp/tests/samples/pdf-sample.pdf')
+        with open(file_path, 'rb') as pdf:
+            res = self.client.post('/api/documents/', {'name': pdf.name, 'file': pdf})
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        json = self.render(res)
+        self.assertEqual(json['id'], 1)
+        self.assertEqual(json['name'], pdf.name)
+        self.assertEqual(json['file'], 'http://testserver/media/pdf-sample.pdf')
+        self.assertRegex(json['thumbnail'], r'tmp.+\.png')
+        self.assertEqual(json['description'], '')
 
     def test_get_document(self):
         PdfDocumentFactory.create(name="hello.pdf")

@@ -132,3 +132,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 )
 
 TEST_RUNNER = 'edupi.runner.CustomTestSuiteRunner'
+
+# wand can only read file from disk, so
+# never keep uploaded file in memory
+FILE_UPLOAD_MAX_MEMORY_SIZE = 0
