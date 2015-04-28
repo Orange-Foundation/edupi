@@ -25,13 +25,14 @@ class BaseRESTTest(TestCase):
 class DocumentRESTTest(BaseRESTTest):
     def test_create_document(self):
         # good example
-        file = SimpleUploadedFile('book.pdf', 'book content'.encode('utf-8'))
-        res = self.client.post('/api/documents/', {'name': 'book.pdf', 'file': file})
+        file = SimpleUploadedFile('book.txt', 'book content'.encode('utf-8'))
+        res = self.client.post('/api/documents/', {'name': 'book.txt', 'file': file})
         self.assertEqual(status.HTTP_201_CREATED, res.status_code)
         self.assertEqual({'id': 1,
-                          'name': 'book.pdf',
+                          'name': 'book.txt',
                           'description': '',
-                          'file': 'http://testserver/media/book.pdf',
+                          'file': 'http://testserver/media/book.txt',
+                          'type': 'o',
                           'thumbnail': None},
                          self.render(res))
 
@@ -45,16 +46,17 @@ class DocumentRESTTest(BaseRESTTest):
         return os.path.join(os.getcwd(), path)
 
     def test_create_document_with_thumbnail(self):
-        file = SimpleUploadedFile('book-1.pdf', 'book content'.encode('utf-8'))
+        file = SimpleUploadedFile('book-1.txt', 'book content'.encode('utf-8'))
         img_path = self.get_sample_file_path('cntapp/tests/images/wiki_logo_test.png')
         with open(img_path, 'rb') as thumbnail:
-            res = self.client.post('/api/documents/', {'name': 'book-1.pdf', 'file': file, 'thumbnail': thumbnail})
+            res = self.client.post('/api/documents/', {'name': 'book-1.txt', 'file': file, 'thumbnail': thumbnail})
 
         self.assertEqual(status.HTTP_201_CREATED, res.status_code)
         self.assertEqual({'id': 1,
-                          'name': 'book-1.pdf',
+                          'name': 'book-1.txt',
                           'description': '',
-                          'file': 'http://testserver/media/book-1.pdf',
+                          'file': 'http://testserver/media/book-1.txt',
+                          'type': 'o',
                           'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.png'},
                          self.render(res))
 
@@ -69,6 +71,7 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual(json['file'], 'http://testserver/media/pdf-sample.pdf')
         self.assertRegex(json['thumbnail'], r'tmp.+\.png')
         self.assertEqual(json['description'], '')
+        self.assertEqual(json['type'], 'p')  # a real pdf
 
     def test_get_document(self):
         PdfDocumentFactory.create(name="hello.pdf")
@@ -78,19 +81,20 @@ class DocumentRESTTest(BaseRESTTest):
                           'name': 'hello.pdf',
                           'description': '__description__0',
                           'file': 'http://testserver/media/hello.pdf',
+                          'type': 'p',  # mocked pdf
                           'thumbnail': None},
                          self.render(res))
 
         # update document's name & description, & keep using the same file
         res = self.client.patch('/api/documents/1/',
                                 {'name': 'not just hello.pdf', 'description': 'detailed description'})
-        self.assertEqual({
-                             'id': 1,
-                             'name': 'not just hello.pdf',
-                             'description': 'detailed description',
-                             'file': 'http://testserver/media/hello.pdf',
-                             'thumbnail': None
-                         }, self.render(res))
+        self.assertEqual({'id': 1,
+                          'name': 'not just hello.pdf',
+                          'description': 'detailed description',
+                          'file': 'http://testserver/media/hello.pdf',
+                          'type': 'p',
+                          'thumbnail': None},
+                         self.render(res))
 
 
 class DirectoryRESTTest(BaseRESTTest):
@@ -195,11 +199,13 @@ class DirDocRelationRESTTest(BaseRESTTest):
                  'id': pdf_0.id,
                  'file': 'http://testserver' + pdf_0.file.url,
                  'name': pdf_0.name,
+                 'type': 'p',
                  'thumbnail': None},
                 {'description': pdf_1.description,
                  'id': pdf_1.id,
                  'file': 'http://testserver' + pdf_1.file.url,
                  'name': pdf_1.name,
+                 'type': 'p',
                  'thumbnail': None},
             ],
             self.render(res))
