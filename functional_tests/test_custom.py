@@ -177,14 +177,6 @@ class CustomSiteTestCase(FunctionalTest):
         self.browser.find_element_by_id('btn-upload').click()
         self.assertEqual(before + 1, len(Document.objects.all()))
 
-    def test_upload_file(self):
-        self.assertEqual(0, len(Document.objects.all()))
-        self.browser.get(self.custom_page_url + '#documents/upload')
-        WebDriverWait(self.browser, 2).until(
-            EC.presence_of_element_located((By.ID, "btn-upload"))
-        )
-        self.upload_check()
-
     def test_edit_document(self):
         # prepare env
         init_test_dirs()
