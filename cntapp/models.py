@@ -1,24 +1,32 @@
 from django.db import models
+from imagekit.models import ImageSpecField, ProcessedImageField
+from imagekit.processors import ResizeToFill
 
 
 class Document(models.Model):
     TYPE_VIDEO = 'v'
     TYPE_PDF = 'p'
     TYPE_IMAGE = 'i'
-    TYPE_SOUND = 's'
+    TYPE_AUDIO = 'a'
+    TYPE_GOOGLE_APK = 'g'  # for google ;)
     TYPE_OTHERS = 'o'
     TYPES = (
         (TYPE_VIDEO, 'video'),
-        (TYPE_SOUND, 'sound'),
+        (TYPE_AUDIO, 'sound'),
         (TYPE_PDF, 'pdf'),
+        (TYPE_GOOGLE_APK, 'google_apk'),
         (TYPE_IMAGE, 'image'),
         (TYPE_OTHERS, 'others'),
     )
 
     name = models.CharField(max_length=100)
-    type = models.CharField(max_length=2, choices=TYPES)
+    type = models.CharField(max_length=2, choices=TYPES, blank=True)
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
+    thumbnail = ProcessedImageField(upload_to='thumbnails', blank=True, null=True,
+                                    processors=[ResizeToFill(400, 400)],
+                                    format='PNG',
+                                    options={'quality': 99})
 
     def __str__(self):
         return self.name

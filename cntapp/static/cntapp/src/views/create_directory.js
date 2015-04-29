@@ -36,6 +36,14 @@ define([
 
         failure: function () {
             console.warn("fail to create");
+        },
+
+        events: {
+            'submit form': 'submit',
+            'click .btn-cancel': function () {
+                this.done();
+                window.history.back();
+            }
         }
     });
 

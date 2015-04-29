@@ -177,26 +177,6 @@ class CustomSiteTestCase(FunctionalTest):
         self.browser.find_element_by_id('btn-upload').click()
         self.assertEqual(before + 1, len(Document.objects.all()))
 
-    def test_upload_file(self):
-        self.assertEqual(0, len(Document.objects.all()))
-        self.browser.get(self.custom_page_url + '#documents/upload')
-        WebDriverWait(self.browser, 2).until(
-            EC.presence_of_element_located((By.ID, "btn-upload"))
-        )
-        self.upload_check()
-
-    def test_upload_file_to_directory(self):
-        init_test_dirs()
-        # suppose there is already a lot of documents
-        for i in range(10):
-            PdfDocumentFactory()
-
-        self.go_to_directories()
-        self.enter_into_dir("a")
-        self.browser.find_element_by_id('btn-upload-to-directory').click()
-        self.upload_check()
-        self.assertInBody('test file.txt')
-
     def test_edit_document(self):
         # prepare env
         init_test_dirs()

@@ -27,6 +27,10 @@ Edupi is a light-weight content management Web application.
         $> git clone https://github.com/yuancheng2013/edupi.git
         $> cd edupi
 
+* Install MagicWand
+
+        $> sudo apt-get install libmagickwand-dev
+
 * Install required packages
 
     We assume that you have already `node.js`, `npm`, `bower` installed.

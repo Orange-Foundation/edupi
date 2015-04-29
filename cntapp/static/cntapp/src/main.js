@@ -8,7 +8,8 @@ require.config({
         'backbone': '/static/backbone/backbone',
         'bootstrap': '/static/bootstrap/dist/js/bootstrap',
         'bootstrap_table': '/static/bootstrap-table/src/bootstrap-table',
-        'text': '/static/requirejs-text/text'
+        'text': '/static/requirejs-text/text',
+        'dropzone': '/static/dropzone/dist/dropzone-amd-module',
     },
     shim: {
         'underscore': {

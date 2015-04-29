@@ -32,20 +32,28 @@ ALLOWED_HOSTS = ['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = (
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
     'django.contrib.staticfiles',
     # Third party apps
     'rest_framework',
     'rest_framework.authtoken',
     'djangobower',
+    'imagekit',
     # Internal apps
     'cntapp',
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
@@ -112,6 +120,7 @@ BOWER_INSTALLED_APPS = (
     'backbone#1.1.2',
     'requirejs#2.1.17',
     'requirejs-text#2.0.14',
+    'dropzone#4.0.1',
 )
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "../media/")
@@ -123,3 +132,7 @@ TEMPLATE_CONTEXT_PROCESSORS = TCP + (
 )
 
 TEST_RUNNER = 'edupi.runner.CustomTestSuiteRunner'
+
+# wand can only read file from disk, so
+# never keep uploaded file in memory
+FILE_UPLOAD_MAX_MEMORY_SIZE = 0

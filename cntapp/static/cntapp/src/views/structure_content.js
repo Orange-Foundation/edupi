@@ -32,7 +32,6 @@ define([
             if (this.parentId) {
                 this.documentListView = new DocumentListView({parentId: this.parentId});
                 this.$el.append('<div id="documents_table" class="col-md-12"></div>');
-
                 this.$("#documents_table").html(this.documentListView.render().el);
             }
 

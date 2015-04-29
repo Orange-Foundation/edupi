@@ -3,11 +3,6 @@ from django.contrib.admin.utils import quote
 from django.contrib.admin.views.main import ChangeList
 
 from cntapp.models import Directory, Document
-from edupi.admin_site import cms_site
-
-
-class DocumentInline(admin.TabularInline):
-    model = Directory.documents.through
 
 
 class DirectoryInline(admin.TabularInline):
@@ -22,7 +17,7 @@ class DirectoryParentsInline(admin.TabularInline):
     extra = 1
 
 
-@admin.register(Document, site=cms_site)
+@admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
     pass
 
@@ -65,7 +60,7 @@ class DirChangeList(ChangeList):
         return super().get_query_string(new_params, remove)
 
 
-@admin.register(Directory, site=cms_site)
+@admin.register(Directory)
 class DirectoryAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Directory Information', {'fields': ['name']}),
