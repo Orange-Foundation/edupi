@@ -25,3 +25,9 @@ video {
 .error-msg {
     color: red;
 }
+
+@media screen and (min-width: 768px) {
+    .custom-class {
+        width: 70%;
+    }
+}

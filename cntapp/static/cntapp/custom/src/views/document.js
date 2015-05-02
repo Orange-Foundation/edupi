@@ -82,7 +82,6 @@ define([
                         that.$(file_id).get(0).play();
                     });
                 }
-
             },
             'click .btn-save': 'saveDocument',
             'keypress': function (e) {
