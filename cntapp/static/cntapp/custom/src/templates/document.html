@@ -37,6 +37,13 @@
                data-target="#video-modal-<%= model.get('id') %>">
                 <%= model.get('name') %>
             </a>
+        <% } else if (dType === 'a') { %>
+            <a type="button"
+               class="btn-play-audio"
+               data-toggle="modal"
+               data-target="#audio-modal-<%= model.get('id') %>">
+                <%= model.get('name') %>
+            </a>
         <% } else { %>
             <a href="<%= model.get('file') %>" target="_blank">
                 <%= model.get('name') %>

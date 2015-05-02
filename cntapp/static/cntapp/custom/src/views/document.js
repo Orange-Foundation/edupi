@@ -3,15 +3,18 @@ define([
     'backbone',
     'text!templates/document.html',
     'text!templates/document_edit.html',
-    'text!templates/video_play_modal.html'
+    'text!templates/video_play_modal.html',
+    'text!templates/audio_play_modal.html'
 ], function (_, Backbone,
              documentTemplate,
              documentEditTemplate,
-             videoPlayModalTemplate) {
+             videoPlayModalTemplate,
+             audioPlayModalTemplate) {
 
     var TEMPLATE = _.template(documentTemplate);
     var EDIT_TEMPLATE = _.template(documentEditTemplate);
     var VIDEO_MODAL_TEMPLATE = _.template(videoPlayModalTemplate);
+    var AUDIO_MODAL_TEMPLATE = _.template(audioPlayModalTemplate);
 
     var DocumentView = Backbone.View.extend({
         tagName: "li",
@@ -79,8 +82,22 @@ define([
 
                 this.$(modal_id).on('shown.bs.modal', function() {
                     that.$(video_id).get(0).play();
-                })
+                });
+            },
+            'click .btn-play-audio': function () {
+                var that, modal_id, audio_id;
+                this.$el.append(AUDIO_MODAL_TEMPLATE({model: this.model}));
+                that = this;
+                modal_id = '#audio-modal-' + this.model.get('id');
+                audio_id = '#audio-' + that.model.get('id');
 
+                this.$(modal_id).on('hidden.bs.modal', function () {
+                    that.$(audio_id).get(0).pause();
+                });
+
+                this.$(modal_id).on('shown.bs.modal', function() {
+                    that.$(audio_id).get(0).play();
+                });
             },
             'click .btn-save': 'saveDocument',
             'keypress': function (e) {
