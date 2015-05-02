@@ -2,11 +2,11 @@
     <div class="col-sm-1">
     <a href="<%= model.get('file') %>" target="_blank">
         <%
-        var imageFile;
+        var imageFile, dType;
+        dType = model.get('type');
         if (model.get('thumbnail')) {
             imageFile = model.get('thumbnail');
         } else {
-            var dType = model.get('type');
             if (dType === 'v') {
                 imageFile = 'default-video.png'
             } else if (dType === 'a') {
@@ -29,7 +29,7 @@
     </a>
     </div>
     <div class="col-sm-6">
-
+        <!-- Play files -->
         <% if (dType === 'v') { %>
             <a type="button"
                class="btn-play-video"
@@ -44,6 +44,13 @@
                data-target="#audio-modal-<%= model.get('id') %>">
                 <%= model.get('name') %>
             </a>
+        <% } else if (dType === 'i') { %>
+            <a type="button"
+               class="btn-show-image"
+               data-toggle="modal"
+               data-target="#image-modal-<%= model.get('id') %>">
+                <%= model.get('name') %>
+            </a>
         <% } else { %>
             <a href="<%= model.get('file') %>" target="_blank">
                 <%= model.get('name') %>
@@ -55,6 +62,7 @@
             <%= model.get('description') %>
         </p>
     </div>
+
     <div class="col-sm-5">
         <!-- actions -->
         <span class="glyphicon glyphicon-pencil"></span>
