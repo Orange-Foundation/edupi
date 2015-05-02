@@ -2,6 +2,11 @@ a:hover {
     cursor: pointer;
 }
 
+video {
+    width: 100% !important;
+    height: auto !important;
+}
+
 .glyphicon {
     font-size: 14px;
     color: #8699A4;
