@@ -30,9 +30,18 @@
     </div>
     <div class="col-sm-6">
 
-        <a href="<%= model.get('file') %>" target="_blank">
-            <%= model.get('name') %>
-        </a>
+        <% if (dType === 'v') { %>
+            <a type="button"
+               class="btn-play-video"
+               data-toggle="modal"
+               data-target="#video-modal-<%= model.get('id') %>">
+                <%= model.get('name') %>
+            </a>
+        <% } else { %>
+            <a href="<%= model.get('file') %>" target="_blank">
+                <%= model.get('name') %>
+            </a>
+        <% } %>
 
         <br>
         <p>
@@ -50,11 +59,6 @@
               title="Delete this document ?">
         </span>
 
-        <% if (dType === 'v') { %>
-            <a type="button" class="glyphicon btn-play-video" data-toggle="modal" data-target="#video-modal-<%= model.get('id') %>">
-                play
-            </a>
-        <% } %>
     </div>
 </div>
 

@@ -1,14 +1,20 @@
+a:hover {
+    cursor: pointer;
+}
+
 .glyphicon {
     font-size: 14px;
     color: #8699A4;
     cursor: pointer;
     outline: 0;
 }
+
 .glyphicon:hover {
     color: #000;
 }
+
 .glyphicon.spaced {
-    letter-spacing:6px;
+    letter-spacing: 6px;
 }
 
 .error-msg {
