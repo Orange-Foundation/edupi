@@ -29,26 +29,13 @@
     </a>
     </div>
     <div class="col-sm-6">
+
         <!-- Play files -->
-        <% if (dType === 'v') { %>
+        <% if (['v', 'a', 'i'].indexOf(model.get('type')) > -1) { %>
             <a type="button"
-               class="btn-play-video"
+               class="btn-play"
                data-toggle="modal"
-               data-target="#video-modal-<%= model.get('id') %>">
-                <%= model.get('name') %>
-            </a>
-        <% } else if (dType === 'a') { %>
-            <a type="button"
-               class="btn-play-audio"
-               data-toggle="modal"
-               data-target="#audio-modal-<%= model.get('id') %>">
-                <%= model.get('name') %>
-            </a>
-        <% } else if (dType === 'i') { %>
-            <a type="button"
-               class="btn-show-image"
-               data-toggle="modal"
-               data-target="#image-modal-<%= model.get('id') %>">
+               data-target="#modal-<%= model.get('id') %>">
                 <%= model.get('name') %>
             </a>
         <% } else { %>
