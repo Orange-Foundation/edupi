@@ -1,43 +1,46 @@
 <div class="row">
     <div class="col-sm-1">
     <a href="<%= model.get('file') %>" target="_blank">
-        <% if (model.get('thumbnail')) { %>
-            <img src="<%= model.get('thumbnail') %>" height="100" width="100">
-        <% } else { %>
-
-            <%
-            var imageFileName;
+        <%
+        var imageFile;
+        if (model.get('thumbnail')) {
+            imageFile = model.get('thumbnail');
+        } else {
             var dType = model.get('type');
             if (dType === 'v') {
-                imageFileName = 'default-video.png'
+                imageFile = 'default-video.png'
             } else if (dType === 'a') {
-                imageFileName = 'default-audio.png'
+                imageFile = 'default-audio.png'
             } else if (dType === 'g') {
-                imageFileName = 'default-google-apk.png'
+                imageFile = 'default-google-apk.png'
             } else if (dType === 'i') {
-                imageFileName = 'default-image.png'
+                imageFile = 'default-image.png'
             } else if (dType === 'g') {
-                imageFileName = 'default-video.png'
+                imageFile = 'default-video.png'
             } else if (dType === 'p') {
-                imageFileName = 'default-pdf.png'
+                imageFile = 'default-pdf.png'
             } else {
-                imageFileName = 'default-file.png'
+                imageFile = 'default-file.png'
             }
-            %>
-            <img src="/static/cntapp/images/<%= imageFileName %>" height="100" width="100">
-        <% } %>
+            imageFile = "/static/cntapp/custom/images/" + imageFile;
+        }
+        %>
+        <img class="img-responsive" src="<%= imageFile %>">
     </a>
     </div>
-    <div class="col-sm-10">
+    <div class="col-sm-6">
 
         <a href="<%= model.get('file') %>" target="_blank">
             <%= model.get('name') %>
         </a>
-        <% if (dType === 'v') { %>
-            <a type="button" class="glyphicon btn-play-video" data-toggle="modal" data-target="#video-modal-<%= model.get('id') %>">
-                play
-            </a>
-        <% } %>
+
+        <br>
+        <p>
+            <%= model.get('description') %>
+        </p>
+    </div>
+    <div class="col-sm-5">
+        <!-- actions -->
         <span class="glyphicon glyphicon-pencil"></span>
         <span tabindex="0"
               class="glyphicon glyphicon-trash"
@@ -47,11 +50,11 @@
               title="Delete this document ?">
         </span>
 
-        <br>
-        <p>
-            <%= model.get('description') %>
-        </p>
+        <% if (dType === 'v') { %>
+            <a type="button" class="glyphicon btn-play-video" data-toggle="modal" data-target="#video-modal-<%= model.get('id') %>">
+                play
+            </a>
+        <% } %>
     </div>
-    <div class="1"></div>
 </div>
 
