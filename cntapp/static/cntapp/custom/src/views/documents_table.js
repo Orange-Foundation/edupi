@@ -26,6 +26,24 @@ define([
                 search: 'true',
                 sidePagination: 'server',
 
+                onEditableSave: function (name, data) {
+                    var url = "/api/documents/" + data.id + "/";
+                    $.ajax({
+                        type: "PATCH",
+                        url: url,
+                        contentType: "application/json",
+                        data: JSON.stringify({
+                                'name': data.name,
+                                'description': data.description
+                            }
+                        ),
+                        success: function (result) {
+                            console.log("updated");
+                            that.$('#table').bootstrapTable('resetView');
+                        }
+                    });
+                },
+
                 columns: [{
                     field: 'id',
                     title: 'ID',
@@ -62,9 +80,17 @@ define([
                             console.log("TODO: show document detail");
                         },
                         'click .remove': function (e, value, row, index) {
-                            that.$('table').bootstrapTable('remove', {
-                                field: 'id',
-                                values: [row.id]
+                            var url = "/api/documents/" + row.id + "/";
+                            $.ajax({
+                                url: url,
+                                type: "DELETE",
+                                success: function (result) {
+                                    console.log("deleted");
+                                    that.$('table').bootstrapTable('remove', {
+                                        field: 'id',
+                                        values: [row.id]
+                                    });
+                                }
                             });
                         }
                     }
