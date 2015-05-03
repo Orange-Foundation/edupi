@@ -3,15 +3,15 @@ define([
     'backbone',
     'text!templates/document.html',
     'text!templates/document_edit.html',
-    'text!templates/video_play_modal.html'
+    'text!templates/file_play_modal.html'
 ], function (_, Backbone,
              documentTemplate,
              documentEditTemplate,
-             videoPlayModalTemplate) {
+             filePlayModalTemplate) {
 
     var TEMPLATE = _.template(documentTemplate);
     var EDIT_TEMPLATE = _.template(documentEditTemplate);
-    var VIDEO_MODAL_TEMPLATE = _.template(videoPlayModalTemplate);
+    var FILE_PLAY_MODAL_TEMPLATE = _.template(filePlayModalTemplate);
 
     var DocumentView = Backbone.View.extend({
         tagName: "li",
@@ -66,21 +66,22 @@ define([
                     }
                 });
             },
-            'click .btn-play-video': function () {
-                var that, modal_id, video_id;
-                this.$el.append(VIDEO_MODAL_TEMPLATE({model: this.model}));
-                that = this;
-                modal_id = '#video-modal-' + this.model.get('id');
-                video_id = '#video-' + that.model.get('id');
+            'click .btn-play': function () {
+                var that, modal_id, file_id;
+                this.$el.append(FILE_PLAY_MODAL_TEMPLATE({model: this.model}));
 
-                this.$(modal_id).on('hidden.bs.modal', function () {
-                    that.$(video_id).get(0).pause();
-                });
-
-                this.$(modal_id).on('shown.bs.modal', function() {
-                    that.$(video_id).get(0).play();
-                })
-
+                // auto-play video and audio
+                if (['v', 'a'].indexOf(this.model.get('type')) > -1) {
+                    modal_id = '#modal-' + this.model.get('id');
+                    file_id = '#file-' + this.model.get('id');
+                    that = this;
+                    this.$(modal_id).on('hidden.bs.modal', function () {
+                        that.$(file_id).get(0).pause();
+                    });
+                    this.$(modal_id).on('shown.bs.modal', function () {
+                        that.$(file_id).get(0).play();
+                    });
+                }
             },
             'click .btn-save': 'saveDocument',
             'keypress': function (e) {

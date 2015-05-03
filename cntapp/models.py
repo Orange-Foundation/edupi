@@ -1,5 +1,7 @@
 from django.db import models
-from imagekit.models import ImageSpecField, ProcessedImageField
+from django.db.models.signals import post_delete
+from django.dispatch.dispatcher import receiver
+from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
 
 
@@ -30,6 +32,13 @@ class Document(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# Receive the post signal and delete the file associated with the document instance.
+@receiver(post_delete, sender=Document)
+def document_delete(sender, instance, **kwargs):
+    instance.file.delete(False)
+    instance.thumbnail.delete(False)
 
 
 class Directory(models.Model):

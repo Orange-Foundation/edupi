@@ -1,0 +1,69 @@
+<div class="row">
+    <div class="col-sm-1">
+    <a href="<%= model.get('file') %>" target="_blank">
+        <%
+        var imageFile, dType;
+        dType = model.get('type');
+        if (model.get('thumbnail')) {
+            imageFile = model.get('thumbnail');
+        } else {
+            if (dType === 'v') {
+                imageFile = 'default-video.png'
+            } else if (dType === 'a') {
+                imageFile = 'default-audio.png'
+            } else if (dType === 'g') {
+                imageFile = 'default-google-apk.png'
+            } else if (dType === 'i') {
+                imageFile = 'default-image.png'
+            } else if (dType === 'g') {
+                imageFile = 'default-video.png'
+            } else if (dType === 'p') {
+                imageFile = 'default-pdf.png'
+            } else {
+                imageFile = 'default-file.png'
+            }
+            imageFile = "/static/cntapp/custom/images/" + imageFile;
+        }
+        %>
+        <img class="img-responsive" src="<%= imageFile %>">
+    </a>
+    </div>
+    <div class="col-sm-6">
+
+        <!-- Play files -->
+        <% if (['v', 'a', 'i', 'p'].indexOf(model.get('type')) > -1) { %>
+            <a type="button"
+               class="btn-play"
+               data-toggle="modal"
+               data-target="#modal-<%= model.get('id') %>">
+                <%= model.get('name') %>
+            </a>
+        <% } else { %>
+            <a href="<%= model.get('file') %>" target="_blank">
+                <%= model.get('name') %>
+            </a>
+        <% } %>
+
+        <br>
+        <p>
+            <%= model.get('description') %>
+        </p>
+    </div>
+
+    <div class="col-sm-5">
+        <!-- actions -->
+        <span class="glyphicon glyphicon-pencil"></span>
+        <a href="<%= model.get('file') %>" style="text-decoration: none;" download>
+            <span class="glyphicon glyphicon-download"></span>
+        </a>
+        <span tabindex="0"
+              class="glyphicon glyphicon-trash"
+              role="button"
+              data-toggle="popover"
+              data-trigger="focus"
+              title="Delete this document ?">
+        </span>
+
+    </div>
+</div>
+

@@ -1,22 +1,14 @@
-{% extends 'cntapp/base.html' %}
 {% load staticfiles %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:"en-us" }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>{{ title | default:"Edupi" }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'bootstrap/dist/css/bootstrap.css' %}">
+</head>
 
-{% block extra_stylesheet %}
-    <link rel="stylesheet" type="text/css" href="{% static 'cntapp/style.css' %}" xmlns="http://www.w3.org/1999/html">
-{% endblock %}
-
-{% block content %}
-    <div class="jumbotron">
-    <div class="page-header">
-        <h1>
-            Edupi
-            <br>
-            <small>
-                We all need to learn
-            </small>
-        </h1>
-        <br>
-    </div>
-        <a class="btn btn-warning" id="id_get_started" href="{% url 'cntapp:root' %}">Get started</a>
-    </div>
-{% endblock %}
+<body>
+<script data-main="{% static 'cntapp/custom/src/main.js' %}" src="{% static 'requirejs/require.js' %}"></script>
+</body>
+</html>

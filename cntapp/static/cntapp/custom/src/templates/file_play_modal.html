@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div class="modal" id="modal-<%= model.get('id') %>" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog custom-class">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalLabel"><%= model.get('name') %></h4>
+            </div>
+            <div class="modal-body">
+                <%
+                var dType = model.get('type');
+                %>
+                <% if (dType === 'v') { %>
+                    <video id="file-<%= model.get('id') %>" controls>
+                        <source src="<%= model.get('file') %>" type="video/mp4">
+                    </video>
+                <% } else if (dType === 'a') { %>
+                    <audio id="file-<%= model.get('id') %>" controls>
+                        <source src="<%= model.get('file') %>" type="audio/mpeg">
+                    </audio>
+                <% } else if (dType === 'i') { %>
+                    <img class="img-responsive" src="<%= model.get('file') %>">
+                <% } else if (dType === 'p') { %>
+                    <div style="height: 80vh">
+                        <embed src="<%= model.get('file') %>" type='application/pdf' width="100%" height="100%"></embed>
+                    </div>
+                <% } else { %>
+                    <p>
+                        This file cannot be displayed.
+                    </p>
+                <% } %>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
