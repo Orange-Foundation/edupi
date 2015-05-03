@@ -2,12 +2,19 @@ define([
     'underscore',
     'backbone',
 
-    'bootstrap_table'
+    'bootstrap_table',
+    'bootstrap_table_editable'
 ], function (_, Backbone) {
 
     var DocumentsTableView = Backbone.View.extend({
         render: function () {
-            this.$el.html("<table id='table'></table>");
+            this.$el.html([
+                    '<link rel="stylesheet" href="/static/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css">',
+                    "<table id='table'></table>",
+                ].join('')
+            );
+
+            var that = this;
 
             this.$('#table').bootstrapTable({
                 height: 519,
@@ -20,20 +27,46 @@ define([
                 sidePagination: 'server',
 
                 columns: [{
+                    field: 'id',
+                    title: 'ID',
+                    sortable: true
+                }, {
                     field: 'name',
-                    title: 'Name'
+                    title: 'Name',
+                    sortable: true,
+                    editable: true
                 }, {
                     field: 'description',
-                    title: 'Description'
+                    title: 'Description',
+                    sortable: true,
+                    editable: true
+                }, {
+                    field: 'type',
+                    title: 'Type',
+                    sortable: true
                 }, {
                     field: 'action',
                     title: 'Action',
                     formatter: function () {
                         return [
+                            '<a class="detail" href="javascript:void(0)" title="Detail">',
+                            '<i class="glyphicon glyphicon-plus-sign"></i>',
+                            '</a> ',
                             '<a class="remove" href="javascript:void(0)" title="Remove">',
                             '<i class="glyphicon glyphicon-remove"></i>',
                             '</a>'
                         ].join('');
+                    },
+                    events: {
+                        'click .detail': function (e, value, row, index) {
+                            console.log("TODO: show document detail");
+                        },
+                        'click .remove': function (e, value, row, index) {
+                            that.$('table').bootstrapTable('remove', {
+                                field: 'id',
+                                values: [row.id]
+                            });
+                        }
                     }
                 }]
             });
