@@ -1,16 +1,20 @@
 define([
     'underscore',
     'backbone',
+    'views/navbar',
     'text!templates/index.html'
-], function (_, Backbone, indexTemplate) {
+], function (_, Backbone, NavbarView, indexTemplate) {
+
+    var INDEX_TEMPLATE = _.template(indexTemplate);
+
     var IndexView = Backbone.View.extend({
 
         initialize: function () {
-            this.template = _.template(indexTemplate);
         },
 
         render: function () {
-            this.$el.html(this.template({}));
+            this.$el.html(INDEX_TEMPLATE());
+            this.$('#nav-zone').html(new NavbarView().render().el);
             return this;
         }
     });

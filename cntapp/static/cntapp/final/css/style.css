@@ -4,15 +4,51 @@ html {
 }
 
 body {
-    padding-top: 70px;
+    padding-top: 50px;
     margin-bottom: 30px; /* for footer */
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  /* Set the fixed height of the footer here */
-  height: 30px;
-  background-color: #f5f5f5;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* Set the fixed height of the footer here */
+    height: 30px;
+    background-color: #f5f5f5;
+}
+
+.btn-root {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+}
+
+.btn-dir {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    font-family: sans-serif;
+    height: 100px;
+    line-height: 80px;
+    font-size: 20px;
+    color: orange;
+    background-color: #ffffff;
+}
+
+.nav .breadcrumb {
+    margin: 0 7px;
+}
+
+@media (min-width: 768px) {
+    .nav .breadcrumb {
+        float: left;
+        margin: 7px 10px;
+    }
+}
+
+.top-buffer {
+    margin-top: 30px;
+}
+
+.statebar-top-buffer {
+    margin-top: 50px;
 }

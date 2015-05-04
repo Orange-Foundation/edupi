@@ -1,40 +1,29 @@
-require.config({
-    // for development purpose, ensure the newest version js at each time
-    urlArgs: "bust=" + (new Date()).getTime(),
+define([
+    'backbone',
+    'views/index',
+    'views/structure',
+    'views/directory_list'
+], function (Backbone, IndexView, StructureView, DirectoryListView) {
+    var AppRouter;
 
-    paths: {
-        'jquery': '/static/jquery/dist/jquery',
-        'underscore': '/static/underscore/underscore',
-        'backbone': '/static/backbone/backbone',
-        'bootstrap': '/static/bootstrap/dist/js/bootstrap',
-        'bootstrap_table': '/static/bootstrap-table/src/bootstrap-table',
-        'text': '/static/requirejs-text/text',
-        'dropzone': '/static/dropzone/dist/dropzone-amd-module',
-    },
-    shim: {
-        'underscore': {
-            exports: '_'
+    AppRouter = Backbone.Router.extend({
+        initialize: function () {
+            this.route(/^$/, 'indexRoute');
+            this.route(/^directories$/, 'directories');
         },
-        'backbone': {
-            deps: ['underscore', 'jquery'],
-            exports: 'Backbone'
+
+        indexRoute: function () {
+            $("body").html(new IndexView().render().el);
+        },
+
+        directories: function () {
+            // (re-)init page structure
+            $("body").html(new StructureView().render().el);
+            // show directories
+            $("#content").html(new DirectoryListView().render().el)
         }
-    }
-});
 
-define('kickstart', function (require) {
-    // import external js modules
-    require('bootstrap');
-
-    // define global variables here if needed
-    // `cntapp` contains the current state of the application
-    cntapp = require('app');
-
-    Backbone.history.start();
-});
-
-require(['jquery'], function($) {
-    $(document).ready(function () {
-        require(['kickstart']);
     });
+
+    return AppRouter;
 });
