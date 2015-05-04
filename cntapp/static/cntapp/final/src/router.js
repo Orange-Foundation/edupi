@@ -1,11 +1,14 @@
 define([
     'backbone',
-    'views/index',
-    'views/structure',
-    'views/directory_list',
-    'views/statebar',
+    'views/index', 'views/structure',
+    'views/directory_list', 'views/statebar',
+    'views/document_list',
     'models/directory'
-], function (Backbone, IndexView, StructureView, DirectoryListView, StateBarView, Directory) {
+], function (Backbone,
+             IndexView, StructureView,
+             DirectoryListView, StateBarView,
+             DocumentListView,
+             Directory) {
     var AppRouter, _currentPath, _refreshCurrentPath;
 
     _currentPath = new Backbone.Collection({model: Directory});
@@ -39,7 +42,7 @@ define([
         },
 
         showDirectoryContent: function (path) {
-            var structureView, dirsView;
+            var structureView, dirsView, documentsView;
 
             // (re-)init page structure
             structureView = new StructureView();
@@ -52,8 +55,10 @@ define([
             dirsView = new DirectoryListView({path: path});
             $("#content").html(dirsView.fetchAndRender().el);
 
-
-            // TODO: show documents
+            var dirId = path.slice(path.lastIndexOf('/') + 1);
+            console.log("dirId:" + dirId);
+            documentsView = new DocumentListView({parentId: dirId});
+            $("#content").append(documentsView.render().el);
         }
 
     });
