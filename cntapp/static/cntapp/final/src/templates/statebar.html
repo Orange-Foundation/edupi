@@ -4,8 +4,13 @@
             <li>
                 <ul class="breadcrumb list-inline">
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">Library</a></li>
-                    <li class="active">Data</li>
+                    <%
+                    var link = '#directories';
+                    _.each(path, function (dir) {
+                        link = link + '/' + dir.get('id');
+                    %>
+                        <li><a href="<%= link %>"><%= dir.get('name') %></a></li>
+                    <% }); %>
                 </ul>
             </li>
         </ul>

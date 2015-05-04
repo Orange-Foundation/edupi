@@ -1,11 +1,18 @@
 <div class="row">
-    <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
-        <a class="btn btn-warning btn-block btn-lg btn-dir" href="#directories">Exo 1</a>
+    <% if (directories && directories.length > 0) { %>
+        <% _.each(directories, function (directory) { %>
+        <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
+            <a class="btn btn-warning btn-block btn-lg btn-dir" href="#directories/<%= path %>/<%= directory.get('id') %>">
+                <%= directory.get('name') %>
+            </a>
+        </div>
+        <% }); %>
+    <% } else { %>
+    <div class="col-xs-8">
+        <h4>
+            Oops, no sub directory here
+        </h4>
     </div>
-    <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
-        <a class="btn btn-warning btn-block btn-lg btn-dir" href="#directories">Exo 2</a>
-    </div>
-    <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
-        <a class="btn btn-warning btn-block btn-lg btn-dir" href="#directories">TEXT</a>
-    </div>
+    <% } %>
+
 </div>

@@ -18,7 +18,7 @@ define([
         render: function () {
             this.$el.html(PAGE_STRUCTURE_TEMPLATE());
             this.$("#nav-zone").html(new NavbarView().render().el);
-            this.$("#nav-zone").append(new StateBarView().render().el);
+            //this.$("#nav-zone").append(new StateBarView({path: path}).render().el);
             this.$("#footer-zone").append(FOOTER_TEMPLATE());
             return this;
         }

@@ -10,11 +10,28 @@ define([
     var IndexView = Backbone.View.extend({
 
         initialize: function () {
+            this.collection = new Backbone.Collection({model: Backbone.Model});
+            this.listenTo(this.collection, 'reset', this.render);
         },
 
         render: function () {
-            this.$el.html(INDEX_TEMPLATE());
+            var context = {
+                directories: (this.collection && this.collection.models) || null
+            };
+            this.$el.html(INDEX_TEMPLATE(context));
             this.$('#nav-zone').html(new NavbarView().render().el);
+            return this;
+        },
+
+        fetchAndRender: function () {
+            // get the root directories
+            var that, url;
+            that = this;
+            url = "/api/directories/?root=true";
+            $.getJSON(url)
+                .done(function (data) {
+                    that.collection.reset(data);
+                });
             return this;
         }
     });

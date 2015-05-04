@@ -6,13 +6,15 @@
             <img class="img-responsive" src="/static/cntapp/final/images/levels.JPG">
         </div>
 
+        <% _.each(directories, function (directory) { %>
         <div class="col-xs-6 col-xs-offset-3 col-sm-4 col-sm-offset-1">
-            <a class="btn btn-success btn-block btn-lg btn-root" href="#directories">TEXT</a>
+            <a class="btn btn-warning btn-block btn-lg btn-root"
+               href="#directories/<%= directory.get('id') %>">
+                <%= directory.get('name') %>
+            </a>
         </div>
+        <% }); %>
 
-        <div class="col-xs-6 col-xs-offset-3 col-sm-4 col-sm-offset-1">
-            <a class="btn btn-warning btn-block btn-lg btn-root">TEXT</a>
-        </div>
     </div>
 </div>
 <div id="foot-zone">
