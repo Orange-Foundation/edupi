@@ -1,6 +1,6 @@
-<div class="row">
+<div class="row document-row" style="cursor: pointer;">
     <div class="col-xs-4">
-    <a href="<%= model.get('file') %>" target="_blank">
+    <a>
         <%
         var imageFile, dType;
         dType = model.get('type');
@@ -29,7 +29,6 @@
     </a>
     </div>
     <div class="col-xs-8">
-
         <!-- Play files -->
         <% if (['v', 'a', 'i', 'p'].indexOf(model.get('type')) > -1) { %>
             <a type="button"
@@ -50,4 +49,3 @@
         </p>
     </div>
 </div>
-
