@@ -1,4 +1,9 @@
-<div class="row document-row" style="cursor: pointer;">
+<div class="row document-row"
+     role="button"
+     style="cursor: pointer;"
+     data-toggle="modal"
+     data-target="#modal-<%= model.get('id') %>">
+
     <div class="col-xs-4">
     <a>
         <%
@@ -29,20 +34,7 @@
     </a>
     </div>
     <div class="col-xs-8">
-        <!-- Play files -->
-        <% if (['v', 'a', 'i', 'p'].indexOf(model.get('type')) > -1) { %>
-            <a type="button"
-               class="btn-play"
-               data-toggle="modal"
-               data-target="#modal-<%= model.get('id') %>">
-                <%= model.get('name') %>
-            </a>
-        <% } else { %>
-            <a href="<%= model.get('file') %>" target="_blank">
-                <%= model.get('name') %>
-            </a>
-        <% } %>
-
+        <a><%= model.get('name') %></a>
         <br>
         <p>
             <%= model.get('description') %>

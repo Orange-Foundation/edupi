@@ -52,3 +52,10 @@ body {
 .statebar-top-buffer {
     margin-top: 50px;
 }
+
+/*for modal window*/
+@media screen and (min-width: 768px) {
+    .custom-class {
+        width: 70%;
+    }
+}
