@@ -1,10 +1,14 @@
+from datetime import datetime
 import os
 import tempfile
-import copy
+import logging
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from wand.image import Image
 from rest_framework import serializers
+
+
+logger = logging.getLogger(__name__)
 
 from .models import Directory, Document
 
@@ -38,7 +42,10 @@ class DocumentSerializer(serializers.ModelSerializer):
             validated_data['type'] = Document.TYPE_OTHERS
 
     def create(self, validated_data):
+        logger.info('copying files...')
         self.fill_document_type(validated_data)
+
+        start = datetime.now()
         if 'thumbnail' in validated_data:
             return super().create(validated_data)
 
@@ -61,5 +68,7 @@ class DocumentSerializer(serializers.ModelSerializer):
                 file_path = os.path.join('/tmp', file_name)
                 with open(file_name, 'rb') as f:
                     validated_data['thumbnail'] = SimpleUploadedFile(file_name, f.read())
+
+        logger.info('%d secs elapsed for generating the file...' % (datetime.now() - start).seconds)
 
         return super().create(validated_data)
