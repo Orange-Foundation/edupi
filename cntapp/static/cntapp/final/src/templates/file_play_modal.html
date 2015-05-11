@@ -1,0 +1,42 @@
+<!-- Modal -->
+<div class="modal" id="modal-<%= model.get('id') %>" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog custom-class">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="modalLabel"><%= model.get('name') %></h4>
+            </div>
+            <div class="modal-body">
+                <%
+                var dType = model.get('type');
+                %>
+                <% if (dType === 'v') { %>
+                    <video id="file-<%= model.get('id') %>" width="100%" controls>
+                        <source src="<%= model.get('file') %>" type="video/mp4">
+                    </video>
+                <% } else if (dType === 'a') { %>
+                    <audio id="file-<%= model.get('id') %>" controls>
+                        <source src="<%= model.get('file') %>" type="audio/mpeg">
+                    </audio>
+                <% } else if (dType === 'i') { %>
+                    <img class="img-responsive" width="100%" src="<%= model.get('file') %>">
+                <% } else { %>
+                    <p>
+                        This file cannot be displayed on browser. How about downloading this file?
+                    </p>
+                    <hr/>
+                <% } %>
+                <p>
+                    <%= model.get('description') %>
+                </p>
+
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-default" href="<%= model.get('file') %>" download>
+                    <span class="glyphicon glyphicon-download"></span> Download</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">
+                    <span class="glyphicon glyphicon-eye-close"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>

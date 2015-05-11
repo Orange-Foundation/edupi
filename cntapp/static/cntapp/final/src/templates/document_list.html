@@ -1,18 +1,22 @@
-<table class="table well">
-    <thead>
-    <tr>
-        <th>File Name</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
+<div class="row">
+    <div class="col-xs-8 col-xs-offset-2 col-sm-6 col-sm-offset-3">
 
+    </div>
+</div>
+
+<table class="table">
+    <tbody>
     <% if (documents.length > 0) { %>
         <% _.each(documents, function (d) { %>
         <tr>
             <td>
                 <a document-id="<%= d['id'] %>" href="<%= d['file'] %>" target="_blank">
                     <%= d['name'] %>
+                </a>
+            </td>
+            <td>
+                <a name="edit" href="#documents/<%= d['id'] %>/edit" class="btn btn-default">
+                    Edit
                 </a>
             </td>
         </tr>
@@ -26,5 +30,4 @@
 
     </tbody>
 </table>
-
 

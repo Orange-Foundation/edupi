@@ -1,0 +1,18 @@
+<nav class="navbar navbar-default navbar-static-top navbar-lower" role="navigation">
+    <div class="container">
+        <ul class="nav navbar-nav navbar-left">
+            <li>
+                <ul class="breadcrumb list-inline">
+                    <li><a href="#">Home</a></li>
+                    <%
+                    var link = '#directories';
+                    _.each(path, function (dir) {
+                        link = link + '/' + dir.get('id');
+                    %>
+                        <li><a href="<%= link %>"><%= dir.get('name') %></a></li>
+                    <% }); %>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</nav>
