@@ -15,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 THUMBNAIL_CREATE_TIMEOUT = 30  # second
 
+MAX_PDF_SIZE_FOR_THUMBNAIL = 200 * 1024 * 1024  # Bytes
+
 
 class DirectorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -57,7 +59,7 @@ class DocumentSerializer(serializers.ModelSerializer):
                 validated_data['thumbnail'] = SimpleUploadedFile(file_name, f.read())
 
     def create(self, validated_data):
-        logger.info('copying files...')
+        logger.debug('creating document ...')
         self.fill_document_type(validated_data)
 
         start = datetime.now()
@@ -74,13 +76,17 @@ class DocumentSerializer(serializers.ModelSerializer):
                 validated_data['thumbnail'] = SimpleUploadedFile(uploaded_file.name, f.read())
 
         elif content_type in ['application/pdf']:
-            t = threading.Thread(name='create-pdf-thumbnail',
-                                 target=self.create_pdf_thumbnail, args=(validated_data,))
-            t.start()
-            t.join(timeout=THUMBNAIL_CREATE_TIMEOUT)
-            if 'thumbnail' not in validated_data:
-                logger.warn('thumbnail is not generated for "%s"' % validated_data['name'])
+            if uploaded_file.size < MAX_PDF_SIZE_FOR_THUMBNAIL:
+                t = threading.Thread(name='create-pdf-thumbnail',
+                                     target=self.create_pdf_thumbnail, args=(validated_data,))
+                t.start()
+                t.join(timeout=THUMBNAIL_CREATE_TIMEOUT)
+                if 'thumbnail' not in validated_data:
+                    logger.warn('thumbnail is not generated for "%s" because of timeout.' % validated_data['name'])
+            else:
+                logger.warn('the pdf file "%s" is too large (>%d Bytes) to generate thumbnail.'
+                            % (validated_data['name'], MAX_PDF_SIZE_FOR_THUMBNAIL))
 
-        logger.info('%d secs elapsed for generating the file...' % (datetime.now() - start).seconds)
+        logger.debug('%d secs elapsed for modifying the validated data.' % (datetime.now() - start).seconds)
 
         return super().create(validated_data)
