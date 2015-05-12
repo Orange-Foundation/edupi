@@ -14,6 +14,7 @@ define([
             this.template = _.template(directoriesTemplate);
             //this.collection = new Backbone.Collection({model: Directory});
             this.collection = options.collection;
+            this.path = options.path || null;
             this.listenTo(this.collection, 'reset', this.render);
         },
 
@@ -25,7 +26,8 @@ define([
 
         getContext: function () {
             return {
-                directories: (this.collection && this.collection.models) || null
+                directories: (this.collection && this.collection.models) || null,
+                path: this.path || null
             };
         },
 

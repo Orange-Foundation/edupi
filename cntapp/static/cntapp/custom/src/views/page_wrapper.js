@@ -16,13 +16,13 @@ define([
             // create the page skeleton
             this.$el.html(this.template());
 
-            if (this.stateBarView) {
-                this.$("#state-bar").html(this.stateBarView.render().el);
-            }
-
-            if (this.actionBarView) {
-                this.$("#action-bar").html(this.actionBarView.render().el);
-            }
+            //if (this.stateBarView) {
+            //    this.$("#state-bar").html(this.stateBarView.el);
+            //}
+            //
+            //if (this.actionBarView) {
+            //    this.$("#action-bar").html(this.actionBarView.render().el);
+            //}
 
             if (this.contentView) {
                 this.$("#content").html(this.contentView.render().el);

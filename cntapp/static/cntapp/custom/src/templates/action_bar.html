@@ -1,8 +1,15 @@
-<a id="create-directory" class="btn btn-primary">
+<a id="create-directory"
+   class="btn btn-primary btn-create"
+   data-toggle="modal"
+   data-target="#modal-create"
+   type="button"
+        >
     Create Directory
 </a>
 
 <% if (parentId) { %>
 <a id="btn-upload-to-directory" href="#directories/<%= parentId %>/upload"
-   class="btn btn-primary">Upload</a>
+   class="btn btn-primary btn-upload">Upload</a>
 <% }; %>
+
+<div class="modal-area"></div>
