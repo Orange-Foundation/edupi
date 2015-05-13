@@ -34,7 +34,7 @@ define([
             this.$el.html(TEMPLATE());
 
             stateBarView = new StateBarView({path: this.path});
-            actionBarView = new ActionBarView({parentId: this.parentId});
+            actionBarView = new ActionBarView({path: this.path, parentId: this.parentId});
             contentView = new StructureContentView({
                 currentDirectories: this.currentDirectories,
                 path: this.path,

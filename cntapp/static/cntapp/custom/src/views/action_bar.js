@@ -11,13 +11,13 @@ define([
     var ActionBarView = Backbone.View.extend({
         initialize: function (options) {
             options = options || {};
+            this.path = options.path;
             this.parentId = options.parentId;
-            //this.template = _.template(actionBarTemplate);
         },
 
         render: function () {
             var that = this;
-            this.$el.html(ACTION_BAR_TEMPLATE({parentId: this.parentId}));
+            this.$el.html(ACTION_BAR_TEMPLATE({path: this.path, parentId: this.parentId}));
             return this;
         },
 
