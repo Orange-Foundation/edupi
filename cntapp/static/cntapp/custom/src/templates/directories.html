@@ -13,10 +13,15 @@
     </tr>
     <% } %>
 
+    <%
+    var baseLink = '#directories';
+    baseLink += path ? '/' + path : '';
+    %>
+
     <% _.each(directories, function (directory) { %>
     <tr>
         <td>
-            <a directory-id='<%= directory.get("id") %>' href='#directories/<%= path %>/<%= directory.get("id") %>'
+            <a directory-id='<%= directory.get("id") %>' href='<%= baseLink %>/<%= directory.get("id") %>'
                class="sub-directory">
                 <%= directory.get('name') %>
             </a>

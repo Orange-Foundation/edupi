@@ -3,13 +3,13 @@ define([
     'views/structure_content',
     'views/documents_table',
     'views/documents_upload',
-    'views/directories_page',
+    'views/directories_page', 'views/root_page',
     'models/directory'
 ], function (Backbone,
              StructureContentView,
              DocumentsTableView,
              DocumentsUploadView,
-             DirectoriesPageView,
+             DirectoriesPageView, RootPageView,
              Directory) {
     var PAGE_WRAPPER = "#page-wrapper";
 
@@ -36,8 +36,9 @@ define([
     AppRouter = Backbone.Router.extend({
 
         initialize: function () {
+            this.route(/^directories$/, 'showRootPage');
             // valid path example: 1/22/33/44
-            this.route(/^directories\/((?:\d+)(?:\/\d+)*)$/, 'structure');
+            this.route(/^directories\/((?:\d+)(?:\/\d+)*)$/, 'showDirectoryPage');
             // documents
             this.route(/^documents$/, 'listDocuments');
             this.route(/^documents\/upload$/, 'uploadDocuments');
@@ -49,7 +50,18 @@ define([
             cntapp.views.pageWrapper.render();
         },
 
-        structure: function (path) {
+        showRootPage: function () {
+            var dirs = cntapp.collections.directories,
+                that = this;
+            dirs.fetch({
+                reset: true,
+                success: function () {
+                    that.renderToContent(new RootPageView());
+                }
+            })
+        },
+
+        showDirectoryPage: function (path) {
             var dirs = cntapp.collections.directories,
                 that = this;
             if (dirs.length > 0) {
@@ -66,7 +78,7 @@ define([
         },
 
         indexRoute: function () {
-            this.navigate('#directories/2', {trigger: true});
+            this.navigate('#directories', {trigger: true});
         }
     });
 

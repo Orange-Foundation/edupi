@@ -5,20 +5,19 @@ define([
 ], function (_, Backbone,
              actionBarTemplate, createDirectoryModalTemplate) {
 
-    var CREATE_DIRECTORY_MODAL = _.template(createDirectoryModalTemplate);
+    var CREATE_DIRECTORY_MODAL = _.template(createDirectoryModalTemplate),
+        ACTION_BAR_TEMPLATE = _.template(actionBarTemplate);
 
     var ActionBarView = Backbone.View.extend({
         initialize: function (options) {
+            options = options || {};
             this.parentId = options.parentId;
-            this.template = _.template(actionBarTemplate);
+            //this.template = _.template(actionBarTemplate);
         },
 
         render: function () {
             var that = this;
-            var html = this.template({
-                parentId: this.parentId
-            });
-            this.$el.html(html);
+            this.$el.html(ACTION_BAR_TEMPLATE({parentId: this.parentId}));
             return this;
         },
 

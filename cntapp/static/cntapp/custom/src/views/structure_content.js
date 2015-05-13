@@ -17,10 +17,6 @@ define([
             this.parentId = options.parentId || null;
         },
 
-        //setParentId: function (parentId) {
-        //    this.parentId = parentId;
-        //},
-
         render: function () {
             console.log('rendering content view');
             // show directories
