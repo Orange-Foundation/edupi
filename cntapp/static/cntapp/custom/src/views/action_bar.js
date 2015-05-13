@@ -1,11 +1,13 @@
 define([
     'underscore', 'backbone',
     'text!templates/action_bar.html',
-    'text!templates/create_directory_modal.html'
+    'text!templates/create_directory_modal.html',
+    'text!templates/confirm_modal.html'
 ], function (_, Backbone,
-             actionBarTemplate, createDirectoryModalTemplate) {
+             actionBarTemplate, createDirectoryModalTemplate, confirmModalTemplate) {
 
     var CREATE_DIRECTORY_MODAL = _.template(createDirectoryModalTemplate),
+        CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate),
         ACTION_BAR_TEMPLATE = _.template(actionBarTemplate);
 
     var ActionBarView = Backbone.View.extend({

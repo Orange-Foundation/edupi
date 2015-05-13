@@ -3,13 +3,19 @@ define([
     'underscore',
     'backbone',
     'text!templates/directory.html',
-    'text!templates/edit_directory_modal.html'
-], function ($, _, Backbone, directoryTemplate, editDirectoryModalTemplate) {
+    'text!templates/edit_directory_modal.html',
+    'text!templates/confirm_modal.html'
 
-    var DirectoryView, TEMPLATE, EDIT_DIRECTORY_MODAL_TEMPLATE;
+], function ($, _, Backbone, directoryTemplate, editDirectoryModalTemplate, confirmModalTemplate) {
+
+    var DirectoryView, TEMPLATE, EDIT_DIRECTORY_MODAL_TEMPLATE, CONFIRM_MODAL_TEMPLATE,
+        DELETE_CONFIRM_MSG = 'Are you sure to delete this directory? ' +
+            'This will also delete its sub directories, but will not delete the linked documents.';
 
     TEMPLATE = _.template(directoryTemplate);
     EDIT_DIRECTORY_MODAL_TEMPLATE = _.template(editDirectoryModalTemplate);
+    CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate);
+
 
     var DirectoryView = Backbone.View.extend({
         tagName: 'tr',
@@ -54,7 +60,32 @@ define([
                         }
                     });
                 }
-            }
+            },
+
+            'click .btn-delete-directory': function () {
+                this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
+                    title: null,
+                    message: DELETE_CONFIRM_MSG
+                }));
+            },
+
+            'click .btn-confirmed': function () {
+                console.debug('deleting directory id="' + this.model.get('id') + '"');
+
+                var that = this;
+                this.model.destroy({
+                    success: function (model, response) {
+                        that.$('.modal').modal('hide');
+                        console.log('directory destroyed');
+                        console.log(response);
+                        that.$el.fadeOut(200, function () {
+                            $(this).remove();
+                        })
+                    }
+                });
+
+            },
+
         }
     });
 
