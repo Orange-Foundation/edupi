@@ -18,7 +18,7 @@ define([
         },
 
         render: function () {
-            console.log('rendering content view');
+            console.debug('show content view for directory with id="' + this.parentId + '"');
             // show directories
             this.$el.html('<div id="directories"></div>');
             this.directoriesView = new DirectoriesView({

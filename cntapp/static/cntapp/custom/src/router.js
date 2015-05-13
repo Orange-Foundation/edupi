@@ -1,51 +1,30 @@
 define([
     'backbone',
-    'views/structure_content',
     'views/documents_table',
-    'views/documents_upload',
-    'views/directories_page', 'views/root_page',
-    'views/upload_page',
+    'views/directories_page', 'views/root_page', 'views/upload_page',
     'models/directory'
 ], function (Backbone,
-             StructureContentView,
              DocumentsTableView,
-             DocumentsUploadView,
-             DirectoriesPageView, RootPageView,
-             UploadPageView,
+             DirectoriesPageView, RootPageView, UploadPageView,
              Directory) {
     var PAGE_WRAPPER = "#page-wrapper";
 
-    var AppRouter,
-        _refreshCurrentPath;
-
-    _refreshCurrentPath = function (pathCollection, pathArray) {
-        pathCollection = pathCollection || new Backbone.Collection({model: Directory});
-        var pathDirectories, d, i;
-        pathDirectories = [];
-        for (i = 0; i < pathArray.length; i++) {
-            d = new Directory({id: pathArray[i]});
-            d.fetch({
-                success: function (directory) {
-                    pathCollection.push(directory);
-                }
-            });
-            pathDirectories.push(d);
-        }
-        pathCollection.reset(pathDirectories);
-        return pathCollection;
-    };
+    var AppRouter;
 
     AppRouter = Backbone.Router.extend({
 
         initialize: function () {
+            // root directories
             this.route(/^directories$/, 'showRootPage');
+
+            // sub directories directories
             // valid path example: 1/22/33/44
             this.route(/^directories\/((?:\d+)(?:\/\d+)*)$/, 'showDirectoryPage');
             this.route(/^directories\/((?:\d+)(?:\/\d+)*)\/upload$/, 'showUploadPage');
 
             // documents
             this.route(/^documents$/, 'listDocuments');
-            this.route(/^documents\/upload$/, 'uploadDocuments');
+
             this.route(/^$/, 'indexRoute');
         },
 

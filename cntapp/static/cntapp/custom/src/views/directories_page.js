@@ -8,15 +8,15 @@ define([
     'views/structure_content', 'views/state_bar', 'views/action_bar',
     'models/directory',
     'collections/directories',
-    'text!templates/directories_page.html'
+    'text!templates/basic_page.html'
 ], function (_, Backbone,
              StructureContentView, StateBarView, ActionBarView,
              Directory,
              DirectoriesCollection,
-             directoriesPageTemplate) {
+             basicPageTemplate) {
     var DirectoriesPageView, TEMPLATE;
 
-    TEMPLATE = _.template(directoriesPageTemplate);
+    TEMPLATE = _.template(basicPageTemplate);
 
     DirectoriesPageView = Backbone.View.extend({
 
@@ -39,7 +39,7 @@ define([
                 parentId: this.parentId
             });
 
-            this.$('.directories').html(contentView.render().el);
+            this.$('.main-content').html(contentView.render().el);
             this.$('.state-bar').html(stateBarView.refreshAndRender().el);
             this.$('.action-bar').html(actionBarView.render().el);
             return this;

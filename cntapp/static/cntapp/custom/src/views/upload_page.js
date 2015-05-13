@@ -3,7 +3,7 @@ define([
     'backbone',
     'views/state_bar', 'views/upload_document_to_directory',
     'models/directory',
-    'text!templates/directories_page.html'
+    'text!templates/basic_page.html'
 ], function (_, Backbone,
              StateBarView, UploadView,
              Directory,

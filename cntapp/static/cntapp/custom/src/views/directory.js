@@ -23,7 +23,6 @@ define([
             this.baseLink += this.path ? '/' + this.path : '';
 
             this.model.on('invalid', function (model, error) {
-                console.log('innnnnvvvaaaalliiiddd:' + error);
                 this.$('.error-msg').html(error);
             }, this);
         },
@@ -44,7 +43,9 @@ define([
             'click .btn-edit-confirm': function () {
                 var that = this,
                     name = this.$('input[name="name"]').val();
-                if (name !== this.model.get("name")) {
+                if (name === this.model.get("name")) {
+                    that.$('.modal').modal('hide');  // nothing to update
+                } else {
                     this.model.save({"name": name}, {
                         patch: true,
                         success: function () {
@@ -52,18 +53,9 @@ define([
                             that.render();
                         }
                     });
-                } else {
-                    that.$('.modal').modal('hide');
                 }
             }
-        },
-
-        serializeForm: function (form) {
-            return _.object(_.map(form.serializeArray(), function (item) {
-                return [item.name, item.value];
-            }));
         }
-
     });
 
     return DirectoryView;

@@ -1,0 +1,15 @@
+<td>
+    <a directory-id='<%= model.get("id") %>' href='<%= baseLink %>/<%= model.get("id") %>'
+       class="sub-directory">
+        <%= model.get('name') %>
+    </a>
+</td>
+<td>
+    <a class="btn btn-default btn-edit"
+       data-toggle="modal"
+       data-target="#modal-directory-edit-<%= model.get('id') %>"
+       role="button">
+        Edit
+    </a>
+    <div class="modal-area"></div>
+</td>

@@ -23,31 +23,31 @@ define([
 
         events: {
             'click .btn-create': function () {
-                console.log('creating ...');
                 this.$('.modal-area').html(CREATE_DIRECTORY_MODAL());
+                console.debug('show create-directory-modal');
             },
 
             'submit form': 'submit'
         },
 
         submit: function (event) {
+            var data, url,
+                that = this;
+
             event.preventDefault();
-            console.log('prevent submit');
             this.form = this.$(event.currentTarget);
-            var data = this.serializeForm(this.form);
-            var url = "/api/directories/";
-            if (this.parentId) {
-                url = url + this.parentId + "/create_sub_directory/";
-            }
+            data = this.serializeForm(this.form);
+            url = cntapp.apiRoots.directories;
+            url = this.parentId ? url + this.parentId + "/create_sub_directory/" : url;
 
             $.post(url, data)
-                .success($.proxy(this.createSuccess, this))
-                .fail($.proxy(this.failure, this));
-        },
-
-        createSuccess: function () {
-            this.$('.modal').modal('hide');
-            Backbone.history.loadUrl(Backbone.history.fragment);
+                .success(function () {
+                    that.$('.modal').modal('hide');
+                    Backbone.history.loadUrl(Backbone.history.fragment);  // reload current url for refreshing page
+                })
+                .fail(function (reason) {
+                    console.error('fail to create directory, reason:' + reason);
+                });
         },
 
         serializeForm: function (form) {

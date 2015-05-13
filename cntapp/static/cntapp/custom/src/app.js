@@ -38,6 +38,10 @@ define([
             },
             collections: {
                 directories: directoriesCollection
+            },
+            apiRoots: {
+                directories: '/api/directories/',
+                documents: '/api/documents/'
             }
         };
     }();

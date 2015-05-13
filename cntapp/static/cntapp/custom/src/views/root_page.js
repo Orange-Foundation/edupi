@@ -8,17 +8,17 @@ define([
     'views/structure_content', 'views/action_bar',
     'models/directory',
     'collections/directories',
-    'text!templates/directories_page.html',
+    'text!templates/basic_page.html',
     'text!templates/root_state_bar.html'
 ], function (_, Backbone,
              StructureContentView, ActionBarView,
              Directory,
              DirectoriesCollection,
-             directoriesPageTemplate,
+             basicPageTemplate,
              rootStateBarTemplate) {
     var RootPageView, TEMPLATE, ROOT_STATE_BAR_TEMPLATE;
 
-    TEMPLATE = _.template(directoriesPageTemplate);
+    TEMPLATE = _.template(basicPageTemplate);
     ROOT_STATE_BAR_TEMPLATE = _.template(rootStateBarTemplate);
 
     RootPageView = Backbone.View.extend({
@@ -36,7 +36,7 @@ define([
                 currentDirectories: this.currentDirectories
             });
 
-            this.$('.directories').html(contentView.render().el);
+            this.$('.main-content').html(contentView.render().el);
             this.$('.action-bar').html(actionBarView.render().el);
             this.$('.state-bar').html(ROOT_STATE_BAR_TEMPLATE());
             return this;
