@@ -58,7 +58,7 @@ define([
         },
 
         listDocuments: function () {
-            new DocumentsTableView({el: PAGE_WRAPPER}).render();
+            this.renderToContent(new DocumentsTableView());
         },
 
         indexRoute: function () {
