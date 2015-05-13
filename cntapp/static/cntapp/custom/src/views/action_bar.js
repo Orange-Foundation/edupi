@@ -24,7 +24,6 @@ define([
         events: {
             'click .btn-create': function () {
                 console.log('creating ...');
-                this.$el.append(CREATE_DIRECTORY_MODAL());
                 this.$('.modal-area').html(CREATE_DIRECTORY_MODAL());
             },
 

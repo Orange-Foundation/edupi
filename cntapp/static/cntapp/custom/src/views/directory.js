@@ -1,0 +1,70 @@
+define([
+    'jquery',
+    'underscore',
+    'backbone',
+    'text!templates/directory.html',
+    'text!templates/edit_directory_modal.html'
+], function ($, _, Backbone, directoryTemplate, editDirectoryModalTemplate) {
+
+    var DirectoryView, TEMPLATE, EDIT_DIRECTORY_MODAL_TEMPLATE;
+
+    TEMPLATE = _.template(directoryTemplate);
+    EDIT_DIRECTORY_MODAL_TEMPLATE = _.template(editDirectoryModalTemplate);
+
+    var DirectoryView = Backbone.View.extend({
+        tagName: 'tr',
+
+        initialize: function (options) {
+            if (options.path && typeof options.path !== 'string') {
+                throw new TypeError("expected 'string', by got:" + typeof options.path);
+            }
+            this.path = options.path;
+            this.baseLink = '#directories';
+            this.baseLink += this.path ? '/' + this.path : '';
+
+            this.model.on('invalid', function (model, error) {
+                console.log('innnnnvvvaaaalliiiddd:' + error);
+                this.$('.error-msg').html(error);
+            }, this);
+        },
+
+        render: function () {
+            this.$el.html(TEMPLATE({
+                baseLink: this.baseLink,
+                model: this.model
+            }));
+            return this;
+        },
+
+        events: {
+            'click .btn-edit': function () {
+                this.$("div.modal-area").html(EDIT_DIRECTORY_MODAL_TEMPLATE({model: this.model}));
+            },
+
+            'click .btn-edit-confirm': function () {
+                var that = this,
+                    name = this.$('input[name="name"]').val();
+                if (name !== this.model.get("name")) {
+                    this.model.save({"name": name}, {
+                        patch: true,
+                        success: function () {
+                            that.$('.modal').modal('hide');
+                            that.render();
+                        }
+                    });
+                } else {
+                    that.$('.modal').modal('hide');
+                }
+            }
+        },
+
+        serializeForm: function (form) {
+            return _.object(_.map(form.serializeArray(), function (item) {
+                return [item.name, item.value];
+            }));
+        }
+
+    });
+
+    return DirectoryView;
+});

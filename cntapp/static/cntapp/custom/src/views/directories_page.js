@@ -5,16 +5,14 @@
 define([
     'underscore',
     'backbone',
-    'views/structure_content',
-    'views/state_bar',
-    'views/action_bar',
+    'views/structure_content', 'views/state_bar', 'views/action_bar',
     'models/directory',
+    'collections/directories',
     'text!templates/directories_page.html'
 ], function (_, Backbone,
-             StructureContentView,
-             StateBarView,
-             ActionBarView,
+             StructureContentView, StateBarView, ActionBarView,
              Directory,
+             DirectoriesCollection,
              directoriesPageTemplate) {
     var DirectoriesPageView, TEMPLATE;
 
@@ -26,7 +24,7 @@ define([
             this.path = options.path;
             this.pathArray = options.path.split('/');
             this.parentId = this.pathArray[this.pathArray.length - 1];
-            this.currentDirectories = new Backbone.Collection({model: Directory});
+            this.currentDirectories = new DirectoriesCollection({model: Directory});
         },
 
         render: function () {

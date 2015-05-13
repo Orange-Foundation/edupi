@@ -5,15 +5,15 @@
 define([
     'underscore',
     'backbone',
-    'views/structure_content',
-    'views/action_bar',
+    'views/structure_content', 'views/action_bar',
     'models/directory',
+    'collections/directories',
     'text!templates/directories_page.html',
     'text!templates/root_state_bar.html'
 ], function (_, Backbone,
-             StructureContentView,
-             ActionBarView,
+             StructureContentView, ActionBarView,
              Directory,
+             DirectoriesCollection,
              directoriesPageTemplate,
              rootStateBarTemplate) {
     var RootPageView, TEMPLATE, ROOT_STATE_BAR_TEMPLATE;
@@ -24,7 +24,7 @@ define([
     RootPageView = Backbone.View.extend({
 
         initialize: function () {
-            this.currentDirectories = new Backbone.Collection({model: Directory});
+            this.currentDirectories = new DirectoriesCollection({model: Directory});
         },
 
         render: function () {
