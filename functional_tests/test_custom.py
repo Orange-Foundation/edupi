@@ -235,3 +235,17 @@ class CustomSiteTestCase(FunctionalTest):
         doc = Document.objects.get(pk=1)
         self.assertEqual("new file name", doc.name)
         self.assertEqual(desc, doc.description)
+
+    def test_upload_page_loaded(self):
+        init_test_dirs()
+        d_a = Directory.objects.get(name="a")
+        self.assertEqual('a', d_a.name)
+
+        self.go_to_directories()
+        self.enter_into_dir(d_a.name)
+
+        # enter into upload page
+        self.browser.find_element_by_id('btn-upload-to-directory').click()
+
+        # ensure that upload module is loaded
+        self.browser.find_element_by_id('file-dropzone').click()

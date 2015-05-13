@@ -1,16 +1,15 @@
 define([
-    'underscore',
-    'backbone',
+    'underscore', 'backbone',
     'views/state_bar', 'views/upload_document_to_directory',
     'models/directory',
     'text!templates/basic_page.html'
 ], function (_, Backbone,
              StateBarView, UploadView,
              Directory,
-             directoriesPageTemplate) {
+             basicPageTemplate) {
     var UploadPageView, TEMPLATE;
 
-    TEMPLATE = _.template(directoriesPageTemplate);
+    TEMPLATE = _.template(basicPageTemplate);
 
     UploadPageView = Backbone.View.extend({
 
@@ -26,7 +25,7 @@ define([
 
             stateBarView = new StateBarView({path: this.path});
             this.$('.state-bar').html(stateBarView.refreshAndRender().el);
-            this.$('.directories').html(new UploadView({path: this.path, parentId: this.parentId}).render().el);
+            this.$('.main-content').html(new UploadView({path: this.path, parentId: this.parentId}).render().el);
             return this;
         }
     });
