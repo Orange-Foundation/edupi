@@ -31,3 +31,11 @@ video {
         width: 70%;
     }
 }
+
+.modal-vertical-center {
+  padding-top: 15%;
+}
+
+.action-bar {
+    padding: 10px;
+}
