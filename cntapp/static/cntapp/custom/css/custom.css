@@ -36,6 +36,6 @@ video {
   padding-top: 15%;
 }
 
-.action-bar {
+.action-bar, .state-bar {
     padding: 10px;
 }

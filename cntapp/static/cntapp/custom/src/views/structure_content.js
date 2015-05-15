@@ -20,7 +20,7 @@ define([
         render: function () {
             console.debug('show content view for directory with id="' + this.parentId + '"');
             // show directories
-            this.$el.html('<div id="directories"></div>');
+            this.$el.html('<div id="directories" class="col-md-12"></div>');
             this.directoriesView = new DirectoriesView({
                 el: this.$("#directories"),
                 collection: this.currentDirectories,
