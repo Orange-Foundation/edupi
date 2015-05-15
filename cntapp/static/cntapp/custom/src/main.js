@@ -36,7 +36,6 @@ define('kickstart', function (require) {
     // `cntapp` contains the current state of the application
     cntapp = require('app');
 
-    Backbone.history.start();
 });
 
 require(['jquery'], function($) {

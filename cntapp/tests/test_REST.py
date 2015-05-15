@@ -145,8 +145,9 @@ class DirectoryRESTTest(BaseRESTTest):
 
     def test_put_rename_dir(self):
         init_test_dirs()
-        res = self.client.put('/api/directories/1/update/', {'name': 'Primary'}, format='json')
-        self.assertEqual({'status': 'directory updated'}, self.render(res))
+        res = self.client.patch('/api/directories/1/', {'name': 'Primary'}, format='json')
+        self.assertEqual({'id': 1, 'name': 'Primary', 'url': 'http://testserver/api/directories/1/'},
+                         self.render(res))
         d = Directory.objects.get(pk=1)
         self.assertEqual('Primary', d.name)
 

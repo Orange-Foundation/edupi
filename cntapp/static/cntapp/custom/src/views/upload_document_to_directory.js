@@ -51,6 +51,7 @@ define([
         UploadView = Backbone.View.extend({
             initialize: function (options) {
                 this.parentId = options.parentId;
+                this.path = options.path;
                 this.template = _.template(uploadTemplate)
             },
 
@@ -62,7 +63,7 @@ define([
 
             events: {
                 'click .btn-finish': function () {
-                    window.history.back();
+                    cntapp.router.navigate('#directories/' + this.path, {trigger: true});
                 }
             }
         });

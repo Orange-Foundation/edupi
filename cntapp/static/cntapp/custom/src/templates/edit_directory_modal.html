@@ -1,0 +1,21 @@
+<!-- Modal -->
+<div class="modal" id="modal-directory-edit-<%= model.get('id') %>" tabindex="-1" role="dialog"
+     aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-vertical-center">
+        <div class="modal-content text-center">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modalLabel">Edit Directory</h4>
+            </div>
+            <div class="modal-body">
+                <input id="input-directory-name" class="form-control"
+                       type='text' name='name'
+                       value='<%= model.get("name") %>' placeholder="name"/>
+                <div class="error-msg"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-edit-confirm">OK</button>
+                <a id="cancel" class="btn btn-danger btn-cancel" role="button" data-dismiss="modal">Cancel</a>
+            </div>
+        </div>
+    </div>
+</div>

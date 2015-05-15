@@ -1,29 +1,47 @@
 define([
-    'underscore',
-    'backbone',
-    'router',
-    'views/nav',
-    'views/page_wrapper',
+    'underscore', 'backbone', 'router',
+    'views/nav', 'views/page_wrapper',
+    'collections/directories',
     'text!templates/container.html'
-], function (_, Backbone, AppRouter, NavbarView, PageWrapperView, containerTemplate) {
+], function (_, Backbone, AppRouter,
+             NavbarView, PageWrapperView,
+             DirectoriesCollection,
+             containerTemplate) {
 
     var app;
 
     app = function () {
         // initialization
         var router = new AppRouter();
-        var navbar, pageWrapper;
+        var navbar, pageWrapper,
+            directoriesCollection;
 
-        $("body").html(_.template(containerTemplate)());
+        navbar = new NavbarView();
+        pageWrapper = new PageWrapperView();
 
-        navbar = new NavbarView({el: "#navbar"});
-        pageWrapper = new PageWrapperView({el: "#page-wrapper"}).render();
+        directoriesCollection = new DirectoriesCollection();
+        directoriesCollection.fetch({
+            reset: true,
+            success: function () {
+                $("body").html(_.template(containerTemplate)());
+                $("#navbar").html(navbar.render().el);
+                $("#page-wrapper").html(pageWrapper.render().el);
+                Backbone.history.start();
+            }
+        });
 
         return {
             router: router,
             views: {
                 navbar: navbar,
                 pageWrapper: pageWrapper
+            },
+            collections: {
+                directories: directoriesCollection
+            },
+            apiRoots: {
+                directories: '/api/directories/',
+                documents: '/api/documents/'
             }
         };
     }();

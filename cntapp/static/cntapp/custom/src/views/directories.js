@@ -1,32 +1,37 @@
 define([
-    'jquery',
-    'underscore',
-    'backbone',
-    'views/document_list',
+    'jquery', 'underscore', 'backbone',
+    'views/directory',
     'models/directory',
     'text!templates/directories.html'
 ], function ($, _, Backbone,
-             DocumentListView, Directory, directoriesTemplate) {
+             DirectoryView,
+             Directory,
+             directoriesTemplate) {
+
+    var DirectoriesView, TEMPLATE;
+
+    TEMPLATE = _.template(directoriesTemplate);
 
     var DirectoriesView = Backbone.View.extend({
 
         initialize: function (options) {
-            this.template = _.template(directoriesTemplate);
-            //this.collection = new Backbone.Collection({model: Directory});
             this.collection = options.collection;
+            this.path = options.path || null;
             this.listenTo(this.collection, 'reset', this.render);
         },
 
         render: function () {
-            this.$el.html('<div id="directories_table" class="col-md-12"></div>');
-            this.$("#directories_table").html(this.template(this.getContext()));
-            return this;
-        },
+            var that = this;
+            this.$el.html(TEMPLATE());
+            if (this.collection.length === 0) {
+                this.$('tbody').append('<tr><td>there is no sub-directories</td></tr>')
+            } else {
+                _.each(this.collection.models, function (dir) {
+                    that.$('tbody').append(new DirectoryView({model: dir, path: that.path}).render().el);
+                });
+            }
 
-        getContext: function () {
-            return {
-                directories: (this.collection && this.collection.models) || null
-            };
+            return this;
         },
 
         fetchAndRefresh: function (parentId) {

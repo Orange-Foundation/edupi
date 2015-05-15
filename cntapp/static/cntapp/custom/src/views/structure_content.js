@@ -13,18 +13,18 @@ define([
 
         initialize: function (options) {
             this.currentDirectories = options.currentDirectories;
-        },
-
-        setParentId: function (parentId) {
-            this.parentId = parentId;
+            this.path = options.path || null;
+            this.parentId = options.parentId || null;
         },
 
         render: function () {
+            console.debug('show content view for directory with id="' + this.parentId + '"');
             // show directories
-            this.$el.html('<div id="directories"></div>');
+            this.$el.html('<div id="directories" class="col-md-12"></div>');
             this.directoriesView = new DirectoriesView({
                 el: this.$("#directories"),
-                collection: this.currentDirectories
+                collection: this.currentDirectories,
+                path: this.path
             });
             this.directoriesView.fetchAndRefresh(this.parentId);
 
