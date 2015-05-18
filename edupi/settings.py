@@ -22,9 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 SECRET_KEY = 'uz#38i83qtu!#f^^4f7=zs311hg)_82kd&uf4!8f2&q3i30+p#'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -58,7 +58,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 REST_FRAMEWORK = {
-    # 'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),  # enable on prod
+    'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),  # enable on prod
     'DEFAULT_PAGINATION_CLASS': 'edupi.pagination.SimpleLimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
         'edupi.permissions.IsAdminOrReadOnly',
