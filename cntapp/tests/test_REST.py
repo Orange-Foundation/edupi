@@ -1,5 +1,6 @@
 import os
 
+from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.utils.six import BytesIO
 from rest_framework.renderers import JSONRenderer
@@ -11,10 +12,19 @@ from rest_framework import status
 from cntapp.models import Directory, Document
 from .helpers import init_test_dirs, PdfDocumentFactory, DirectoryFactory
 
+User = get_user_model()
+
 
 class BaseRESTTest(TestCase):
     def setUp(self):
+        self.username = 'yuancheng'
+        self.password = 'secret'
+        self.user = User.objects.create_superuser(username=self.username, email='', password=self.password)
         self.client = APIClient()
+
+        if not self.client.login(username=self.username, password=self.password):
+            self.fail('Admin is not login')
+
         PdfDocumentFactory.reset_sequence(force=True)
 
     def render(self, res):
@@ -23,6 +33,14 @@ class BaseRESTTest(TestCase):
 
 
 class DocumentRESTTest(BaseRESTTest):
+
+    def test_without_authentication(self):
+        self.client.logout()
+        file = SimpleUploadedFile('book.txt', 'book content'.encode('utf-8'))
+        res = self.client.post('/api/documents/', {'name': 'book.txt', 'file': file})
+        self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)
+        self.assertEqual(status.HTTP_200_OK, self.client.get('/api/documents/').status_code)
+
     def test_create_document(self):
         # good example
         file = SimpleUploadedFile('book.txt', 'book content'.encode('utf-8'))
@@ -73,7 +91,7 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual(json['description'], '')
         self.assertEqual(json['type'], 'p')  # a real pdf
 
-    def test_get_document(self):
+    def test_get_and_patch_document(self):
         PdfDocumentFactory.create(name="hello.pdf")
         res = self.client.get('/api/documents/1/')
         self.assertEqual(status.HTTP_200_OK, res.status_code)
@@ -98,6 +116,16 @@ class DocumentRESTTest(BaseRESTTest):
 
 
 class DirectoryRESTTest(BaseRESTTest):
+
+    def test_without_authentication(self):
+        self.client.logout()
+        init_test_dirs()
+        dir_a = Directory.objects.first()
+        self.assertEqual(1, dir_a.get_sub_dirs().count())
+        res = self.client.post('/api/directories/1/create_sub_directory/', {'name': 'Primary'}, format='json')
+        self.assertEqual(status.HTTP_403_FORBIDDEN, res.status_code)
+        self.assertEqual(status.HTTP_200_OK, self.client.get('/api/directories/').status_code)
+
     def test_get_dir(self):
         init_test_dirs()
         res = self.client.get('/api/directories/1/')
@@ -137,7 +165,7 @@ class DirectoryRESTTest(BaseRESTTest):
         self.assertEqual(1, dir_a.get_sub_dirs().count())
 
         res = self.client.post('/api/directories/1/create_sub_directory/', {'name': 'Primary'}, format='json')
-        self.assertTrue(status.HTTP_200_OK, res.status_code)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
 
         self.assertEqual(2, dir_a.get_sub_dirs().count())
         self.assertEqual({'status': 'sub directory created'},
