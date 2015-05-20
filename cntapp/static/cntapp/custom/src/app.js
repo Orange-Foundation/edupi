@@ -76,7 +76,8 @@ define([
             apiRoots: {
                 directories: '/api/directories/',
                 documents: '/api/documents/'
-            }
+            },
+            csrfToken: csrfToken
         };
     }();
 

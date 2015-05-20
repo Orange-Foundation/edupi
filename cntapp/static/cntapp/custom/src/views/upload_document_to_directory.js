@@ -26,6 +26,7 @@ define([
                     this.on("sending", function (file, xhr, formData) {
                         // TODO: change file name here
                         formData.append("name", file.name);
+                        formData.append("csrfmiddlewaretoken", cntapp.csrfToken);
                     });
                     this.on('processing', function (file) {
                         console.log('processing:' + file.name);
