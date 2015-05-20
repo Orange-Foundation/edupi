@@ -18,6 +18,15 @@ class CustomSiteTestCase(FunctionalTest):
         self.custom_page_url = self.server_url + '/custom/'
         self.directories_root_url = self.custom_page_url + '#directories'
 
+    def login(self):
+        self.browser.get(self.custom_page_url)
+        self.browser.find_element_by_id('inputUsername').send_keys(self.username)
+        self.browser.find_element_by_id('inputPassword').send_keys(self.password)
+        self.browser.find_element_by_id('inputPassword').send_keys(Keys.ENTER)
+        WebDriverWait(self.browser, 3).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.navbar-brand'))
+        )
+
     def assertElementNotInDOM(self, css_selector):
         try:
             self.browser.find_element_by_css_selector(css_selector)
@@ -42,7 +51,7 @@ class CustomSiteTestCase(FunctionalTest):
         name_input.click()
         name_input.send_keys(dir_name)
         name_input.send_keys(Keys.ENTER)
-        self.assertElementNotInDOM('.modal')
+        # self.assertElementNotInDOM('.modal')  # modal window should disappear, but not instantly
 
         WebDriverWait(self.browser, 1).until(
             EC.text_to_be_present_in_element((By.CSS_SELECTOR, '.table tbody'), dir_name)
@@ -55,15 +64,18 @@ class CustomSiteTestCase(FunctionalTest):
     def assertInDirectoryTable(self, text):
         self.assertIn(text, self.browser.find_element_by_css_selector('.table tbody').text)
 
-    def go_to_directories(self):
-        self.browser.get(self.custom_page_url + "#directories")
+    def go_to_home_page(self):
+        self.browser.get(self.custom_page_url)
+        if self.browser.current_url == self.custom_page_url + 'login/':
+            self.login()
+
         # need some time to load the page
         WebDriverWait(self.browser, 2).until(
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
         )
 
     def test_create_directories(self):
-        self.go_to_directories()
+        self.go_to_home_page()
 
         self.create_dir("primary")
         self.create_dir("secondary")
@@ -85,7 +97,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.create_dir("English")
         self.create_dir("French")
 
-        self.go_to_directories()
+        self.go_to_home_page()
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
 
@@ -107,7 +119,7 @@ class CustomSiteTestCase(FunctionalTest):
             path = self.browser.find_element_by_id("path")
             path.find_element_by_link_text(dir_name).click()
 
-        self.go_to_directories()
+        self.go_to_home_page()
 
         self.enter_into_dir("a")
         check_path(['Home', 'a'])
@@ -142,7 +154,7 @@ class CustomSiteTestCase(FunctionalTest):
         dir_a = Directory.objects.get(name='a')
 
         # go into the root dirs page
-        self.go_to_directories()
+        self.go_to_home_page()
         new_name = 'primary'
         self.assertNotEqual(new_name, dir_a.name)
         self.assertNotInBody(new_name)
@@ -179,6 +191,7 @@ class CustomSiteTestCase(FunctionalTest):
         for i in range(10):
             DocumentFactory()
         # ensure that the table is loaded with data
+        self.login()
         self.browser.get(self.custom_page_url + '#documents')
         WebDriverWait(self.browser, 2).until(
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
@@ -203,7 +216,7 @@ class CustomSiteTestCase(FunctionalTest):
         pdf = PdfDocumentFactory()
         d_a.documents.add(pdf)
 
-        self.go_to_directories()
+        self.go_to_home_page()
         self.enter_into_dir(d_a.name)
         document_li = self.browser.find_element_by_css_selector('li#document-1')
 
@@ -241,7 +254,7 @@ class CustomSiteTestCase(FunctionalTest):
         d_a = Directory.objects.get(name="a")
         self.assertEqual('a', d_a.name)
 
-        self.go_to_directories()
+        self.go_to_home_page()
         self.enter_into_dir(d_a.name)
 
         # enter into upload page
@@ -249,3 +262,11 @@ class CustomSiteTestCase(FunctionalTest):
 
         # ensure that upload module is loaded
         self.browser.find_element_by_id('file-dropzone').click()
+
+    def test_logout(self):
+        self.go_to_home_page()
+        self.browser.find_element_by_link_text('Logout').click()
+        self.assertEqual(self.custom_page_url + 'login/', self.browser.current_url)
+        # cannot access once to home page, must login again
+        self.browser.get(self.custom_page_url)
+        self.assertEqual(self.custom_page_url + 'login/', self.browser.current_url)

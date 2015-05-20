@@ -1,8 +1,10 @@
 import sys
+from django.contrib.auth import get_user_model
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 
+User = get_user_model()
 
 class FunctionalTest(StaticLiveServerTestCase):
 
@@ -22,6 +24,9 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def setUp(self):
         super().setUp()
+        self.username = 'yuancheng'
+        self.password = 'secret'
+        self.user = User.objects.create_superuser(username=self.username, email='', password=self.password)
         self.browser = webdriver.Firefox()
 
     def tearDown(self):
