@@ -62,6 +62,9 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'edupi.pagination.SimpleLimitOffsetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
         'edupi.permissions.IsAdminOrReadOnly',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
     )
 }
 
