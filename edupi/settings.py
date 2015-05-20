@@ -60,6 +60,12 @@ MIDDLEWARE_CLASSES = (
 REST_FRAMEWORK = {
     # 'DEFAULT_RENDERER_CLASSES': ('rest_framework.renderers.JSONRenderer', ),  # enable on prod
     'DEFAULT_PAGINATION_CLASS': 'edupi.pagination.SimpleLimitOffsetPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'edupi.permissions.IsAdminOrReadOnly',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
 
 ROOT_URLCONF = 'edupi.urls'
