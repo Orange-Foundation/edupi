@@ -76,8 +76,7 @@ define([
             apiRoots: {
                 directories: '/api/directories/',
                 documents: '/api/documents/'
-            },
-            isLoggedIn: false
+            }
         };
     }();
 
