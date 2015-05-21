@@ -1,9 +1,16 @@
 define([
-    'underscore', 'backbone', 'router',
+    'underscore', 'backbone',
+    'router',
     'views/nav', 'views/page_wrapper',
     'collections/directories',
-    'text!templates/container.html'
-], function (_, Backbone, AppRouter,
+    'text!templates/container.html',
+
+    'bootstrap',
+    'bootstrap_editable',
+    'bootstrap_table',
+    'bootstrap_table_editable'
+], function (_, Backbone,
+             AppRouter,
              NavbarView, PageWrapperView,
              DirectoriesCollection,
              containerTemplate) {
