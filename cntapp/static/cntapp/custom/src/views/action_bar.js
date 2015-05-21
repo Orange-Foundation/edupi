@@ -1,12 +1,14 @@
 define([
     'underscore', 'backbone',
+    'views/link_documents_modal',
     'text!templates/action_bar.html',
     'text!templates/create_directory_modal.html',
     'text!templates/confirm_modal.html'
 ], function (_, Backbone,
+             LinkDocumentModalView,
              actionBarTemplate, createDirectoryModalTemplate, confirmModalTemplate) {
 
-    var CREATE_DIRECTORY_MODAL = _.template(createDirectoryModalTemplate),
+    var CREATE_DIRECTORY_MODAL_TEMPLATE = _.template(createDirectoryModalTemplate),
         CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate),
         ACTION_BAR_TEMPLATE = _.template(actionBarTemplate);
 
@@ -25,11 +27,18 @@ define([
 
         events: {
             'click .btn-create': function () {
-                this.$('.modal-area').html(CREATE_DIRECTORY_MODAL());
+                this.$('.modal-area').html(CREATE_DIRECTORY_MODAL_TEMPLATE());
                 console.debug('show create-directory-modal');
             },
 
-            'submit form': 'submit'
+            'submit form': 'submit',
+
+            'click .btn-link-documents': function () {
+                var modal = new LinkDocumentModalView();
+                this.$('.modal-area').html(modal.render().el);
+                modal.toggle();
+                console.debug('show documents...');
+            }
         },
 
         submit: function (event) {
