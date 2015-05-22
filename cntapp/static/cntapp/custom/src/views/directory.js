@@ -43,7 +43,11 @@ define([
 
         events: {
             'click .btn-edit': function () {
+                var that = this;
                 this.$("div.modal-area").html(EDIT_DIRECTORY_MODAL_TEMPLATE({model: this.model}));
+                this.$('.modal').on('shown.bs.modal', function () {
+                    that.$('input[name="name"]').focus();
+                });
             },
 
             'click .btn-edit-confirm': function () {
@@ -84,8 +88,7 @@ define([
                     }
                 });
 
-            },
-
+            }
         }
     });
 
