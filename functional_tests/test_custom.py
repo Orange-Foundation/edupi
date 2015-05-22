@@ -198,6 +198,65 @@ class CustomSiteTestCase(FunctionalTest):
         )
         self.assertInBody('Showing 1 to 10 of 10 rows')
 
+    def test_link_documents(self):
+        # create directories and documents
+        init_test_dirs()
+        documents = []
+        for i in range(10):
+            documents.append(PdfDocumentFactory())
+        dir_a = Directory.objects.get(name='a')
+        col_index = {'id': 0, 'name': 1, 'description': 2, 'type': 3, 'action': 4}
+
+        def _get_link_documents_table():
+            # open the documents window and return the table
+            self.browser.find_element_by_id('btn-link-documents-to-directory').click()
+            WebDriverWait(self.browser, 1).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "modal-dialog"))
+            )
+            return self.browser.find_element_by_id('table')
+
+        def _toggle_link(document_table, document_id):
+            row = None
+            rows = document_table.find_elements_by_css_selector('tbody tr')
+            for r in rows:
+                if r.find_elements_by_css_selector('td')[col_index['id']].text == str(document_id):
+                    row = r
+            self.assertIsNotNone(row)  # document must exist
+            data = row.find_elements_by_css_selector('td')
+            data[col_index['action']].find_element_by_tag_name('a').click()  # toggle
+
+        self.login()
+        self.enter_into_dir('a')
+
+        doc_table = _get_link_documents_table()
+        _toggle_link(doc_table, documents[0].id)
+        self.assertEqual(1, documents[0].directory_set.get_queryset().count())
+
+        _toggle_link(doc_table, documents[0].id)
+        self.assertEqual(0, documents[0].directory_set.get_queryset().count())
+
+        # link three documents to the directory 'a'
+        _toggle_link(doc_table, documents[0].id)
+        _toggle_link(doc_table, documents[1].id)
+        _toggle_link(doc_table, documents[2].id)
+        self.assertEqual(3, dir_a.documents.count())
+
+        # link the document[0] to the directory 'b'
+        self.go_to_home_page()
+        self.enter_into_dir('b')
+        doc_table = _get_link_documents_table()
+        _toggle_link(doc_table, documents[0].id)
+
+        # Now the document[0] is linked to directory 'a' and 'b'
+        self.assertEqual(2, documents[0].directory_set.get_queryset().count())
+
+        # close the modal
+        self.browser.find_element_by_css_selector('.modal-footer button').click()
+
+        # the document is in the on the page
+        doc_list = self.browser.find_element_by_id('document-list')
+        self.assertIn(documents[0].name, doc_list.text)
+
     def upload_check(self):
         before = len(Document.objects.all())
         upload_file = os.path.join(os.getcwd(), 'functional_tests/upload/test file.txt')
