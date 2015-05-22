@@ -7,12 +7,12 @@ define([
     'backbone',
     'views/structure_content', 'views/state_bar', 'views/action_bar',
     'models/directory',
-    'collections/directories',
+    'collections/directories', 'collections/documents',
     'text!templates/basic_page.html'
 ], function (_, Backbone,
              StructureContentView, StateBarView, ActionBarView,
              Directory,
-             DirectoriesCollection,
+             DirectoriesCollection, DocumentsCollection,
              basicPageTemplate) {
     var DirectoriesPageView, TEMPLATE;
 
@@ -25,6 +25,7 @@ define([
             this.pathArray = options.path.split('/');
             this.parentId = this.pathArray[this.pathArray.length - 1];
             this.currentDirectories = new DirectoriesCollection({model: Directory});
+            this.currentDocuments = new DocumentsCollection();
         },
 
         render: function () {
@@ -32,9 +33,14 @@ define([
             this.$el.html(TEMPLATE());
 
             stateBarView = new StateBarView({path: this.path});
-            actionBarView = new ActionBarView({path: this.path, parentId: this.parentId});
+            actionBarView = new ActionBarView({
+                path: this.path,
+                parentId: this.parentId,
+                currentDocuments: this.currentDocuments
+            });
             contentView = new StructureContentView({
                 currentDirectories: this.currentDirectories,
+                currentDocuments: this.currentDocuments,
                 path: this.path,
                 parentId: this.parentId
             });

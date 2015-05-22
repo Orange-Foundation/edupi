@@ -122,7 +122,7 @@ BOWER_INSTALLED_APPS = (
     'jquery#2.1.3',
     'bootstrap#3.3.4',
     'x-editable#1.5.1',
-    'bootstrap-table#1.6.0',
+    'bootstrap-table#1.8.0',
     'underscore#1.8.3',
     'backbone#1.1.2',
     'requirejs#2.1.17',
