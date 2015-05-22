@@ -28,7 +28,11 @@ define([
 
         events: {
             'click .btn-create': function () {
+                var that = this;
                 this.$('.modal-area').html(CREATE_DIRECTORY_MODAL_TEMPLATE());
+                this.$('#modal-create').on('shown.bs.modal', function () {
+                    that.$('input[name="name"]').focus();
+                });
                 console.debug('show create-directory-modal');
             },
 
