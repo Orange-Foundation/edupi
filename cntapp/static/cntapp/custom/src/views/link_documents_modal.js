@@ -1,31 +1,28 @@
-/*
- This is a modal view
- */
 define([
     'underscore', 'backbone',
     'models/document',
     'text!templates/link_documents_modal.html',
 
-    'bootstrap_table',
-    //'bootstrap_table_editable'
+    'bootstrap_table'
 ], function (_, Backbone,
              Document,
              linkDocumentsModal) {
-    var DocumentsTableView, LinkDocumentModalView, TEMPLATE;
-
-    var UNLINK_SIGN = [
-        '<a class="unlink" href="javascript:void(0)" title="Unlink">',
-        '<i class="glyphicon glyphicon-minus-sign"></i>',
-        '</a> '
-    ].join('');
-
-    var LINK_SIGN = [
-        '<a class="link" href="javascript:void(0)" title="Link">',
-        '<i class="glyphicon glyphicon-link"></i>',
-        '</a> '
-    ].join('');
+    var DocumentsTableView, LinkDocumentModalView, TEMPLATE, SIGNS_ENUM;
 
     TEMPLATE = _.template(linkDocumentsModal);
+    SIGNS_ENUM = {
+        unlink: [
+            '<a class="unlink toggle-link" href="javascript:void(0)" title="Unlink">',
+            '<i class="glyphicon glyphicon-minus-sign"></i>',
+            '</a>'
+        ].join(''),
+
+        link: [
+            '<a class="link toggle-link" href="javascript:void(0)" title="Link">',
+            '<i class="glyphicon glyphicon-link"></i>',
+            '</a>'
+        ].join('')
+    };
 
     DocumentsTableView = Backbone.View.extend({
         initialize: function (options) {
@@ -38,7 +35,6 @@ define([
 
         render: function () {
             this.$el.html([
-                    //'<link rel="stylesheet" href="/static/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css">',
                     "<table id='table'></table>",
                 ].join('')
             );
@@ -46,7 +42,6 @@ define([
             var that = this;
 
             this.$('#table').bootstrapTable({
-                height: 519,
                 url: '/api/documents/',
                 showRefresh: 'true',
                 showColumns: 'true',
@@ -105,25 +100,39 @@ define([
                         // Search if the document is in the current directory
                         for (var i = 0; i < length; i++) {
                             if (row.id == that.currentDocuments.at(i).get('id')) {
-                                return UNLINK_SIGN;
+                                return SIGNS_ENUM.unlink;
                             }
                         }
-                        return LINK_SIGN;
+                        return SIGNS_ENUM.link;
                     },
                     events: {
-                        'click .link': function (e, value, row, index) {
-                            var url = cntapp.apiRoots.directories + that.parentId + '/documents/';
-                            var data = {"documents": row.id};
+                        'click .toggle-link': function (e, value, row, index) {
+                            var type, newSign, url, data, sign;
+                            sign = e.currentTarget.outerHTML;
+
+                            switch (sign) {
+                                case SIGNS_ENUM.link:
+                                    type = 'POST';
+                                    newSign = SIGNS_ENUM.unlink;
+                                    break;
+                                case SIGNS_ENUM.unlink:
+                                    type = 'DELETE';
+                                    newSign = SIGNS_ENUM.link;
+                                    break;
+                                default :
+                                    console.error('unexpected action sign:' + sign);
+                                    return;
+                            }
+
+                            url = cntapp.apiRoots.directories + that.parentId + '/documents/';
+                            data = {"documents": row.id};
                             $.ajax({
-                                type: "POST",
-                                traditional: true,
-                                url: url,
-                                data: data,
+                                type: type, traditional: true, url: url, data: data,
                                 success: function () {
                                     that.$('#table').bootstrapTable('updateCell', {
                                         rowIndex: index,
                                         fieldName: 'action',
-                                        fieldValue: UNLINK_SIGN
+                                        fieldValue: newSign
                                     });
                                     that.currentDocuments.trigger('render');
                                 },
@@ -131,28 +140,7 @@ define([
                                     alert(error);
                                 }
                             });
-                        },
-                        'click .unlink': function (e, value, row, index) {
-                            console.log("TODO: unlink the document");
-                            var url = cntapp.apiRoots.directories + that.parentId + '/documents/';
-                            var data = {"documents": row.id};
-                            $.ajax({
-                                type: "DELETE",
-                                traditional: true,
-                                url: url,
-                                data: data,
-                                success: function () {
-                                    that.$('#table').bootstrapTable('updateCell', {
-                                        rowIndex: index,
-                                        fieldName: 'action',
-                                        fieldValue: LINK_SIGN
-                                    });
-                                    that.currentDocuments.trigger('render');
-                                },
-                                error: function (request, status, error) {
-                                    alert(error);
-                                }
-                            });
+
                         }
                     }
                 }]

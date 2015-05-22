@@ -130,9 +130,10 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         else:
             documents_id = [int(d) for d in request.data['documents']]
 
-        documents = Document.objects.filter(pk__in=documents_id)
+        current_dir = self.get_object()
+        documents = current_dir.documents.filter(pk__in=documents_id)
         if documents.count() != len(documents_id):
-            return Response({'status': 'document objects not exist!'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'status': 'documents not exist in directory!'}, status=status.HTTP_404_NOT_FOUND)
 
-        self.get_object().documents.remove(*documents)
+        current_dir.documents.remove(*documents)
         return Response(status=status.HTTP_200_OK)
