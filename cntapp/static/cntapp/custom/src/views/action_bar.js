@@ -17,6 +17,7 @@ define([
             options = options || {};
             this.path = options.path;
             this.parentId = options.parentId;
+            this.currentDocuments = options.currentDocuments;
         },
 
         render: function () {
@@ -34,7 +35,10 @@ define([
             'submit form': 'submit',
 
             'click .btn-link-documents': function () {
-                var modal = new LinkDocumentModalView();
+                var modal = new LinkDocumentModalView({
+                    currentDocuments: this.currentDocuments,
+                    parentId: this.parentId
+                });
                 this.$('.modal-area').html(modal.render().el);
                 modal.toggle();
                 console.debug('show documents...');

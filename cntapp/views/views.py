@@ -116,6 +116,7 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         documents = Document.objects.filter(pk__in=documents_id)
         if documents.count() != len(documents_id):
             return Response({'status': 'document objects not exist!'}, status=status.HTTP_404_NOT_FOUND)
+
         self.get_object().documents.add(*documents)
         return Response(status=status.HTTP_201_CREATED)
 
@@ -124,9 +125,14 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         if res is not None:
             return res
 
-        current_dir = self.get_object()
-        documents = current_dir.documents.filter(pk__in=request.data['documents'])
-        if documents.count() != len(request.data['documents']):
-            return Response({'status': 'documents not exist in directory'}, status=status.HTTP_404_NOT_FOUND)
-        current_dir.documents.remove(*documents)
+        if isinstance(request.data['documents'], str):
+            documents_id = [int(request.data['documents'])]
+        else:
+            documents_id = [int(d) for d in request.data['documents']]
+
+        documents = Document.objects.filter(pk__in=documents_id)
+        if documents.count() != len(documents_id):
+            return Response({'status': 'document objects not exist!'}, status=status.HTTP_404_NOT_FOUND)
+
+        self.get_object().documents.remove(*documents)
         return Response(status=status.HTTP_200_OK)

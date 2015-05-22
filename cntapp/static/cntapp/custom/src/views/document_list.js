@@ -26,20 +26,24 @@ define([
 
             this.parentId = options.parentId;
             this.template = _.template(documentListTemplate);
-            this.collection = new DocumentList();
+            this.collection = options.currentDocuments;
+            this.collection.on('render', this.render, this);
         },
 
         render: function () {
+            var docs = [];
             var that = this;
             var url = '/api/directories/' + this.parentId + '/documents/';
+            that.$el.html('');
             $.get(url)
                 .done(function (data) {
                     _(data).each(function (obj) {
                         var m = new Document(obj);
                         that.$el.append(
                             new DocumentView({model: m, id: "document-" + m.id}).render().el);
-                        that.collection.add(m);
+                        docs.push(m);
                     });
+                    that.collection.set(docs);
                 });
             return this;
         }
