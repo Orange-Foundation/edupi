@@ -1,13 +1,50 @@
+import datetime
+
 from rest_framework import status
 from rest_framework.decorators import detail_route
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import viewsets
+from django.core.cache import cache
+from django.utils.encoding import force_text
+from rest_framework_extensions.cache.decorators import cache_response
+from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
+from rest_framework_extensions.key_constructor import bits
 
 from cntapp.helpers import get_root_dirs
 from cntapp.serializers import DirectorySerializer, DocumentSerializer
 from cntapp.models import Directory, Document
-from django.core import serializers
+
+
+class UpdatedAtKeyBit(bits.KeyBitBase):
+    """
+    Cache every read request and invalidate all cache data after write to any model,
+    which used in API.
+    This approach let us don't think about granular cache invalidation - just flush
+    it after any model instance change/creation/deletion.
+    """
+
+    def get_data(self, **kwargs):
+        key = 'api_updated_at_timestamp'
+        value = cache.get(key, None)
+        if not value:
+            value = datetime.datetime.utcnow()
+            cache.set(key, value=value)
+        return force_text(value)
+
+
+class CustomObjectKeyConstructor(DefaultKeyConstructor):
+    retrieve_sql = bits.RetrieveSqlQueryKeyBit()
+    updated_at = UpdatedAtKeyBit()
+
+
+class CustomListKeyConstructor(DefaultKeyConstructor):
+    """ For calculating the key of the cache """
+    all_query_params = bits.QueryParamsKeyBit('*')
+    kwargs = bits.KwargsKeyBit('*')
+    pagination = bits.PaginationKeyBit()
+    list_sql = bits.ListSqlQueryKeyBit()
+    updated_at = UpdatedAtKeyBit()
 
 
 def index(request):
@@ -21,6 +58,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
     """
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
+    @cache_response(key_func=CustomObjectKeyConstructor())
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @cache_response(key_func=CustomListKeyConstructor())
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class DirectoryViewSet(viewsets.ModelViewSet):
@@ -40,6 +85,11 @@ class DirectoryViewSet(viewsets.ModelViewSet):
             instance.remove_sub_dir(d)
         super().perform_destroy(instance)
 
+    @cache_response(key_func=CustomObjectKeyConstructor())
+    def retrieve(self, request, *args, **kwargs):
+        return super().retrieve(request, *args, **kwargs)
+
+    @cache_response(key_func=CustomListKeyConstructor())
     def list(self, request, *args, **kwargs):
         # filter root directories here instead of using get_queryset
         # because we can't construct a this queryset!
@@ -61,6 +111,7 @@ class DirectoryViewSet(viewsets.ModelViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @detail_route(methods=['get'])
+    @cache_response(key_func=CustomListKeyConstructor())
     def sub_directories(self, request, *args, **kwargs):
         current_dir = self.get_object()
         serializer = DirectorySerializer(current_dir.get_sub_dirs(), many=True, context={'request': request})
@@ -98,6 +149,7 @@ class DirectoryViewSet(viewsets.ModelViewSet):
             return Response({'documents': 'This field should contain a list of document id'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+    @cache_response(key_func=CustomListKeyConstructor())
     def get_documents(self, request, *args, **kwargs):
         current_dir = self.get_object()
         serializer = DocumentSerializer(current_dir.documents, many=True, context={'request': request})

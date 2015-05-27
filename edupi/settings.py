@@ -48,7 +48,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,7 +56,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.middleware.cache.FetchFromCacheMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 REST_FRAMEWORK = {
@@ -153,9 +153,11 @@ CACHES = {
     }
 }
 
-CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True  # will be removed in Django 1.8 !!
+# CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True  # will be removed in Django 1.8 !!
 
-CACHE_MIDDLEWARE_SECONDS = 20
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15
+}
 
 LOGGING = {
     'version': 1,
