@@ -1,8 +1,12 @@
-from django.db import models
-from django.db.models.signals import post_delete
+import datetime
+
 from django.dispatch.dispatcher import receiver
+
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
+from django.db import models
+from django.db.models.signals import post_save, post_delete, m2m_changed
+from django.core.cache import cache
 
 
 class Document(models.Model):
@@ -87,3 +91,14 @@ class Directory(models.Model):
 class SubDirRelation(models.Model):
     parent = models.ForeignKey(Directory, related_name='parent')
     child = models.ForeignKey(Directory, related_name='child')
+
+
+def change_api_updated_at(sender=None, instance=None, *args, **kwargs):
+    cache.set('api_updated_at_timestamp', datetime.datetime.utcnow())
+
+for model in [Document, Directory]:
+    post_save.connect(receiver=change_api_updated_at, sender=model)
+    post_delete.connect(receiver=change_api_updated_at, sender=model)
+
+for through in [Directory.sub_dirs.through, Directory.documents.through]:
+    m2m_changed.connect(receiver=change_api_updated_at, sender=through)
