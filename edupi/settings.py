@@ -48,7 +48,6 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE_CLASSES = (
-    # 'django.middleware.cache.UpdateCacheMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -56,7 +55,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.middleware.cache.FetchFromCacheMiddleware',
 )
 
 REST_FRAMEWORK = {
@@ -149,12 +147,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        # 'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        # 'LOCATION': 'unix:/tmp/memcached.edupi.socket',
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # use this to disable server cache
     }
 }
-
-# CACHE_MIDDLEWARE_ANONYMOUS_ONLY = True  # will be removed in Django 1.8 !!
 
 REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15,
