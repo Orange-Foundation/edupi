@@ -148,8 +148,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': 'unix:/tmp/memcached.edupi.socket',
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # 'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        # 'LOCATION': 'unix:/tmp/memcached.edupi.socket',
     }
 }
 
