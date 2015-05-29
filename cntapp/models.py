@@ -8,6 +8,10 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.core.cache import cache
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Document(models.Model):
     TYPE_VIDEO = 'v'
@@ -83,6 +87,17 @@ class Directory(models.Model):
             for d in sub_dir.get_sub_dirs():
                 sub_dir.remove_sub_dir(d)
             Directory.objects.get(pk=sub_dir.pk).delete()
+
+    def unlink_sub_dir(self, sub_dir):
+        try:
+            l = SubDirRelation.objects.get(parent=self, child=sub_dir)
+            l.delete()
+            return True
+        except models.ObjectDoesNotExist as e:
+            logger.warn('No SubDirRelation found between parent_id=%d and child_id=%d: %s' % (
+                self.id, sub_dir.id, e
+            ))
+            return False
 
     def __str__(self):
         return self.name
