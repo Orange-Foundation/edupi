@@ -10,12 +10,13 @@ define([
 
     var DirectoryView, TEMPLATE, EDIT_DIRECTORY_MODAL_TEMPLATE, CONFIRM_MODAL_TEMPLATE,
         DELETE_CONFIRM_MSG = 'Are you sure to delete this directory? ' +
-            'This will also delete its sub directories, but will not delete the linked documents.';
+            'This will also delete its sub directories, but will not delete the linked documents.',
+        UNLINK_CONFIRM_MSG = 'Are you sure to unlink this directory? ' +
+            'Unlinked directory can be found in root directories.';
 
     TEMPLATE = _.template(directoryTemplate);
     EDIT_DIRECTORY_MODAL_TEMPLATE = _.template(editDirectoryModalTemplate);
     CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate);
-
 
     var DirectoryView = Backbone.View.extend({
         tagName: 'tr',
@@ -67,28 +68,49 @@ define([
             },
 
             'click .btn-delete-directory': function () {
+                var that = this;
                 this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
                     title: null,
                     message: DELETE_CONFIRM_MSG
                 }));
+                this.$('.modal-area .btn-confirmed').click(function () {
+                    console.debug('deleting directory id="' + that.model.get('id') + '"');
+                    that.model.destroy({
+                        success: function (model, response) {
+                            that.$('.modal').modal('hide');
+                            console.log('directory destroyed');
+                            that.$el.fadeOut(200, function () {
+                                $(this).remove();
+                            })
+                        }
+                    })
+                })
             },
 
-            'click .btn-confirmed': function () {
-                console.debug('deleting directory id="' + this.model.get('id') + '"');
-
+            'click .btn-unlink-directory': function () {
                 var that = this;
-                this.model.destroy({
-                    success: function (model, response) {
-                        that.$('.modal').modal('hide');
-                        console.log('directory destroyed');
-                        console.log(response);
-                        that.$el.fadeOut(200, function () {
-                            $(this).remove();
-                        })
-                    }
-                });
-
+                this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
+                    title: null,
+                    message: UNLINK_CONFIRM_MSG
+                }));
+                this.$('.modal-area .btn-confirmed').click(function () {
+                    var pathArray = that.path.split('/');
+                    var parentId = pathArray[pathArray.length - 1];
+                    $.ajax({
+                        url: cntapp.apiRoots.directories + parentId + '/directories/',
+                        type: 'DELETE',
+                        data: {'id': that.model.get('id')},
+                        success: function (result) {
+                            that.$('.modal').modal('hide');
+                            console.log('directory unlinked');
+                            that.$el.fadeOut(200, function () {
+                                $(this).remove();
+                            })
+                        }
+                    });
+                })
             }
+
         }
     });
 

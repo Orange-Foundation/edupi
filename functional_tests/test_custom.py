@@ -151,7 +151,7 @@ class CustomSiteTestCase(FunctionalTest):
 
     def test_edit_directory(self):
         init_test_dirs()
-        ## Let's get edit dir "a", and change it's name to primary
+        # Let's edit dir "a", and change it's name to primary
 
         dir_a = Directory.objects.get(name='a')
 
@@ -331,3 +331,33 @@ class CustomSiteTestCase(FunctionalTest):
         # cannot access once to home page, must login again
         self.browser.get(self.custom_page_url)
         self.assertEqual(self.custom_page_url + 'login/', self.browser.current_url)
+
+    def test_unlink_directory(self):
+        init_test_dirs()
+        a = Directory.objects.get(name="a")
+        ab_a = Directory.objects.get(name="ab_a")
+        ab_a_a = Directory.objects.get(name="ab_a_a")
+
+        self.go_to_home_page()
+        self.enter_into_dir(a.name)
+        self.enter_into_dir(ab_a.name)
+
+        ab_a_a_css = 'a[directory-id="%d"]' % ab_a_a.id
+
+        # ensure the directory `ab_a_a` exists
+        self.browser.find_element_by_css_selector(ab_a_a_css)
+
+        # unlink ab_a_a
+        unlink_elements = self.browser.find_elements_by_css_selector('a.btn-unlink-directory')
+        unlink_elements[0].click()
+        self.browser.find_element_by_css_selector('button.btn-confirmed').click()
+
+        # check that the directory is unlinked
+        WebDriverWait(self.browser, 1).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ab_a_a_css))
+        )
+        self.assertNotInDirectoryTable(ab_a_a.name)
+
+        # we can find it in the home page
+        self.go_to_home_page()
+        self.assertInDirectoryTable(ab_a_a.name)

@@ -112,7 +112,7 @@ class SubDirRelation(models.Model):
 def change_api_updated_at(sender=None, instance=None, *args, **kwargs):
     cache.set('api_updated_at_timestamp', datetime.datetime.utcnow())
 
-for model in [Document, Directory]:
+for model in [Document, Directory, SubDirRelation]:
     post_save.connect(receiver=change_api_updated_at, sender=model)
     post_delete.connect(receiver=change_api_updated_at, sender=model)
 
