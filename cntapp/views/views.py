@@ -2,7 +2,7 @@ import datetime
 
 from rest_framework import status
 from rest_framework.decorators import detail_route
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.core.cache import cache
@@ -128,6 +128,27 @@ class DirectoryViewSet(viewsets.ModelViewSet):
             return Response({'status': 'sub directory deleted'})
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @detail_route(methods=['post', 'delete'])
+    def directories(self, request, *args, **kwargs):
+        if 'id' not in request.data:
+            return Response(data={'status': 'no sub-directory id is provided'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        dir_id = int(request.data['id'])
+        sub_dir = get_object_or_404(Directory, pk=dir_id)
+        current_dir = self.get_object()
+
+        if request.method == 'POST':
+            current_dir.add_sub_dir(sub_dir)
+            return Response(data={'status': 'relation created'}, status=status.HTTP_201_CREATED)
+        elif request.method == 'DELETE':
+            if current_dir.unlink_sub_dir(sub_dir):
+                return Response({'status': 'sub directory unlinked'})
+            else:
+                return Response({'status': 'Relation does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
 
     @detail_route(methods=['post', 'get', 'delete'])
     def documents(self, request, *args, **kwargs):

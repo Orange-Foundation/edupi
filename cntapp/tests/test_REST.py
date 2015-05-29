@@ -207,6 +207,62 @@ class DirectoryRESTTest(BaseRESTTest):
         self.client.delete('/api/directories/%d/' % b.pk)
         self.assertEqual(2, Directory.objects.all().count())
 
+    def test_unlink_dir(self):
+        init_test_dirs()
+        ab_a = Directory.objects.get(name='ab_a')
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        self.assertEqual(6, Directory.objects.all().count())
+        res = self.client.delete('/api/directories/%d/directories/' % ab_a.pk, {'id': str(ab_a_a.pk)}, format='json')
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual({'status': 'sub directory unlinked'}, self.render(res))
+        self.assertEqual(6, Directory.objects.all().count())
+
+        # delete again
+        res = self.client.delete('/api/directories/%d/directories/' % ab_a.pk, {'id': str(ab_a_a.pk)}, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'status': 'Relation does not exist'}, self.render(res))
+
+    def test_link_dir(self):
+        a = DirectoryFactory()
+        b = DirectoryFactory()
+        res = self.client.post('/api/directories/%d/directories/' % a.pk, {'id': str(b.pk)}, format='json')
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        self.assertIn(b, a.get_sub_dirs())
+        self.assertEqual({'status': 'relation created'}, self.render(res))
+
+        # link again
+        res = self.client.post('/api/directories/%d/directories/' % a.pk, {'id': str(b.pk)}, format='json')
+        self.assertIn(b, a.get_sub_dirs())
+        self.assertEqual({'status': 'relation created'}, self.render(res))
+
+    def test_link_dir_incorrectly(self):
+        a = DirectoryFactory()
+        b = DirectoryFactory()
+        res = self.client.post('/api/directories/%d/directories/' % a.pk, {'i': str(b.pk)}, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'status': 'no sub-directory id is provided'}, self.render(res))
+
+    def test_unlink_dir_incorrectly(self):
+        init_test_dirs()
+        ab_a = Directory.objects.get(name='ab_a')
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        self.assertEqual(6, Directory.objects.all().count())
+        # no `id` in the request
+        res = self.client.delete('/api/directories/%d/directories/' % ab_a.pk, {'i': str(ab_a_a.pk)}, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'status': 'no sub-directory id is provided'}, self.render(res))
+
+        # sub directory does not exist
+        res = self.client.delete('/api/directories/%d/directories/' % ab_a.pk, {'id': '999'}, format='json')
+        self.assertEqual(status.HTTP_404_NOT_FOUND, res.status_code)
+        self.assertEqual({'detail': 'Not found.'}, self.render(res))
+
+        # delete it-self
+        res = self.client.delete('/api/directories/%d/directories/' % ab_a.pk, {'id': str(ab_a.pk)}, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'status': 'Relation does not exist'}, self.render(res))
+        self.assertEqual(6, Directory.objects.all().count())
+
 
 class DirDocRelationRESTTest(BaseRESTTest):
     def test_get_documents_from_directory(self):

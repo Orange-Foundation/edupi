@@ -8,6 +8,10 @@ from django.db import models
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.core.cache import cache
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class Document(models.Model):
     TYPE_VIDEO = 'v'
@@ -68,7 +72,8 @@ class Directory(models.Model):
 
     def add_sub_dir(self, sub_dir):
         if len(SubDirRelation.objects.filter(parent=self, child=sub_dir)) > 0:
-            # TODO: warning
+            logger.warn('SubDirRelation already exists between parent_id=%d and child_id=%d' % (
+                self.id, sub_dir.id))
             return self
         SubDirRelation.objects.create(parent=self, child=sub_dir)
         return self
@@ -84,6 +89,17 @@ class Directory(models.Model):
                 sub_dir.remove_sub_dir(d)
             Directory.objects.get(pk=sub_dir.pk).delete()
 
+    def unlink_sub_dir(self, sub_dir):
+        try:
+            l = SubDirRelation.objects.get(parent=self, child=sub_dir)
+            l.delete()
+            return True
+        except models.ObjectDoesNotExist as e:
+            logger.warn('No SubDirRelation found between parent_id=%d and child_id=%d: %s' % (
+                self.id, sub_dir.id, e
+            ))
+            return False
+
     def __str__(self):
         return self.name
 
@@ -96,7 +112,7 @@ class SubDirRelation(models.Model):
 def change_api_updated_at(sender=None, instance=None, *args, **kwargs):
     cache.set('api_updated_at_timestamp', datetime.datetime.utcnow())
 
-for model in [Document, Directory]:
+for model in [Document, Directory, SubDirRelation]:
     post_save.connect(receiver=change_api_updated_at, sender=model)
     post_delete.connect(receiver=change_api_updated_at, sender=model)
 

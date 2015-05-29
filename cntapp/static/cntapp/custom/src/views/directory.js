@@ -10,12 +10,13 @@ define([
 
     var DirectoryView, TEMPLATE, EDIT_DIRECTORY_MODAL_TEMPLATE, CONFIRM_MODAL_TEMPLATE,
         DELETE_CONFIRM_MSG = 'Are you sure to delete this directory? ' +
-            'This will also delete its sub directories, but will not delete the linked documents.';
+            'This will also delete its sub directories, but will not delete the linked documents.',
+        UNLINK_CONFIRM_MSG = 'Are you sure to unlink this directory? ' +
+            'Unlinked directory can be found in root directories.';
 
     TEMPLATE = _.template(directoryTemplate);
     EDIT_DIRECTORY_MODAL_TEMPLATE = _.template(editDirectoryModalTemplate);
     CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate);
-
 
     var DirectoryView = Backbone.View.extend({
         tagName: 'tr',
@@ -39,6 +40,22 @@ define([
                 model: this.model
             }));
             return this;
+        },
+
+        create_instant_confirm_modal: function (message, confirm_callback) {
+            if (typeof confirm_callback === 'undefined') {
+                throw Error('No callback function for confirm dialog.');
+            }
+
+            this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
+                title: null,
+                message: message
+            }));
+            this.$(".modal").on('hidden.bs.modal', function () {
+                $(this).data('bs.modal', null);
+                $(this).remove();
+            });
+            this.$('.modal-area .btn-confirmed').click(confirm_callback);
         },
 
         events: {
@@ -67,28 +84,47 @@ define([
             },
 
             'click .btn-delete-directory': function () {
-                this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
-                    title: null,
-                    message: DELETE_CONFIRM_MSG
-                }));
-            },
-
-            'click .btn-confirmed': function () {
-                console.debug('deleting directory id="' + this.model.get('id') + '"');
-
                 var that = this;
-                this.model.destroy({
-                    success: function (model, response) {
-                        that.$('.modal').modal('hide');
-                        console.log('directory destroyed');
-                        console.log(response);
-                        that.$el.fadeOut(200, function () {
-                            $(this).remove();
+                this.create_instant_confirm_modal(
+                    DELETE_CONFIRM_MSG,
+                    function () {
+                        console.debug('deleting directory id="' + that.model.get('id') + '"');
+                        that.model.destroy({
+                            success: function (model, response) {
+                                that.$('.modal').modal('hide');
+                                console.log('directory destroyed');
+                                that.$el.fadeOut(200, function () {
+                                    $(this).remove();
+                                })
+                            }
                         })
                     }
-                });
+                );
+            },
 
+            'click .btn-unlink-directory': function () {
+                var that = this;
+                this.create_instant_confirm_modal(
+                    UNLINK_CONFIRM_MSG,
+                    function () {
+                        var pathArray = that.path.split('/');
+                        var parentId = pathArray[pathArray.length - 1];
+                        $.ajax({
+                            url: cntapp.apiRoots.directories + parentId + '/directories/',
+                            type: 'DELETE',
+                            data: {'id': that.model.get('id')},
+                            success: function (result) {
+                                that.$('.modal').modal('hide');
+                                console.log('directory unlinked');
+                                that.$el.fadeOut(200, function () {
+                                    $(this).remove();
+                                })
+                            }
+                        });
+                    }
+                );
             }
+
         }
     });
 

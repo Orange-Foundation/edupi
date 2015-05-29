@@ -1,11 +1,11 @@
 define([
     'underscore', 'backbone',
-    'views/link_documents_modal',
+    'views/link_documents_modal', 'views/link_directory_modal',
     'text!templates/action_bar.html',
     'text!templates/create_directory_modal.html',
     'text!templates/confirm_modal.html'
 ], function (_, Backbone,
-             LinkDocumentModalView,
+             LinkDocumentModalView, LinkDirectoryModalView,
              actionBarTemplate, createDirectoryModalTemplate, confirmModalTemplate) {
 
     var CREATE_DIRECTORY_MODAL_TEMPLATE = _.template(createDirectoryModalTemplate),
@@ -46,6 +46,15 @@ define([
                 this.$('.modal-area').html(modal.render().el);
                 modal.toggle();
                 console.debug('show documents...');
+            },
+
+            'click .btn-link-directory': function () {
+                var modal = new LinkDirectoryModalView({
+                    parentId: this.parentId,
+                    path: this.path
+                });
+                this.$('.modal-area').html(modal.render().el);
+                modal.toggle();
             }
         },
 
