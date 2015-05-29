@@ -72,7 +72,8 @@ class Directory(models.Model):
 
     def add_sub_dir(self, sub_dir):
         if len(SubDirRelation.objects.filter(parent=self, child=sub_dir)) > 0:
-            # TODO: warning
+            logger.warn('SubDirRelation already exists between parent_id=%d and child_id=%d' % (
+                self.id, sub_dir.id))
             return self
         SubDirRelation.objects.create(parent=self, child=sub_dir)
         return self

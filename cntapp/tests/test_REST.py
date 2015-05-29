@@ -222,6 +222,26 @@ class DirectoryRESTTest(BaseRESTTest):
         self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
         self.assertEqual({'status': 'Relation does not exist'}, self.render(res))
 
+    def test_link_dir(self):
+        a = DirectoryFactory()
+        b = DirectoryFactory()
+        res = self.client.post('/api/directories/%d/directories/' % a.pk, {'id': str(b.pk)}, format='json')
+        self.assertEqual(status.HTTP_201_CREATED, res.status_code)
+        self.assertIn(b, a.get_sub_dirs())
+        self.assertEqual({'status': 'relation created'}, self.render(res))
+
+        # link again
+        res = self.client.post('/api/directories/%d/directories/' % a.pk, {'id': str(b.pk)}, format='json')
+        self.assertIn(b, a.get_sub_dirs())
+        self.assertEqual({'status': 'relation created'}, self.render(res))
+
+    def test_link_dir_incorrectly(self):
+        a = DirectoryFactory()
+        b = DirectoryFactory()
+        res = self.client.post('/api/directories/%d/directories/' % a.pk, {'i': str(b.pk)}, format='json')
+        self.assertEqual(status.HTTP_400_BAD_REQUEST, res.status_code)
+        self.assertEqual({'status': 'no sub-directory id is provided'}, self.render(res))
+
     def test_unlink_dir_incorrectly(self):
         init_test_dirs()
         ab_a = Directory.objects.get(name='ab_a')
