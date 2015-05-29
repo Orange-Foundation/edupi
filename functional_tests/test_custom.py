@@ -10,7 +10,7 @@ from django.core.cache import cache
 
 from cntapp.models import Directory, Document
 from .base import FunctionalTest
-from cntapp.tests.helpers import DocumentFactory, init_test_dirs, PdfDocumentFactory
+from cntapp.tests.helpers import DocumentFactory, init_test_dirs, PdfDocumentFactory, DirectoryFactory
 
 
 class CustomSiteTestCase(FunctionalTest):
@@ -361,3 +361,26 @@ class CustomSiteTestCase(FunctionalTest):
         # we can find it in the home page
         self.go_to_home_page()
         self.assertInDirectoryTable(ab_a_a.name)
+
+    def test_link_directory(self):
+        a = DirectoryFactory()
+        b = DirectoryFactory()
+
+        self.go_to_home_page()
+        self.assertInDirectoryTable(a.name)
+        self.assertInDirectoryTable(b.name)
+        self.enter_into_dir(a.name)
+        self.assertNotInDirectoryTable(b.name)
+
+        # select and link a root directory
+        self.browser.find_element_by_id('btn-link-directory-to-directory').click()
+        radio_group = self.browser.find_element_by_class_name('input-group')
+        radio_b = radio_group.find_element_by_css_selector('input[value="%d"]' % b.id)
+        radio_b.click()
+        self.browser.find_element_by_css_selector('.modal-footer .btn-confirm').click()
+
+        self.assertInDirectoryTable(b.name)
+
+        self.go_to_home_page()
+        self.assertNotInDirectoryTable(b.name)
+        self.assertInDirectoryTable(a.name)
