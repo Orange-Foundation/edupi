@@ -1,0 +1,15 @@
+<div class="input-group">
+    <% _.each(directories, function(dir) { %>
+
+    <div class="radio">
+        <label>
+            <% if (dir.get('id') == current_root_id) { %>
+            <input type="radio" name="root-dir" value="<%= dir.get('id') %>" disabled> <%= dir.get('name') %>
+            <% } else { %>
+            <input type="radio" name="root-dir" value="<%= dir.get('id') %>"> <%= dir.get('name') %>
+            <% } %>
+        </label>
+    </div>
+
+    <% });%>
+</div>
