@@ -42,6 +42,22 @@ define([
             return this;
         },
 
+        create_instant_confirm_modal: function (message, confirm_callback) {
+            if (typeof confirm_callback === 'undefined') {
+                throw Error('No callback function for confirm dialog.');
+            }
+
+            this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
+                title: null,
+                message: message
+            }));
+            this.$(".modal").on('hidden.bs.modal', function () {
+                $(this).data('bs.modal', null);
+                $(this).remove();
+            });
+            this.$('.modal-area .btn-confirmed').click(confirm_callback);
+        },
+
         events: {
             'click .btn-edit': function () {
                 var that = this;
@@ -69,46 +85,44 @@ define([
 
             'click .btn-delete-directory': function () {
                 var that = this;
-                this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
-                    title: null,
-                    message: DELETE_CONFIRM_MSG
-                }));
-                this.$('.modal-area .btn-confirmed').click(function () {
-                    console.debug('deleting directory id="' + that.model.get('id') + '"');
-                    that.model.destroy({
-                        success: function (model, response) {
-                            that.$('.modal').modal('hide');
-                            console.log('directory destroyed');
-                            that.$el.fadeOut(200, function () {
-                                $(this).remove();
-                            })
-                        }
-                    })
-                })
+                this.create_instant_confirm_modal(
+                    DELETE_CONFIRM_MSG,
+                    function () {
+                        console.debug('deleting directory id="' + that.model.get('id') + '"');
+                        that.model.destroy({
+                            success: function (model, response) {
+                                that.$('.modal').modal('hide');
+                                console.log('directory destroyed');
+                                that.$el.fadeOut(200, function () {
+                                    $(this).remove();
+                                })
+                            }
+                        })
+                    }
+                );
             },
 
             'click .btn-unlink-directory': function () {
                 var that = this;
-                this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
-                    title: null,
-                    message: UNLINK_CONFIRM_MSG
-                }));
-                this.$('.modal-area .btn-confirmed').click(function () {
-                    var pathArray = that.path.split('/');
-                    var parentId = pathArray[pathArray.length - 1];
-                    $.ajax({
-                        url: cntapp.apiRoots.directories + parentId + '/directories/',
-                        type: 'DELETE',
-                        data: {'id': that.model.get('id')},
-                        success: function (result) {
-                            that.$('.modal').modal('hide');
-                            console.log('directory unlinked');
-                            that.$el.fadeOut(200, function () {
-                                $(this).remove();
-                            })
-                        }
-                    });
-                })
+                this.create_instant_confirm_modal(
+                    UNLINK_CONFIRM_MSG,
+                    function () {
+                        var pathArray = that.path.split('/');
+                        var parentId = pathArray[pathArray.length - 1];
+                        $.ajax({
+                            url: cntapp.apiRoots.directories + parentId + '/directories/',
+                            type: 'DELETE',
+                            data: {'id': that.model.get('id')},
+                            success: function (result) {
+                                that.$('.modal').modal('hide');
+                                console.log('directory unlinked');
+                                that.$el.fadeOut(200, function () {
+                                    $(this).remove();
+                                })
+                            }
+                        });
+                    }
+                );
             }
 
         }
