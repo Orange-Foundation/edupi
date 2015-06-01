@@ -42,8 +42,8 @@ define([
             return this;
         },
 
-        create_instant_confirm_modal: function (message, confirm_callback) {
-            if (typeof confirm_callback === 'undefined') {
+        createInstantConfirmModal: function (message, confirmCallback) {
+            if (typeof confirmCallback === 'undefined') {
                 throw Error('No callback function for confirm dialog.');
             }
 
@@ -55,7 +55,14 @@ define([
                 $(this).data('bs.modal', null);
                 $(this).remove();
             });
-            this.$('.modal-area .btn-confirmed').click(confirm_callback);
+            this.$('.modal-area .btn-confirmed').click(confirmCallback);
+        },
+
+        removeModalAndItem: function () {
+            this.$('.modal').modal('hide');
+            this.$el.fadeOut(200, function () {
+                $(this).remove();
+            });
         },
 
         events: {
@@ -85,26 +92,31 @@ define([
 
             'click .btn-delete-directory': function () {
                 var that = this;
-                this.create_instant_confirm_modal(
+                this.createInstantConfirmModal(
                     DELETE_CONFIRM_MSG,
                     function () {
-                        console.debug('deleting directory id="' + that.model.get('id') + '"');
-                        that.model.destroy({
-                            success: function (model, response) {
-                                that.$('.modal').modal('hide');
-                                console.log('directory destroyed');
-                                that.$el.fadeOut(200, function () {
-                                    $(this).remove();
-                                })
-                            }
-                        })
+                        console.debug('recursively deleting directory id="' + that.model.get('id') + '"');
+                        if (that.path) {  // sub directory
+                            var pathArray = that.path.split('/');
+                            var parentId = pathArray[pathArray.length - 1];
+                            $.ajax({
+                                url: cntapp.apiRoots.directories + parentId + '/delete/',
+                                type: 'DELETE',
+                                data: {'id': that.model.get('id')},
+                                success: that.removeModalAndItem()
+                            });
+                        } else {  // root directory
+                            that.model.destroy({
+                                success: that.removeModalAndItem()
+                            });
+                        }
                     }
                 );
             },
 
             'click .btn-unlink-directory': function () {
                 var that = this;
-                this.create_instant_confirm_modal(
+                this.createInstantConfirmModal(
                     UNLINK_CONFIRM_MSG,
                     function () {
                         var pathArray = that.path.split('/');
@@ -113,13 +125,7 @@ define([
                             url: cntapp.apiRoots.directories + parentId + '/directories/',
                             type: 'DELETE',
                             data: {'id': that.model.get('id')},
-                            success: function (result) {
-                                that.$('.modal').modal('hide');
-                                console.log('directory unlinked');
-                                that.$el.fadeOut(200, function () {
-                                    $(this).remove();
-                                })
-                            }
+                            success: that.removeModalAndItem()
                         });
                     }
                 );

@@ -6,6 +6,7 @@ from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework import viewsets
 from django.core.cache import cache
+from django.db import transaction
 from django.utils.encoding import force_text
 from rest_framework_extensions.cache.decorators import cache_response
 from rest_framework_extensions.key_constructor.constructors import DefaultKeyConstructor
@@ -79,12 +80,6 @@ class DirectoryViewSet(viewsets.ModelViewSet):
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
 
-    def perform_destroy(self, instance):
-        sub_dirs = instance.get_sub_dirs()
-        for d in sub_dirs:
-            instance.remove_sub_dir(d)
-        super().perform_destroy(instance)
-
     @cache_response(key_func=CustomObjectKeyConstructor())
     def retrieve(self, request, *args, **kwargs):
         return super().retrieve(request, *args, **kwargs)
@@ -117,17 +112,27 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         serializer = DirectorySerializer(current_dir.get_sub_dirs(), many=True, context={'request': request})
         return Response(serializer.data)
 
-    @detail_route(methods=['delete'])
-    def delete(self, request, *args, **kwargs):
-        current_dir = self.get_object()
-        serializer = DirectorySerializer(data=request.data)
-        if serializer.is_valid():
-            sub_dir = current_dir.get_sub_dir_by_name(serializer.validated_data.get('name'))
+    @transaction.atomic
+    def perform_destroy(self, instance):
+        """ Delete recursively a directory
+        """
+        sub_dirs = instance.get_sub_dirs()
+        for d in sub_dirs:
+            instance.remove_sub_dir(d)
+        super().perform_destroy(instance)
 
-            current_dir.remove_sub_dir(sub_dir)
-            return Response({'status': 'sub directory deleted'})
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @detail_route(methods=['delete'])
+    @transaction.atomic
+    def delete(self, request, *args, **kwargs):
+        """ Delete recursively a sub directory
+        """
+        if 'id' not in request.data:
+            return Response(data={'status': 'no sub-directory id is provided'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        dir_id = int(request.data['id'])
+        sub_dir = get_object_or_404(Directory, pk=dir_id)
+        self.get_object().remove_sub_dir(sub_dir)
+        return Response({'status': 'sub directory deleted'})
 
     @detail_route(methods=['post', 'delete'])
     def directories(self, request, *args, **kwargs):

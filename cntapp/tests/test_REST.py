@@ -182,18 +182,17 @@ class DirectoryRESTTest(BaseRESTTest):
     def test_delete_sub_dir(self):
         init_test_dirs()
         ab_a = Directory.objects.get(name='ab_a')
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
         self.assertEqual(6, Directory.objects.all().count())
 
-        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_a'}, format='json')
+        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'id': ab_a_a.pk}, format='json')
         self.assertEqual({'status': 'sub directory deleted'}, self.render(res))
         self.assertEqual(5, Directory.objects.all().count())
 
-        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_b'}, format='json')
+        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'id': ab_a_b.pk}, format='json')
         self.assertEqual({'status': 'sub directory deleted'}, self.render(res))
         self.assertEqual(5, Directory.objects.all().count())
-
-        with self.assertRaises(Directory.DoesNotExist):
-            res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_b'}, format='json')
 
     def test_delete_root_dir(self):
         init_test_dirs()
