@@ -12,10 +12,19 @@
         Edit
     </a>
 
+    <% if (baseLink !== '#directories') { %>
+        <a class="btn btn-default btn-unlink-directory"
+           data-toggle="modal"
+           data-target="#modal-confirm"
+           type="button"
+                >Unlink</a>
+    <% } %>
+
     <a class="btn btn-danger btn-delete-directory"
        data-toggle="modal"
        data-target="#modal-confirm"
        type="button"
             >DELETE</a>
+
     <div class="modal-area"></div>
 </td>

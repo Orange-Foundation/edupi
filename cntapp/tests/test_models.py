@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.db.models import ObjectDoesNotExist
 
 from cntapp.models import Directory, Document, SubDirRelation
-from .helpers import DocumentFactory, PdfDocumentFactory, DirectoryFactory
+from .helpers import DocumentFactory, PdfDocumentFactory, DirectoryFactory, init_test_dirs
 from .helpers import DOCUMENT_BASE_NAME, DIRECTORY_BASE_NAME
 
 
@@ -181,3 +181,22 @@ class DirectoryTestCase(TestCase):
             self.fail("'%s' should not exist!" % ab_a_b.name)
         except ObjectDoesNotExist:
             pass
+
+    def test_unlink_directory(self):
+        init_test_dirs()
+        ab_a = Directory.objects.get(name='ab_a')
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        self.assertEqual(6, Directory.objects.count())
+        self.assertIn(ab_a_a, ab_a.get_sub_dirs())
+        self.assertIn(ab_a, ab_a_a.get_parents())
+
+        # correct unlink
+        self.assertTrue(ab_a.unlink_sub_dir(ab_a_a))
+
+        self.assertNotIn(ab_a_a, ab_a.get_sub_dirs())
+        self.assertNotIn(ab_a, ab_a_a.get_parents())
+
+        # incorrect unlink
+        self.assertFalse(ab_a.unlink_sub_dir(ab_a_a))
+        self.assertNotIn(ab_a_a, ab_a.get_sub_dirs())
+        self.assertEqual(6, Directory.objects.count())

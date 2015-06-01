@@ -6,10 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import NoSuchElementException
+from django.core.cache import cache
 
 from cntapp.models import Directory, Document
 from .base import FunctionalTest
-from cntapp.tests.helpers import DocumentFactory, init_test_dirs, PdfDocumentFactory
+from cntapp.tests.helpers import DocumentFactory, init_test_dirs, PdfDocumentFactory, DirectoryFactory
 
 
 class CustomSiteTestCase(FunctionalTest):
@@ -17,6 +18,7 @@ class CustomSiteTestCase(FunctionalTest):
         super().setUp()
         self.custom_page_url = self.server_url + '/custom/'
         self.directories_root_url = self.custom_page_url + '#directories'
+        cache.clear()
 
     def login(self):
         self.browser.get(self.custom_page_url)
@@ -149,7 +151,7 @@ class CustomSiteTestCase(FunctionalTest):
 
     def test_edit_directory(self):
         init_test_dirs()
-        ## Let's get edit dir "a", and change it's name to primary
+        # Let's edit dir "a", and change it's name to primary
 
         dir_a = Directory.objects.get(name='a')
 
@@ -329,3 +331,56 @@ class CustomSiteTestCase(FunctionalTest):
         # cannot access once to home page, must login again
         self.browser.get(self.custom_page_url)
         self.assertEqual(self.custom_page_url + 'login/', self.browser.current_url)
+
+    def test_unlink_directory(self):
+        init_test_dirs()
+        a = Directory.objects.get(name="a")
+        ab_a = Directory.objects.get(name="ab_a")
+        ab_a_a = Directory.objects.get(name="ab_a_a")
+
+        self.go_to_home_page()
+        self.enter_into_dir(a.name)
+        self.enter_into_dir(ab_a.name)
+
+        ab_a_a_css = 'a[directory-id="%d"]' % ab_a_a.id
+
+        # ensure the directory `ab_a_a` exists
+        self.browser.find_element_by_css_selector(ab_a_a_css)
+
+        # unlink ab_a_a
+        unlink_elements = self.browser.find_elements_by_css_selector('a.btn-unlink-directory')
+        unlink_elements[0].click()
+        self.browser.find_element_by_css_selector('button.btn-confirmed').click()
+
+        # check that the directory is unlinked
+        WebDriverWait(self.browser, 1).until(
+            EC.invisibility_of_element_located((By.CSS_SELECTOR, ab_a_a_css))
+        )
+        self.assertNotInDirectoryTable(ab_a_a.name)
+
+        # we can find it in the home page
+        self.go_to_home_page()
+        self.assertInDirectoryTable(ab_a_a.name)
+
+    def test_link_directory(self):
+        a = DirectoryFactory()
+        b = DirectoryFactory()
+
+        self.go_to_home_page()
+        self.assertInDirectoryTable(a.name)
+        self.assertInDirectoryTable(b.name)
+        self.enter_into_dir(a.name)
+        self.assertNotInDirectoryTable(b.name)
+
+        # select and link a root directory
+        self.browser.find_element_by_id('btn-link-directory-to-directory').click()
+        radio_group = self.browser.find_element_by_class_name('input-group')
+        radio_b = radio_group.find_element_by_css_selector('input[value="%d"]' % b.id)
+        radio_b.click()
+        self.browser.find_element_by_css_selector('.modal-footer .btn-confirm').click()
+
+        self.assertInDirectoryTable(b.name)
+
+        self.go_to_home_page()
+        self.assertNotInDirectoryTable(b.name)
+        self.assertInDirectoryTable(a.name)

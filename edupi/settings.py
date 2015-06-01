@@ -144,6 +144,18 @@ TEST_RUNNER = 'edupi.runner.CustomTestSuiteRunner'
 # never keep uploaded file in memory
 FILE_UPLOAD_MAX_MEMORY_SIZE = 0
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        # 'BACKEND': 'django.core.cache.backends.dummy.DummyCache',  # use this to disable server cache
+    }
+}
+
+REST_FRAMEWORK_EXTENSIONS = {
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 15,
+    'DEFAULT_KEY_CONSTRUCTOR_MEMOIZE_FOR_REQUEST': True
+}
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
