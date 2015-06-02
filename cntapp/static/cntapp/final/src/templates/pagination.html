@@ -1,0 +1,27 @@
+<ul class="pagination">
+    <li>
+        <a href="<%= head %>" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+        </a>
+    </li>
+
+    <%
+    var pageNum = startPageNum;
+    %>
+
+    <% _.each(pres, function (link) { %>
+        <li><a href="<%= link %>"><%= pageNum++ %></a></li>
+    <% }); %>
+
+    <li class="active"><a><%= pageNum++ %></a></li>
+
+    <% _.each(nexts, function (link) { %>
+        <li><a href="<%= link %>"><%= pageNum++ %></a></li>
+    <% }); %>
+
+    <li>
+        <a href="<%= tail %>" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+        </a>
+    </li>
+</ul>

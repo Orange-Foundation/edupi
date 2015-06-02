@@ -1,13 +1,10 @@
 define([
-    'underscore',
-    'backbone',
-    'views/document',
-    'models/document',
-    'collections/documents',
-    'text!templates/document_list.html'
+    'underscore', 'backbone',
+    'views/document', 'views/pagination',
+    'models/document', 'collections/documents'
 ], function (_, Backbone,
-             DocumentView, Document, Documents,
-             documentListTemplate) {
+             DocumentView, PaginationView,
+             Document, Documents) {
     var parseQueryString;
 
     parseQueryString = function (queryString) {
@@ -45,9 +42,6 @@ define([
             }
             this.queryString = options.queryString;
             this.collection = new Documents();
-
-            // {search: "ja", order: "asc", limit: "10", offset: "0"}
-            //var params = parseQueryString(this.queryString);
         },
 
         render: function () {
@@ -55,15 +49,25 @@ define([
             var fetchUrl = '/api/documents/?' + this.queryString;
             $.get(fetchUrl)
                 .done(function (data) {
-                    //that.$el.append(_.template(paginationTemplate)());
-                    that.$el.append('total:' + data['total']);
-                    // TODO: show pagination
+                    var params;
+
+                    that.$el.append(data['total'] + ' results found.');
                     _(data['rows']).each(function (obj) {
                         var m = new Document(obj);
                         that.$el.append(
                             new DocumentView({model: m, id: "document-" + m.id}).render().el);
                         that.collection.add(m);
                     });
+
+                    params = parseQueryString(that.queryString);
+                    if (data['total'] > params['limit']) {
+                        that.$el.append(new PaginationView({
+                            total: data['total'],
+                            offset: params['offset'],
+                            limit: params['limit'],
+                            searchString: params['search']
+                        }).render().el);
+                    }
                 });
             return this;
         }

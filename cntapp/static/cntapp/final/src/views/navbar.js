@@ -5,6 +5,7 @@ define([
 ], function (_, Backbone, navbarTemplate) {
 
     var NAVBAR_TEMPLATE = _.template(navbarTemplate);
+    var SEARCH_MAX_ITEM_PER_PAGE = 20;
 
     var IndexView = Backbone.View.extend({
 
@@ -22,13 +23,19 @@ define([
 
         submit: function (event) {
             event.preventDefault();
-            console.log('submit research...');
-            // TODO check the input
             var name = this.$('input[name="search-text"]').val();
             name = name.trim().split(' ').join('+');
 
+            if (name === "") {
+                return;
+            }
+
             // Go to the research page
-            var searchUrl = '#documents?search=' + name + '&order=asc&limit=10&offset=0';
+            var searchUrl = [
+                '#documents?search=', name,
+                '&order=asc&limit=', SEARCH_MAX_ITEM_PER_PAGE,
+                '&offset=0'
+            ].join('');
             finalApp.router.navigate(searchUrl, {trigger: true});
         }
 

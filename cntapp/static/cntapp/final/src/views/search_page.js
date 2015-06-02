@@ -30,8 +30,6 @@ define([
         },
 
         render: function () {
-            //var fetchUrl = '/api/documents/?' + this.queryString;
-            //this.$el.html('searching for : ' + fetchUrl);
             this.$el.html(new DocumentSearchView({queryString: this.queryString}).render().el);
             return this;
         }
