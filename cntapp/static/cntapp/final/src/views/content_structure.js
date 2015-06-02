@@ -30,7 +30,7 @@ define([
             dirsView = new DirectoryListView({path: this.path});
             this.$("#directories-container").html(dirsView.fetchAndRender().el);
 
-            // show documents
+
             documentsView = new DocumentListView({parentId: this.parentId});
             this.$("#documents-container").html(documentsView.render().el);
             return this;
