@@ -1,8 +1,11 @@
 import sys
-from django.contrib.auth import get_user_model
 
+from django.contrib.auth import get_user_model
+from selenium.common.exceptions import NoSuchElementException
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
+from django.core.cache import cache
+
 
 User = get_user_model()
 
@@ -18,7 +21,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         cls.server_url = cls.live_server_url
 
     @classmethod
-    def tearDown(cls):
+    def tearDownClass(cls):
         if cls.server_url == cls.live_server_url:
             super().tearDownClass()
 
@@ -28,6 +31,7 @@ class FunctionalTest(StaticLiveServerTestCase):
         self.password = 'secret'
         self.user = User.objects.create_superuser(username=self.username, email='', password=self.password)
         self.browser = webdriver.Firefox()
+        cache.clear()
 
     def tearDown(self):
         self.browser.quit()
@@ -38,3 +42,10 @@ class FunctionalTest(StaticLiveServerTestCase):
 
     def assertNotInBody(self, text):
         self.assertNotIn(text, self.browser.find_element_by_tag_name('body').text)
+
+    def assertElementNotInDOM(self, css_selector):
+        try:
+            self.browser.find_element_by_css_selector(css_selector)
+            self.fail()
+        except NoSuchElementException:
+            pass
