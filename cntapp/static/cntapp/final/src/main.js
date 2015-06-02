@@ -8,6 +8,10 @@ require.config({
         'backbone': '/static/backbone/backbone',
         'bootstrap': '/static/bootstrap/dist/js/bootstrap',
         'text': '/static/requirejs-text/text',
+
+        // shared modules
+        'collections': '../../shared/src/collections',
+        'models': '../../shared/src/models',
     },
     shim: {
         'underscore': {
