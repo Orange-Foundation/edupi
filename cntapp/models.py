@@ -4,7 +4,7 @@ from django.dispatch.dispatcher import receiver
 
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.core.cache import cache
 
@@ -78,11 +78,13 @@ class Directory(models.Model):
         SubDirRelation.objects.create(parent=self, child=sub_dir)
         return self
 
+    @transaction.atomic
     def remove_sub_dir(self, sub_dir):
+        """ Remove recursively a sub directory.
+
+        Delete the directories that have only one parent.
+        Only delete the parent-child relation for the directories that have multiple parents."""
         l = SubDirRelation.objects.get(parent=self, child=sub_dir)
-        if l is None:
-            # TODO: warning
-            return
         l.delete()
         if len(sub_dir.get_parents()) == 0:
             for d in sub_dir.get_sub_dirs():

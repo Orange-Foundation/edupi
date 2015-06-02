@@ -108,6 +108,12 @@ class DirectoryTestCase(TestCase):
         self.assertEqual(len(root.get_sub_dirs()), 0)
         self.assertEqual(len(Directory.objects.all()), 1)
 
+    def test_remove_not_sub_dir(self):
+        root = self.create_dir('root')
+        dir_a = self.create_dir('dir_a')
+        with self.assertRaises(SubDirRelation.DoesNotExist):
+            root.remove_sub_dir(dir_a)
+
     def test_remove_sub_dir_two_parents(self):
         p_a = self.create_dir('parent_a')
         p_b = self.create_dir('parent_b')
