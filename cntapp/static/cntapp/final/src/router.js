@@ -31,9 +31,11 @@ define([
     };
 
     AppRouter = Backbone.Router.extend({
-        routes: {
-            "": "indexRoute",
-            "directories/*path": "showDirectoryContent",
+
+        initialize: function () {
+            // valid path example: 1/22/33/44
+            this.route(/^directories\/((?:\d+)(?:\/\d+)*)$/, 'showDirectoryContent');
+            this.route(/^$/, 'indexRoute');
         },
 
         indexRoute: function () {
