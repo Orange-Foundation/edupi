@@ -1,9 +1,8 @@
 define([
     'underscore',
     'backbone',
-    'views/navbar',
     'text!templates/index.html'
-], function (_, Backbone, NavbarView, indexTemplate) {
+], function (_, Backbone, indexTemplate) {
 
     var INDEX_TEMPLATE = _.template(indexTemplate);
 
@@ -15,11 +14,9 @@ define([
         },
 
         render: function () {
-            var context = {
+            this.$el.html(INDEX_TEMPLATE({
                 directories: (this.collection && this.collection.models) || null
-            };
-            this.$el.html(INDEX_TEMPLATE(context));
-            this.$('#nav-zone').html(new NavbarView().render().el);
+            }));
             return this;
         },
 
