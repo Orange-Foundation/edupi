@@ -4,7 +4,6 @@ html {
 }
 
 body {
-    padding-top: 50px;
     margin-bottom: 30px; /* for footer */
 }
 
@@ -58,4 +57,12 @@ body {
     .custom-class {
         width: 70%;
     }
+}
+
+.navbar-top {
+    margin-bottom: 0;
+}
+
+.navbar-form {
+    margin-bottom: 0;
 }
