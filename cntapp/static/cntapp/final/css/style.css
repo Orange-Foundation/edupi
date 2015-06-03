@@ -66,3 +66,8 @@ body {
 .navbar-form {
     margin-bottom: 0;
 }
+
+.loading {
+    margin-top: 20%;
+    text-align: center;
+}
