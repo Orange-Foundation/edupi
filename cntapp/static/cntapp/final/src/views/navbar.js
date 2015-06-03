@@ -19,10 +19,16 @@ define([
 
         events: {
             'submit form': 'submit',
+            'keyup input[name="search-text"]': function (e) {
+                this.search();
+            }
         },
 
         submit: function (event) {
             event.preventDefault();
+        },
+
+        search: function () {
             var name = this.$('input[name="search-text"]').val();
             name = name.trim().split(' ').join('+');
 
