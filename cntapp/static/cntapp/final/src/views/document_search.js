@@ -53,7 +53,7 @@ define([
                     var params;
                     var end =   performance.now();
                     var diff = (end - start) / 1000;
-                    that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + 'seconds)');
+                    that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + ' seconds)');
                     _(data['rows']).each(function (obj) {
                         var m = new Document(obj);
                         that.$el.append(

@@ -6,6 +6,7 @@ define([
 
     var NAVBAR_TEMPLATE = _.template(navbarTemplate);
     var SEARCH_MAX_ITEM_PER_PAGE = 20;
+    var SEARCH_TEXT_MIN_LENGTH = 2;
 
     var IndexView = Backbone.View.extend({
 
@@ -32,7 +33,7 @@ define([
             var name = this.$('input[name="search-text"]').val();
             name = name.trim().split(' ').join('+');
 
-            if (name === "") {
+            if (name.length < SEARCH_TEXT_MIN_LENGTH) {
                 return;
             }
 
