@@ -3,9 +3,10 @@ define([
     'backbone',
     'views/document',
     'models/document',
+    'collections/documents',
     'text!templates/document_list.html'
 ], function (_, Backbone,
-             DocumentView, Document,
+             DocumentView, Document, Documents,
              documentListTemplate) {
 
     var DocumentList = Backbone.Collection.extend({

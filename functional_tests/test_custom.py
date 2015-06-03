@@ -5,7 +5,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException
 from django.core.cache import cache
 
 from cntapp.models import Directory, Document
@@ -18,7 +17,6 @@ class CustomSiteTestCase(FunctionalTest):
         super().setUp()
         self.custom_page_url = self.server_url + '/custom/'
         self.directories_root_url = self.custom_page_url + '#directories'
-        cache.clear()
 
     def login(self):
         self.browser.get(self.custom_page_url)
@@ -28,13 +26,6 @@ class CustomSiteTestCase(FunctionalTest):
         WebDriverWait(self.browser, 3).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.navbar-brand'))
         )
-
-    def assertElementNotInDOM(self, css_selector):
-        try:
-            self.browser.find_element_by_css_selector(css_selector)
-            self.fail()
-        except NoSuchElementException:
-            pass
 
     def create_dir(self, dir_name):
         self.assertNotInBody(dir_name)
@@ -76,6 +67,10 @@ class CustomSiteTestCase(FunctionalTest):
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
         )
 
+    def enter_into_dir(self, dir_name):
+        table = self.browser.find_element_by_id("directories-table")
+        table.find_element_by_link_text(dir_name).click()
+
     def test_create_directories(self):
         self.go_to_home_page()
 
@@ -102,10 +97,6 @@ class CustomSiteTestCase(FunctionalTest):
         self.go_to_home_page()
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
-
-    def enter_into_dir(self, dir_name):
-        table = self.browser.find_element_by_id("directories-table")
-        table.find_element_by_link_text(dir_name).click()
 
     def test_navigate_directory_path(self):
         init_test_dirs()
@@ -259,16 +250,6 @@ class CustomSiteTestCase(FunctionalTest):
         doc_list = self.browser.find_element_by_id('document-list')
         self.assertIn(documents[0].name, doc_list.text)
 
-    def upload_check(self):
-        before = len(Document.objects.all())
-        upload_file = os.path.join(os.getcwd(), 'functional_tests/upload/test file.txt')
-        self.assertTrue(os.path.exists(upload_file))
-
-        file_input = self.browser.find_element_by_tag_name('input')
-        file_input.send_keys(upload_file)
-        self.browser.find_element_by_id('btn-upload').click()
-        self.assertEqual(before + 1, len(Document.objects.all()))
-
     def test_edit_document(self):
         # prepare env
         init_test_dirs()
@@ -279,7 +260,7 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.go_to_home_page()
         self.enter_into_dir(d_a.name)
-        document_li = self.browser.find_element_by_css_selector('li#document-1')
+        document_li = self.browser.find_element_by_css_selector('li#document-%d' % pdf.id)
 
         # hover on the document item
         actions = ActionChains(self.browser)
@@ -306,7 +287,7 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.assertInBody('new file name')
         self.assertInBody(desc)
-        doc = Document.objects.get(pk=1)
+        doc = Document.objects.get(pk=pdf.id)
         self.assertEqual("new file name", doc.name)
         self.assertEqual(desc, doc.description)
 

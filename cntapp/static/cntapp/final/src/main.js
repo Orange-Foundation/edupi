@@ -8,6 +8,10 @@ require.config({
         'backbone': '/static/backbone/backbone',
         'bootstrap': '/static/bootstrap/dist/js/bootstrap',
         'text': '/static/requirejs-text/text',
+
+        // shared modules
+        'collections': '../../shared/src/collections',
+        'models': '../../shared/src/models',
     },
     shim: {
         'underscore': {
@@ -27,8 +31,6 @@ define('kickstart', function (require) {
     // define global variables here if needed
     // `cntapp` contains the current state of the application
     finalApp = require('app');
-
-    Backbone.history.start();
 });
 
 require(['jquery'], function($) {
