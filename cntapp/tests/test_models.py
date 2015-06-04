@@ -55,6 +55,13 @@ class DocumentTest(TestCase):
         self.assertEquals(0, len(f_1.directory_set.all()))
         self.assertEquals(3, len(Document.objects.all()))
 
+    def test_get_parents(self):
+        d0 = DirectoryFactory()
+        d1 = DirectoryFactory()
+        f_1 = PdfDocumentFactory()
+        d0.documents.add(f_1)
+        d1.documents.add(f_1)
+        self.assertEqual(2, f_1.directory_set.count())
 
 class DirectoryTestCase(TestCase):
     def setUp(self):
@@ -206,3 +213,26 @@ class DirectoryTestCase(TestCase):
         self.assertFalse(ab_a.unlink_sub_dir(ab_a_a))
         self.assertNotIn(ab_a_a, ab_a.get_sub_dirs())
         self.assertEqual(6, Directory.objects.count())
+
+    def test_get_paths(self):
+        init_test_dirs()
+        a = Directory.objects.get(name='a')
+        b = Directory.objects.get(name='b')
+        c = Directory.objects.get(name='c')
+        ab_a = Directory.objects.get(name='ab_a')
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
+
+        path_1 = [a, ab_a, ab_a_a]
+        path_2 = [b, ab_a, ab_a_a]
+
+        self.assertEqual([[a]], a.get_paths())
+        self.assertEqual([path_1, path_2], ab_a_a.get_paths())
+        self.assertEqual(
+            [
+                [a, ab_a, ab_a_b],
+                [b, ab_a, ab_a_b],
+                [c, ab_a_b],
+            ],
+            ab_a_b.get_paths()
+        )

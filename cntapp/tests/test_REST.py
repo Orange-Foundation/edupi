@@ -262,6 +262,37 @@ class DirectoryRESTTest(BaseRESTTest):
         self.assertEqual({'status': 'Relation does not exist'}, self.render(res))
         self.assertEqual(6, Directory.objects.all().count())
 
+    def test_get_paths(self):
+        init_test_dirs()
+        a = Directory.objects.get(name='a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
+        res = self.client.get('/api/directories/%d/paths/' % a.pk)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual([
+            [
+                {'id': 1, 'url': 'http://testserver/api/directories/1/', 'name': 'a'}
+            ]
+        ],
+            self.render(res))
+
+        res = self.client.get('/api/directories/%d/paths/' % ab_a_b.pk)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual([
+            [
+                {'url': 'http://testserver/api/directories/1/', 'id': 1, 'name': 'a'},
+                {'url': 'http://testserver/api/directories/4/', 'id': 4, 'name': 'ab_a'},
+                {'url': 'http://testserver/api/directories/6/', 'id': 6, 'name': 'ab_a_b'}
+            ], [
+                {'url': 'http://testserver/api/directories/2/', 'id': 2, 'name': 'b'},
+                {'url': 'http://testserver/api/directories/4/', 'id': 4, 'name': 'ab_a'},
+                {'url': 'http://testserver/api/directories/6/', 'id': 6, 'name': 'ab_a_b'}
+            ], [
+                {'url': 'http://testserver/api/directories/3/', 'id': 3, 'name': 'c'},
+                {'url': 'http://testserver/api/directories/6/', 'id': 6, 'name': 'ab_a_b'}
+            ]
+        ],
+            self.render(res))
+
 
 class DirDocRelationRESTTest(BaseRESTTest):
     def test_get_documents_from_directory(self):

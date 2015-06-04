@@ -134,6 +134,17 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         self.get_object().remove_sub_dir(sub_dir)
         return Response({'status': 'sub directory deleted'})
 
+    @detail_route(methods=['get'])
+    @cache_response(key_func=CustomListKeyConstructor())
+    def paths(self, request, *args, **kwargs):
+        """calculate all the paths to this directory"""
+        all_paths = self.get_object().get_paths()
+        data = []
+        for path in all_paths:
+            serializer = DirectorySerializer(path, many=True, context={'request': request})
+            data.append(serializer.data)
+        return Response(data)
+
     @detail_route(methods=['post', 'delete'])
     def directories(self, request, *args, **kwargs):
         if 'id' not in request.data:
@@ -153,7 +164,6 @@ class DirectoryViewSet(viewsets.ModelViewSet):
                 return Response({'status': 'Relation does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
-
 
     @detail_route(methods=['post', 'get', 'delete'])
     def documents(self, request, *args, **kwargs):
