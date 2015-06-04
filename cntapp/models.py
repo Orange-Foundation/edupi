@@ -34,9 +34,9 @@ class Document(models.Model):
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
     thumbnail = ProcessedImageField(upload_to='thumbnails', blank=True, null=True,
-                                    processors=[ResizeToFill(400, 400)],
+                                    processors=[ResizeToFill(150, 150)],
                                     format='PNG',
-                                    options={'quality': 99})
+                                    options={'quality': 50})
 
     def __str__(self):
         return self.name
