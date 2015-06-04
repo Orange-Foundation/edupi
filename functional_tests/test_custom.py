@@ -68,6 +68,9 @@ class CustomSiteTestCase(FunctionalTest):
         )
 
     def enter_into_dir(self, dir_name):
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#directories-table"))
+        )
         table = self.browser.find_element_by_id("directories-table")
         table.find_element_by_link_text(dir_name).click()
 
