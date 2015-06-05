@@ -2,6 +2,9 @@ from rest_framework.pagination import LimitOffsetPagination, CursorPagination
 from rest_framework.response import Response
 from rest_framework.compat import OrderedDict
 from django.db.models import Q, CharField
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SimpleLimitOffsetPagination(LimitOffsetPagination):
@@ -27,8 +30,7 @@ class SimpleLimitOffsetPagination(LimitOffsetPagination):
             elif order == 'asc':
                 queryset = queryset.order_by(sort_attr)
             else:
-                # todo warning
-                pass
+                logger.warn('unexpected order param:' + order)
 
         return super().paginate_queryset(queryset, request, view)
 
