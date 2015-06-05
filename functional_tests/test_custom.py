@@ -201,7 +201,7 @@ class CustomSiteTestCase(FunctionalTest):
         for i in range(10):
             documents.append(PdfDocumentFactory())
         dir_a = Directory.objects.get(name='a')
-        col_index = {'id': 0, 'name': 1, 'description': 2, 'type': 3, 'action': 4}
+        col_index = {'id': 0, 'name': 1, 'description': 2, 'type': 3, 'action': 5}
 
         def _get_link_documents_table():
             # open the documents window and return the table
@@ -368,3 +368,38 @@ class CustomSiteTestCase(FunctionalTest):
         self.go_to_home_page()
         self.assertNotInDirectoryTable(b.name)
         self.assertInDirectoryTable(a.name)
+
+    def test_get_all_paths(self):
+        init_test_dirs()
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
+        pdf = PdfDocumentFactory()
+        ab_a_a.documents.add(pdf)
+        ab_a_b.documents.add(pdf)
+
+        self.go_to_home_page()
+        self.enter_into_dir('a')
+        self.enter_into_dir('ab_a')
+        self.enter_into_dir('ab_a_a')
+        document_li = self.browser.find_element_by_css_selector('li#document-%d' % pdf.id)
+        btn = document_li.find_element_by_class_name('paths-popover')
+        self.assertEqual('2', btn.text)
+        btn.click()
+
+        WebDriverWait(self.browser, 1).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.popover-content'))
+        )
+
+        paths = self.browser.find_element_by_class_name('popover-content')
+
+        self.assertEqual(5, len(paths.find_elements_by_tag_name('ol')))  # there are 5 possible paths
+        expected = [
+            'a ab_a ab_a_b',
+            'a ab_a ab_a_a',
+            'b ab_a ab_a_b',
+            'b ab_a ab_a_a',
+            'c ab_a_b'
+        ]
+
+        for e in expected:
+            self.assertIn(e, paths.text)
