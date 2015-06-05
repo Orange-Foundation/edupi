@@ -33,7 +33,6 @@ class BaseRESTTest(TestCase):
 
 
 class DocumentRESTTest(BaseRESTTest):
-
     def test_without_authentication(self):
         self.client.logout()
         file = SimpleUploadedFile('book.txt', 'book content'.encode('utf-8'))
@@ -48,6 +47,7 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual(status.HTTP_201_CREATED, res.status_code)
         self.assertEqual({'id': 1,
                           'name': 'book.txt',
+                          'directory_set': [],
                           'description': '',
                           'file': 'http://testserver/media/book.txt',
                           'type': 'o',
@@ -75,6 +75,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'description': '',
                           'file': 'http://testserver/media/book-1.txt',
                           'type': 'o',
+                          'directory_set': [],
                           'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.png'},
                          self.render(res))
 
@@ -100,6 +101,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'description': '__description__0',
                           'file': 'http://testserver/media/hello.pdf',
                           'type': 'p',  # mocked pdf
+                          'directory_set': [],
                           'thumbnail': None},
                          self.render(res))
 
@@ -111,12 +113,12 @@ class DocumentRESTTest(BaseRESTTest):
                           'description': 'detailed description',
                           'file': 'http://testserver/media/hello.pdf',
                           'type': 'p',
+                          'directory_set': [],
                           'thumbnail': None},
                          self.render(res))
 
 
 class DirectoryRESTTest(BaseRESTTest):
-
     def test_without_authentication(self):
         self.client.logout()
         init_test_dirs()
@@ -310,18 +312,32 @@ class DirDocRelationRESTTest(BaseRESTTest):
         res = self.client.get('/api/directories/%d/documents/' % d.pk)
         self.assertEqual(
             [
-                {'description': pdf_0.description,
-                 'id': pdf_0.id,
-                 'file': 'http://testserver' + pdf_0.file.url,
-                 'name': pdf_0.name,
-                 'type': 'p',
-                 'thumbnail': None},
-                {'description': pdf_1.description,
-                 'id': pdf_1.id,
-                 'file': 'http://testserver' + pdf_1.file.url,
-                 'name': pdf_1.name,
-                 'type': 'p',
-                 'thumbnail': None},
+                {
+                    'description': pdf_0.description,
+                    'id': pdf_0.id,
+                    'file': 'http://testserver' + pdf_0.file.url,
+                    'name': pdf_0.name,
+                    'type': 'p',
+                    'thumbnail': None,
+                    'directory_set': [
+                        {
+                            'name': d.name, 'url': 'http://testserver/api/directories/%d/' % d.id, 'id': d.id
+                        }
+                    ],
+                },
+                {
+                    'description': pdf_1.description,
+                    'id': pdf_1.id,
+                    'file': 'http://testserver' + pdf_1.file.url,
+                    'name': pdf_1.name,
+                    'type': 'p',
+                    'thumbnail': None,
+                    'directory_set': [
+                        {
+                            'name': d.name, 'url': 'http://testserver/api/directories/%d/' % d.id, 'id': d.id
+                        }
+                    ],
+                },
             ],
             self.render(res))
 
