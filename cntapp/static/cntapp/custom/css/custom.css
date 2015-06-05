@@ -39,3 +39,13 @@ video {
 .action-bar, .state-bar {
     padding: 10px;
 }
+
+/* The max width is dependant on the container (more info below) */
+.popover{
+    max-width: 100%; /* Max Width of the popover (depending on the container!) */
+}
+
+.path-breadcrumb {
+    margin: 0;
+    padding: 0;
+}

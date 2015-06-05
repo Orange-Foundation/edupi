@@ -3,15 +3,17 @@ define([
     'backbone',
     'text!templates/document.html',
     'text!templates/document_edit.html',
-    'text!templates/file_play_modal.html'
+    'text!templates/file_play_modal.html',
+    'text!templates/path_list.html'
 ], function (_, Backbone,
              documentTemplate,
              documentEditTemplate,
-             filePlayModalTemplate) {
+             filePlayModalTemplate, pathListTemplate) {
 
     var TEMPLATE = _.template(documentTemplate);
     var EDIT_TEMPLATE = _.template(documentEditTemplate);
     var FILE_PLAY_MODAL_TEMPLATE = _.template(filePlayModalTemplate);
+    var PATH_LIST_TEMPLATE = _.template(pathListTemplate);
 
     var DocumentView = Backbone.View.extend({
         tagName: "li",
@@ -24,6 +26,7 @@ define([
                 this.$('.error-msg').html(error);
             }, this);
 
+            this.allPaths = [];
         },
 
         render: function () {
@@ -88,6 +91,37 @@ define([
                 var code = e.keyCode || e.which;
                 if (code === 10) {  // ctrl + enter
                     this.saveDocument();
+                }
+            },
+            'click .paths': function () {
+                if (this.allPaths.length > 0) {
+                    return;
+                }
+
+                var that = this;
+                var parents = that.model.get('directory_set');
+                var fetchedNum = 0;
+                for (var i = 0; i < parents.length; i++) {
+                    $.get(cntapp.apiRoots.directories + parents[i]['id'] + '/paths/')
+                        .done(function (paths) {
+                            that.allPaths = that.allPaths.concat(paths);
+                            if (++fetchedNum === parents.length) {
+                                // TODO: find a proper way to sort the result
+                                that.allPaths = that.allPaths.sort(function (a, b) {
+                                    return a[0]['name'] >= b['0']['name'];
+                                });
+
+                                that.$('span[data-toggle="path-popover"]').popover({
+                                    html: true,
+                                    container: 'body',
+                                    content: function () {
+                                        return PATH_LIST_TEMPLATE({
+                                            paths: that.allPaths
+                                        });
+                                    }
+                                }).popover('show');
+                            }
+                        });
                 }
             }
         },
