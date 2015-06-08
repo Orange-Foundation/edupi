@@ -70,6 +70,21 @@ class Directory(models.Model):
     def get_parents(self):
         return self.directory_set.all()
 
+    def get_paths(self):
+        """ return paths recursively
+        """
+        parents = self.get_parents()
+        if parents.count() == 0:
+            return [[self]]
+
+        paths = []
+        for p in parents:
+            p_paths = p.get_paths()
+            for p_path in p_paths:
+                p_path.append(self)
+            paths.extend(p_paths)
+        return paths
+
     def add_sub_dir(self, sub_dir):
         if len(SubDirRelation.objects.filter(parent=self, child=sub_dir)) > 0:
             logger.warn('SubDirRelation already exists between parent_id=%d and child_id=%d' % (

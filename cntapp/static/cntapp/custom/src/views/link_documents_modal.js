@@ -90,6 +90,12 @@ define([
                         return ret;
                     }
                 }, {
+                    field: 'directory_set',
+                    title: 'refs',
+                    formatter: function (value, row, index) {
+                        return value.length;
+                    }
+                }, {
                     field: 'action',
                     title: 'Action',
                     formatter: function (value, row, index) {
