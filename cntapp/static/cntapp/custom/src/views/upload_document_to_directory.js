@@ -17,7 +17,11 @@ define([
                 paramName: "file",
                 maxFilesize: 1024,  // MB
                 maxThumbnailFilesize: 5,  // MB
-                acceptedFiles: "image/*,audio/*,video/*,application/pdf,.apk",
+                acceptedFiles: "image/*,audio/*,video/*,application/pdf,.apk," +
+                    // office files
+                ".ppt,.pptx,.pot,.potx,.pps,.ppsx,.ppa," +
+                ".doc,.docx,.dot,.dotx," +
+                ".xls,.xlsx,.xlt,.xltx,.xla",
 
                 init: function () {
                     this.on('addedfile', function (file) {
