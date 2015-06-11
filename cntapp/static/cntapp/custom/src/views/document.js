@@ -4,16 +4,24 @@ define([
     'text!templates/document.html',
     'text!templates/document_edit.html',
     'text!templates/file_play_modal.html',
+    'text!templates/confirm_modal.html',
     'text!templates/path_list.html'
 ], function (_, Backbone,
              documentTemplate,
              documentEditTemplate,
-             filePlayModalTemplate, pathListTemplate) {
+             filePlayModalTemplate,
+             confirmModalTemplate,
+             pathListTemplate) {
 
     var TEMPLATE = _.template(documentTemplate);
     var EDIT_TEMPLATE = _.template(documentEditTemplate);
     var FILE_PLAY_MODAL_TEMPLATE = _.template(filePlayModalTemplate);
+    var CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate);
     var PATH_LIST_TEMPLATE = _.template(pathListTemplate);
+
+    var DOCUMENT_DELETE_CONFIRM_MSG =
+        "The document will be deleted from the server and from all linked directories." +
+        "Are you sure to delete this document?";
 
     var DocumentView = Backbone.View.extend({
         tagName: "li",
@@ -37,11 +45,32 @@ define([
             this.$('span[data-toggle="popover"]').popover({
                 html: true,
                 content: function () {
-                    return "<button class='btn btn-danger btn-block btn-delete-confirmed'>\
-                        DELETE</button>";
+                    return [
+                        "<button ",
+                        " class='btn btn-danger btn-block btn-delete-confirmed'",
+                        " data-toggle='modal'",
+                        " data-target='#modal-confirm'> DELETE </button>"
+                    ].join();
                 }
             });
             return this;
+        },
+
+        createInstantConfirmModal: function (message, confirmCallback) {
+            if (typeof confirmCallback === 'undefined') {
+                throw Error('No callback function for confirm dialog.');
+            }
+
+            console.log('searching modal-area');
+            this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
+                title: null,
+                message: message
+            }));
+            this.$(".modal").on('hidden.bs.modal', function () {
+                $(this).data('bs.modal', null);
+                $(this).remove();
+            });
+            this.$('.modal-area .btn-confirmed').click(confirmCallback);
         },
 
         events: {
@@ -59,15 +88,21 @@ define([
             },
             'click .btn-delete-confirmed': function () {
                 var that = this;
-                this.model.destroy({
-                    success: function (model, response) {
-                        console.log('model destroyed');
-                        console.log(response);
-                        that.$el.fadeOut(200, function () {
-                            $(this).remove();
-                        })
+                this.createInstantConfirmModal(
+                    DOCUMENT_DELETE_CONFIRM_MSG,
+                    function () {
+                        that.model.destroy({
+                            success: function (model, response) {
+                                console.log('model destroyed');
+                                console.log(response);
+                                this.$('.modal').modal('hide');
+                                that.$el.fadeOut(200, function () {
+                                    $(this).remove();
+                                })
+                            }
+                        });
                     }
-                });
+                );
             },
             'click .btn-play': function () {
                 var that, modal_id, file_id;
