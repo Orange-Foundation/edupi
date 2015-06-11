@@ -13,7 +13,7 @@ define([
     SIGNS_ENUM = {
         unlink: [
             '<a class="unlink toggle-link" href="javascript:void(0)" title="Unlink">',
-            '<i class="glyphicon glyphicon-minus-sign"></i>',
+            '<i class="glyphicon glyphicon-ok"></i>',
             '</a>'
         ].join(''),
 
