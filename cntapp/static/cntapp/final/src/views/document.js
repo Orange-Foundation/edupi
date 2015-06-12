@@ -44,14 +44,16 @@ define([
                 var tmpHash;
                 this.$(modal_id).one("shown.bs.modal", function () { // any time a modal is shown
                     var s = location.hash;
+                    var URL_SEPARATOR = '$';
 
-                    if (s.lastIndexOf('?') > s.indexOf('#')) {
+                    // query string
+                    if (s.lastIndexOf(URL_SEPARATOR) > s.indexOf('#')) {
                         // happens when refresh with a modal window
-                        s = s.slice(0, s.indexOf('?'));
-                        tmpHash = s + '?' + modal_id;
+                        s = s.slice(0, s.indexOf(URL_SEPARATOR));
+                        tmpHash = s + URL_SEPARATOR + modal_id;
                         history.replaceState(null, null, tmpHash); // push state that hash into the url
                     } else {
-                        tmpHash = s + '?' + modal_id;
+                        tmpHash = s + URL_SEPARATOR + modal_id;
                         history.pushState(null, null, tmpHash); // push state that hash into the url
                     }
                 });

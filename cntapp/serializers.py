@@ -25,9 +25,11 @@ class DirectorySerializer(serializers.ModelSerializer):
 
 
 class DocumentSerializer(serializers.ModelSerializer):
+    directory_set = DirectorySerializer(many=True, read_only=True)
+
     class Meta:
         model = Document
-        fields = ('id', 'name', 'description', 'type', 'file', 'thumbnail')
+        fields = ('id', 'name', 'description', 'type', 'file', 'thumbnail', 'directory_set')
 
     @staticmethod
     def fill_document_type(validated_data):

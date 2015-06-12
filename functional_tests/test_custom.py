@@ -5,7 +5,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-from selenium.common.exceptions import NoSuchElementException
 from django.core.cache import cache
 
 from cntapp.models import Directory, Document
@@ -18,7 +17,6 @@ class CustomSiteTestCase(FunctionalTest):
         super().setUp()
         self.custom_page_url = self.server_url + '/custom/'
         self.directories_root_url = self.custom_page_url + '#directories'
-        cache.clear()
 
     def login(self):
         self.browser.get(self.custom_page_url)
@@ -28,13 +26,6 @@ class CustomSiteTestCase(FunctionalTest):
         WebDriverWait(self.browser, 3).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.navbar-brand'))
         )
-
-    def assertElementNotInDOM(self, css_selector):
-        try:
-            self.browser.find_element_by_css_selector(css_selector)
-            self.fail()
-        except NoSuchElementException:
-            pass
 
     def create_dir(self, dir_name):
         self.assertNotInBody(dir_name)
@@ -76,6 +67,13 @@ class CustomSiteTestCase(FunctionalTest):
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
         )
 
+    def enter_into_dir(self, dir_name):
+        WebDriverWait(self.browser, 2).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "#directories-table"))
+        )
+        table = self.browser.find_element_by_id("directories-table")
+        table.find_element_by_link_text(dir_name).click()
+
     def test_create_directories(self):
         self.go_to_home_page()
 
@@ -102,10 +100,6 @@ class CustomSiteTestCase(FunctionalTest):
         self.go_to_home_page()
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
-
-    def enter_into_dir(self, dir_name):
-        table = self.browser.find_element_by_id("directories-table")
-        table.find_element_by_link_text(dir_name).click()
 
     def test_navigate_directory_path(self):
         init_test_dirs()
@@ -207,7 +201,7 @@ class CustomSiteTestCase(FunctionalTest):
         for i in range(10):
             documents.append(PdfDocumentFactory())
         dir_a = Directory.objects.get(name='a')
-        col_index = {'id': 0, 'name': 1, 'description': 2, 'type': 3, 'action': 4}
+        col_index = {'id': 0, 'name': 1, 'description': 2, 'type': 3, 'action': 5}
 
         def _get_link_documents_table():
             # open the documents window and return the table
@@ -259,16 +253,6 @@ class CustomSiteTestCase(FunctionalTest):
         doc_list = self.browser.find_element_by_id('document-list')
         self.assertIn(documents[0].name, doc_list.text)
 
-    def upload_check(self):
-        before = len(Document.objects.all())
-        upload_file = os.path.join(os.getcwd(), 'functional_tests/upload/test file.txt')
-        self.assertTrue(os.path.exists(upload_file))
-
-        file_input = self.browser.find_element_by_tag_name('input')
-        file_input.send_keys(upload_file)
-        self.browser.find_element_by_id('btn-upload').click()
-        self.assertEqual(before + 1, len(Document.objects.all()))
-
     def test_edit_document(self):
         # prepare env
         init_test_dirs()
@@ -279,7 +263,7 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.go_to_home_page()
         self.enter_into_dir(d_a.name)
-        document_li = self.browser.find_element_by_css_selector('li#document-1')
+        document_li = self.browser.find_element_by_css_selector('li#document-%d' % pdf.id)
 
         # hover on the document item
         actions = ActionChains(self.browser)
@@ -306,7 +290,7 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.assertInBody('new file name')
         self.assertInBody(desc)
-        doc = Document.objects.get(pk=1)
+        doc = Document.objects.get(pk=pdf.id)
         self.assertEqual("new file name", doc.name)
         self.assertEqual(desc, doc.description)
 
@@ -384,3 +368,38 @@ class CustomSiteTestCase(FunctionalTest):
         self.go_to_home_page()
         self.assertNotInDirectoryTable(b.name)
         self.assertInDirectoryTable(a.name)
+
+    def test_get_all_paths(self):
+        init_test_dirs()
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
+        pdf = PdfDocumentFactory()
+        ab_a_a.documents.add(pdf)
+        ab_a_b.documents.add(pdf)
+
+        self.go_to_home_page()
+        self.enter_into_dir('a')
+        self.enter_into_dir('ab_a')
+        self.enter_into_dir('ab_a_a')
+        document_li = self.browser.find_element_by_css_selector('li#document-%d' % pdf.id)
+        btn = document_li.find_element_by_class_name('paths-popover')
+        self.assertEqual('2', btn.text)
+        btn.click()
+
+        WebDriverWait(self.browser, 1).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, '.popover-content'))
+        )
+
+        paths = self.browser.find_element_by_class_name('popover-content')
+
+        self.assertEqual(5, len(paths.find_elements_by_tag_name('ol')))  # there are 5 possible paths
+        expected = [
+            'a ab_a ab_a_b',
+            'a ab_a ab_a_a',
+            'b ab_a ab_a_b',
+            'b ab_a ab_a_a',
+            'c ab_a_b'
+        ]
+
+        for e in expected:
+            self.assertIn(e, paths.text)

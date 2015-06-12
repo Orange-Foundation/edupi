@@ -3,15 +3,25 @@ define([
     'backbone',
     'text!templates/document.html',
     'text!templates/document_edit.html',
-    'text!templates/file_play_modal.html'
+    'text!templates/file_play_modal.html',
+    'text!templates/confirm_modal.html',
+    'text!templates/path_list.html'
 ], function (_, Backbone,
              documentTemplate,
              documentEditTemplate,
-             filePlayModalTemplate) {
+             filePlayModalTemplate,
+             confirmModalTemplate,
+             pathListTemplate) {
 
     var TEMPLATE = _.template(documentTemplate);
     var EDIT_TEMPLATE = _.template(documentEditTemplate);
     var FILE_PLAY_MODAL_TEMPLATE = _.template(filePlayModalTemplate);
+    var CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate);
+    var PATH_LIST_TEMPLATE = _.template(pathListTemplate);
+
+    var DOCUMENT_DELETE_CONFIRM_MSG =
+        "The document will be deleted from the server and from all linked directories." +
+        "Are you sure to delete this document?";
 
     var DocumentView = Backbone.View.extend({
         tagName: "li",
@@ -24,6 +34,7 @@ define([
                 this.$('.error-msg').html(error);
             }, this);
 
+            this.allPaths = [];
         },
 
         render: function () {
@@ -34,11 +45,32 @@ define([
             this.$('span[data-toggle="popover"]').popover({
                 html: true,
                 content: function () {
-                    return "<button class='btn btn-danger btn-block btn-delete-confirmed'>\
-                        DELETE</button>";
+                    return [
+                        "<button ",
+                        " class='btn btn-danger btn-block btn-delete-confirmed'",
+                        " data-toggle='modal'",
+                        " data-target='#modal-confirm'> DELETE </button>"
+                    ].join();
                 }
             });
             return this;
+        },
+
+        createInstantConfirmModal: function (message, confirmCallback) {
+            if (typeof confirmCallback === 'undefined') {
+                throw Error('No callback function for confirm dialog.');
+            }
+
+            console.log('searching modal-area');
+            this.$('.modal-area').html(CONFIRM_MODAL_TEMPLATE({
+                title: null,
+                message: message
+            }));
+            this.$(".modal").on('hidden.bs.modal', function () {
+                $(this).data('bs.modal', null);
+                $(this).remove();
+            });
+            this.$('.modal-area .btn-confirmed').click(confirmCallback);
         },
 
         events: {
@@ -56,15 +88,21 @@ define([
             },
             'click .btn-delete-confirmed': function () {
                 var that = this;
-                this.model.destroy({
-                    success: function (model, response) {
-                        console.log('model destroyed');
-                        console.log(response);
-                        that.$el.fadeOut(200, function () {
-                            $(this).remove();
-                        })
+                this.createInstantConfirmModal(
+                    DOCUMENT_DELETE_CONFIRM_MSG,
+                    function () {
+                        that.model.destroy({
+                            success: function (model, response) {
+                                console.log('model destroyed');
+                                console.log(response);
+                                this.$('.modal').modal('hide');
+                                that.$el.fadeOut(200, function () {
+                                    $(this).remove();
+                                })
+                            }
+                        });
                     }
-                });
+                );
             },
             'click .btn-play': function () {
                 var that, modal_id, file_id;
@@ -88,6 +126,37 @@ define([
                 var code = e.keyCode || e.which;
                 if (code === 10) {  // ctrl + enter
                     this.saveDocument();
+                }
+            },
+            'click .paths': function () {
+                if (this.allPaths.length > 0) {
+                    return;
+                }
+
+                var that = this;
+                var parents = that.model.get('directory_set');
+                var fetchedNum = 0;
+                for (var i = 0; i < parents.length; i++) {
+                    $.get(cntapp.apiRoots.directories + parents[i]['id'] + '/paths/')
+                        .done(function (paths) {
+                            that.allPaths = that.allPaths.concat(paths);
+                            if (++fetchedNum === parents.length) {
+                                // TODO: find a proper way to sort the result
+                                that.allPaths = that.allPaths.sort(function (a, b) {
+                                    return a[0]['name'] >= b['0']['name'];
+                                });
+
+                                that.$('span[data-toggle="path-popover"]').popover({
+                                    html: true,
+                                    container: 'body',
+                                    content: function () {
+                                        return PATH_LIST_TEMPLATE({
+                                            paths: that.allPaths
+                                        });
+                                    }
+                                }).popover('show');
+                            }
+                        });
                 }
             }
         },

@@ -4,7 +4,6 @@ html {
 }
 
 body {
-    padding-top: 50px;
     margin-bottom: 30px; /* for footer */
 }
 
@@ -28,7 +27,7 @@ body {
     margin-bottom: 5px;
     font-family: sans-serif;
     height: 100px;
-    line-height: 80px;
+    line-height: 60px;
     font-size: 20px;
     color: orange;
     background-color: #ffffff;
@@ -49,6 +48,10 @@ body {
     margin-top: 30px;
 }
 
+.bottom-buffer {
+    margin-bottom: 30px;
+}
+
 .statebar-top-buffer {
     margin-top: 50px;
 }
@@ -58,4 +61,17 @@ body {
     .custom-class {
         width: 70%;
     }
+}
+
+.navbar-top {
+    margin-bottom: 0;
+}
+
+.navbar-form {
+    margin-bottom: 0;
+}
+
+.loading {
+    margin-top: 20%;
+    text-align: center;
 }

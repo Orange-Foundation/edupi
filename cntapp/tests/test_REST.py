@@ -33,7 +33,6 @@ class BaseRESTTest(TestCase):
 
 
 class DocumentRESTTest(BaseRESTTest):
-
     def test_without_authentication(self):
         self.client.logout()
         file = SimpleUploadedFile('book.txt', 'book content'.encode('utf-8'))
@@ -48,6 +47,7 @@ class DocumentRESTTest(BaseRESTTest):
         self.assertEqual(status.HTTP_201_CREATED, res.status_code)
         self.assertEqual({'id': 1,
                           'name': 'book.txt',
+                          'directory_set': [],
                           'description': '',
                           'file': 'http://testserver/media/book.txt',
                           'type': 'o',
@@ -75,6 +75,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'description': '',
                           'file': 'http://testserver/media/book-1.txt',
                           'type': 'o',
+                          'directory_set': [],
                           'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.png'},
                          self.render(res))
 
@@ -100,6 +101,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'description': '__description__0',
                           'file': 'http://testserver/media/hello.pdf',
                           'type': 'p',  # mocked pdf
+                          'directory_set': [],
                           'thumbnail': None},
                          self.render(res))
 
@@ -111,12 +113,12 @@ class DocumentRESTTest(BaseRESTTest):
                           'description': 'detailed description',
                           'file': 'http://testserver/media/hello.pdf',
                           'type': 'p',
+                          'directory_set': [],
                           'thumbnail': None},
                          self.render(res))
 
 
 class DirectoryRESTTest(BaseRESTTest):
-
     def test_without_authentication(self):
         self.client.logout()
         init_test_dirs()
@@ -182,18 +184,17 @@ class DirectoryRESTTest(BaseRESTTest):
     def test_delete_sub_dir(self):
         init_test_dirs()
         ab_a = Directory.objects.get(name='ab_a')
+        ab_a_a = Directory.objects.get(name='ab_a_a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
         self.assertEqual(6, Directory.objects.all().count())
 
-        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_a'}, format='json')
+        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'id': ab_a_a.pk}, format='json')
         self.assertEqual({'status': 'sub directory deleted'}, self.render(res))
         self.assertEqual(5, Directory.objects.all().count())
 
-        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_b'}, format='json')
+        res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'id': ab_a_b.pk}, format='json')
         self.assertEqual({'status': 'sub directory deleted'}, self.render(res))
         self.assertEqual(5, Directory.objects.all().count())
-
-        with self.assertRaises(Directory.DoesNotExist):
-            res = self.client.delete('/api/directories/%d/delete/' % ab_a.pk, {'name': 'ab_a_b'}, format='json')
 
     def test_delete_root_dir(self):
         init_test_dirs()
@@ -263,6 +264,37 @@ class DirectoryRESTTest(BaseRESTTest):
         self.assertEqual({'status': 'Relation does not exist'}, self.render(res))
         self.assertEqual(6, Directory.objects.all().count())
 
+    def test_get_paths(self):
+        init_test_dirs()
+        a = Directory.objects.get(name='a')
+        ab_a_b = Directory.objects.get(name='ab_a_b')
+        res = self.client.get('/api/directories/%d/paths/' % a.pk)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual([
+            [
+                {'id': 1, 'url': 'http://testserver/api/directories/1/', 'name': 'a'}
+            ]
+        ],
+            self.render(res))
+
+        res = self.client.get('/api/directories/%d/paths/' % ab_a_b.pk)
+        self.assertEqual(status.HTTP_200_OK, res.status_code)
+        self.assertEqual([
+            [
+                {'url': 'http://testserver/api/directories/1/', 'id': 1, 'name': 'a'},
+                {'url': 'http://testserver/api/directories/4/', 'id': 4, 'name': 'ab_a'},
+                {'url': 'http://testserver/api/directories/6/', 'id': 6, 'name': 'ab_a_b'}
+            ], [
+                {'url': 'http://testserver/api/directories/2/', 'id': 2, 'name': 'b'},
+                {'url': 'http://testserver/api/directories/4/', 'id': 4, 'name': 'ab_a'},
+                {'url': 'http://testserver/api/directories/6/', 'id': 6, 'name': 'ab_a_b'}
+            ], [
+                {'url': 'http://testserver/api/directories/3/', 'id': 3, 'name': 'c'},
+                {'url': 'http://testserver/api/directories/6/', 'id': 6, 'name': 'ab_a_b'}
+            ]
+        ],
+            self.render(res))
+
 
 class DirDocRelationRESTTest(BaseRESTTest):
     def test_get_documents_from_directory(self):
@@ -280,18 +312,32 @@ class DirDocRelationRESTTest(BaseRESTTest):
         res = self.client.get('/api/directories/%d/documents/' % d.pk)
         self.assertEqual(
             [
-                {'description': pdf_0.description,
-                 'id': pdf_0.id,
-                 'file': 'http://testserver' + pdf_0.file.url,
-                 'name': pdf_0.name,
-                 'type': 'p',
-                 'thumbnail': None},
-                {'description': pdf_1.description,
-                 'id': pdf_1.id,
-                 'file': 'http://testserver' + pdf_1.file.url,
-                 'name': pdf_1.name,
-                 'type': 'p',
-                 'thumbnail': None},
+                {
+                    'description': pdf_0.description,
+                    'id': pdf_0.id,
+                    'file': 'http://testserver' + pdf_0.file.url,
+                    'name': pdf_0.name,
+                    'type': 'p',
+                    'thumbnail': None,
+                    'directory_set': [
+                        {
+                            'name': d.name, 'url': 'http://testserver/api/directories/%d/' % d.id, 'id': d.id
+                        }
+                    ],
+                },
+                {
+                    'description': pdf_1.description,
+                    'id': pdf_1.id,
+                    'file': 'http://testserver' + pdf_1.file.url,
+                    'name': pdf_1.name,
+                    'type': 'p',
+                    'thumbnail': None,
+                    'directory_set': [
+                        {
+                            'name': d.name, 'url': 'http://testserver/api/directories/%d/' % d.id, 'id': d.id
+                        }
+                    ],
+                },
             ],
             self.render(res))
 

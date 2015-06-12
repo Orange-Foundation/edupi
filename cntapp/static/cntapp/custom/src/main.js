@@ -13,6 +13,10 @@ require.config({
         'bootstrap_table_editable': '/static/bootstrap-table/src/extensions/editable/bootstrap-table-editable',
         'text': '/static/requirejs-text/text',
         'dropzone': '/static/dropzone/dist/dropzone-amd-module',
+
+        // shared modules
+        'collections': '../../shared/src/collections',
+        'models': '../../shared/src/models',
     },
     shim: {
         'underscore': {

@@ -4,7 +4,7 @@ from django.dispatch.dispatcher import receiver
 
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFill
-from django.db import models
+from django.db import models, transaction
 from django.db.models.signals import post_save, post_delete, m2m_changed
 from django.core.cache import cache
 
@@ -34,9 +34,9 @@ class Document(models.Model):
     description = models.CharField(max_length=250, blank=True)
     file = models.FileField()
     thumbnail = ProcessedImageField(upload_to='thumbnails', blank=True, null=True,
-                                    processors=[ResizeToFill(400, 400)],
+                                    processors=[ResizeToFill(150, 150)],
                                     format='PNG',
-                                    options={'quality': 99})
+                                    options={'quality': 50})
 
     def __str__(self):
         return self.name
@@ -70,6 +70,21 @@ class Directory(models.Model):
     def get_parents(self):
         return self.directory_set.all()
 
+    def get_paths(self):
+        """ return paths recursively
+        """
+        parents = self.get_parents()
+        if parents.count() == 0:
+            return [[self]]
+
+        paths = []
+        for p in parents:
+            p_paths = p.get_paths()
+            for p_path in p_paths:
+                p_path.append(self)
+            paths.extend(p_paths)
+        return paths
+
     def add_sub_dir(self, sub_dir):
         if len(SubDirRelation.objects.filter(parent=self, child=sub_dir)) > 0:
             logger.warn('SubDirRelation already exists between parent_id=%d and child_id=%d' % (
@@ -78,11 +93,13 @@ class Directory(models.Model):
         SubDirRelation.objects.create(parent=self, child=sub_dir)
         return self
 
+    @transaction.atomic
     def remove_sub_dir(self, sub_dir):
+        """ Remove recursively a sub directory.
+
+        Delete the directories that have only one parent.
+        Only delete the parent-child relation for the directories that have multiple parents."""
         l = SubDirRelation.objects.get(parent=self, child=sub_dir)
-        if l is None:
-            # TODO: warning
-            return
         l.delete()
         if len(sub_dir.get_parents()) == 0:
             for d in sub_dir.get_sub_dirs():

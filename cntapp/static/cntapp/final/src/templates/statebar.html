@@ -5,11 +5,18 @@
                 <ul class="breadcrumb list-inline">
                     <li><a href="#">Home</a></li>
                     <%
-                    var link = '#directories';
-                    _.each(path, function (dir) {
-                        link = link + '/' + dir.get('id');
+                    var link = '#directories'
+                    linkedNum = path.length - 1;
+                    _.each(path, function (dir, index) {
                     %>
-                        <li><a href="<%= link %>"><%= dir.get('name') %></a></li>
+                    <li>
+                        <% if (index < linkedNum) {
+                            link = link + '/' + dir.get('id'); %>
+                            <a href="<%= link %>"><%= dir.get('name') %></a>
+                        <% } else { %>
+                            <%= dir.get('name') %>
+                        <% } %>
+                    </li>
                     <% }); %>
                 </ul>
             </li>

@@ -1,0 +1,23 @@
+<ul class="list-unstyled">
+    <% _.each(paths, function (path) { %>
+    <li>
+        <ol class="breadcrumb path-breadcrumb">
+            <%
+            var link = '#directories';
+            var last = path.length - 1;
+            _.each(path, function (dir, index) {
+            link = link + '/' + dir['id'];
+            %>
+            <li>
+                <% if (index === last) { %>
+                <a href="<%= link %>"><%= dir['name'] %></a>
+                <% } else { %>
+                <%= dir['name'] %>
+                <% } %>
+            </li>
+            <% }); %>
+        </ol>
+        <br>
+    </li>
+    <% });%>
+</ul>
