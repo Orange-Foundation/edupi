@@ -1,6 +1,7 @@
 require.config({
     // for development purpose, ensure the newest version js at each time
     //urlArgs: "bust=" + (new Date()).getTime(),
+    urlArgs: "bust=v1.0.0",
 
     paths: {
         'jquery': '/static/jquery/dist/jquery',
@@ -24,17 +25,8 @@ require.config({
     }
 });
 
-define('kickstart', function (require) {
-    // import external js modules
-    require('bootstrap');
-
-    // define global variables here if needed
-    // `cntapp` contains the current state of the application
-    finalApp = require('app');
-});
-
-require(['jquery'], function($) {
+require(['jquery', 'app'], function($, app) {
     $(document).ready(function () {
-        require(['kickstart']);
+        finalApp = app;
     });
 });

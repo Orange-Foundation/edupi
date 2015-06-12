@@ -3,7 +3,9 @@ define([
     'backbone',
     'router',
     'collections/directories',
-    'views/body_structure'
+    'views/body_structure',
+
+    'bootstrap'
 ], function (_, Backbone, AppRouter,
              DirectoriesCollection,
              BodyStructureView) {

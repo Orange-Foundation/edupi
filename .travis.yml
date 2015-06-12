@@ -12,6 +12,7 @@ install:
   - pip install -r requirements-dev.txt
   - python manage.py bower install
   - r.js -o cntapp/static/cntapp/custom/src/app.build.js
+  - r.js -o cntapp/static/cntapp/final/src/app.build.js
 script:
   - coverage run --source=cntapp manage.py test
 after_success:
