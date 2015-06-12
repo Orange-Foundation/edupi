@@ -27,7 +27,7 @@ body {
     margin-bottom: 5px;
     font-family: sans-serif;
     height: 100px;
-    line-height: 80px;
+    line-height: 60px;
     font-size: 20px;
     color: orange;
     background-color: #ffffff;
@@ -46,6 +46,10 @@ body {
 
 .top-buffer {
     margin-top: 30px;
+}
+
+.bottom-buffer {
+    margin-bottom: 30px;
 }
 
 .statebar-top-buffer {
