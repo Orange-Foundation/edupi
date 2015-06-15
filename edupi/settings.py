@@ -192,12 +192,12 @@ LOGGING = {
         },
         'django.db.backends': {
             'handlers': ['console'],
-            'level': 'DEBUG',
+            'level': 'WARN',
             'propagate': False,
         },
         'cntapp': {
             'handlers': ['console', 'logfile'],
-            'level': 'DEBUG',
+            'level': 'WARN',
         },
     }
 }
