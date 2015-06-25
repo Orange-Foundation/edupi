@@ -23,12 +23,17 @@ define([
         "The document will be deleted from the server and from all linked directories." +
         "Are you sure to delete this document?";
 
+    var DOCUMENT_UNLINK_CONFIRM_MSG =
+        "The document will be unlink from the current directory." +
+        "Are you sure to unlink this document?";
+
     var DocumentView = Backbone.View.extend({
         tagName: "li",
         className: "list-group-item",
 
         initialize: function () {
             this.model.on("change", this.render, this);
+            this.model.on("destroy", this.destroy, this);
 
             this.model.on('invalid', function (model, error) {
                 this.$('.error-msg').html(error);
@@ -57,6 +62,8 @@ define([
         },
 
         createInstantConfirmModal: function (message, confirmCallback) {
+            var that = this,
+                wrappedCallback;
             if (typeof confirmCallback === 'undefined') {
                 throw Error('No callback function for confirm dialog.');
             }
@@ -70,7 +77,19 @@ define([
                 $(this).data('bs.modal', null);
                 $(this).remove();
             });
-            this.$('.modal-area .btn-confirmed').click(confirmCallback);
+            wrappedCallback = _.wrap(confirmCallback, function (callback) {
+                callback();
+                that.$('.modal').modal('hide');
+            });
+
+            this.$('.modal-area .btn-confirmed').click(wrappedCallback);
+        },
+
+        destroy: function () {
+            // remove this view, only called when document model destroy event is triggered.
+            this.$el.fadeOut(200, function () {
+                $(this).remove();
+            });
         },
 
         events: {
@@ -86,21 +105,21 @@ define([
             'click .btn-cancel': function () {
                 this.render();
             },
+            'click .glyphicon-link': function () {
+                var that = this;
+                this.createInstantConfirmModal(
+                    DOCUMENT_UNLINK_CONFIRM_MSG,
+                    function () {
+                        that.model.trigger('unlink', that.model);
+                    }
+                );
+            },
             'click .btn-delete-confirmed': function () {
                 var that = this;
                 this.createInstantConfirmModal(
                     DOCUMENT_DELETE_CONFIRM_MSG,
                     function () {
-                        that.model.destroy({
-                            success: function (model, response) {
-                                console.log('model destroyed');
-                                console.log(response);
-                                this.$('.modal').modal('hide');
-                                that.$el.fadeOut(200, function () {
-                                    $(this).remove();
-                                })
-                            }
-                        });
+                        that.model.destroy();
                     }
                 );
             },
