@@ -46,18 +46,6 @@ define([
             this.$el.html(TEMPLATE({model: this.model}));
             this.$(".glyphicon").hide();
             this.$(".error-msg").hide();
-
-            this.$('span[data-toggle="popover"]').popover({
-                html: true,
-                content: function () {
-                    return [
-                        "<button ",
-                        " class='btn btn-danger btn-block btn-delete-confirmed'",
-                        " data-toggle='modal'",
-                        " data-target='#modal-confirm'> DELETE </button>"
-                    ].join();
-                }
-            });
             return this;
         },
 
@@ -76,6 +64,9 @@ define([
             this.$(".modal").on('hidden.bs.modal', function () {
                 $(this).data('bs.modal', null);
                 $(this).remove();
+            });
+            this.$('.modal').on('shown.bs.modal', function () {
+                that.$('.btn-confirmed').focus();
             });
             wrappedCallback = _.wrap(confirmCallback, function (callback) {
                 callback();
@@ -114,7 +105,7 @@ define([
                     }
                 );
             },
-            'click .btn-delete-confirmed': function () {
+            'click .glyphicon-trash': function () {
                 var that = this;
                 this.createInstantConfirmModal(
                     DOCUMENT_DELETE_CONFIRM_MSG,
