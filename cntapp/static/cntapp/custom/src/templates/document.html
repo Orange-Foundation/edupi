@@ -65,16 +65,21 @@
 
     <div class="col-sm-4">
         <!-- actions -->
-        <span class="glyphicon glyphicon-pencil"></span>
+        <span class="glyphicon glyphicon-pencil" title="edit"></span>
+
         <a href="<%= model.get('file') %>" style="text-decoration: none;" download>
-            <span class="glyphicon glyphicon-download"></span>
+            <span class="glyphicon glyphicon-download" title="download"></span>
         </a>
-        <span tabindex="0"
-              class="glyphicon glyphicon-trash"
-              role="button"
-              data-toggle="popover"
-              data-trigger="focus"
-              title="Delete this document ?">
+
+        <span class="glyphicon glyphicon-link"
+              title="unlink"
+              data-toggle='modal'
+              data-target='#modal-confirm'></span>
+
+        <span class="glyphicon glyphicon-trash"
+              title="delete"
+              data-toggle='modal'
+              data-target='#modal-confirm'>
         </span>
 
     </div>
