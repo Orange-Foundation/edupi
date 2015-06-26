@@ -1,7 +1,7 @@
 require.config({
     // for development purpose, ensure the newest version js at each time
     //urlArgs: "bust=" + (new Date()).getTime(),
-    urlArgs: "bust=v1.0.0",
+    urlArgs: "bust=v1.1.0",
 
     paths: {
         'jquery': '/static/jquery/dist/jquery',
