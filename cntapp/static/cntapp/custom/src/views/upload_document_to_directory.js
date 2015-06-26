@@ -15,8 +15,9 @@ define([
             view.$('#file-dropzone').dropzone({
                 url: '/api/documents/',
                 paramName: "file",
-                maxFilesize: 1024,  // MB
+                maxFilesize: 200,  // MB
                 maxThumbnailFilesize: 5,  // MB
+                parallelUploads: 1,
                 acceptedFiles: "image/*,audio/*,video/*,application/pdf,.apk," +
                     // office files
                 ".ppt,.pptx,.pot,.potx,.pps,.ppsx,.ppa," +
@@ -24,16 +25,30 @@ define([
                 ".xls,.xlsx,.xlt,.xltx,.xla",
 
                 init: function () {
+                    var uploadInfo = function (msg) {
+                        this.$('.upload-info').html(msg)
+                    };
+
                     this.on('addedfile', function (file) {
                         console.log(file);
                     });
                     this.on("sending", function (file, xhr, formData) {
-                        // TODO: change file name here
                         formData.append("name", file.name);
                         formData.append("csrfmiddlewaretoken", cntapp.csrfToken);
                     });
                     this.on('processing', function (file) {
-                        console.log('processing:' + file.name);
+                        view.$('.btn-finish').attr('disabled', true);
+                        uploadInfo('Uploading: ' + file.name);
+                    });
+                    this.on("uploadprogress", function (file, progress, bytesSent) {
+                        if (progress === 100) {
+                            // the server need times to copy the file, and generate thumbnail.
+                            uploadInfo('Processing:' + file.name);
+                        }
+                    });
+                    this.on('queuecomplete', function (uploadProgress, totalBytes, totalBytesSent) {
+                        uploadInfo('Upload complete!');
+                        view.$('.btn-finish').attr('disabled', false);
                     });
                     this.on('success', function (file, json) {
                         console.log(json);
