@@ -16,7 +16,6 @@ define([
         getCookie,
         csrfSafeMethod;
 
-
     getCookie = function (name) {
         var cookieValue = null;
         if (document.cookie && document.cookie != '') {
@@ -65,7 +64,7 @@ define([
 
         $.i18n.init({
             resGetPath: '/static/cntapp/custom/locales/__lng__/__ns__.json',
-            lng: navigator.language || navigator.userLanguage
+            lng: getCookie('i18next') || navigator.language || navigator.userLanguage
         }, function () {
             directoriesCollection.fetch({
                 reset: true,
