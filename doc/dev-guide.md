@@ -34,7 +34,7 @@ I haven't tested but I think any Linux distribution with `Python3.4` should work
         (virtualenv)$> git clone https://github.com/yuancheng2013/edupi.git
         (virtualenv)$> cd edupi
 
-* Install MagicWand, this is necessary for manage processing in EduPi.
+* Install MagicWand, this is necessary for image processing in EduPi.
 
         (virtualenv)$> sudo apt-get install libmagickwand-dev
 
