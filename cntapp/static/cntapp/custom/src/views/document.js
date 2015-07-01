@@ -46,6 +46,7 @@ define([
             this.$el.html(TEMPLATE({model: this.model}));
             this.$(".glyphicon").hide();
             this.$(".error-msg").hide();
+            this.$el.i18n();
             return this;
         },
 
@@ -73,6 +74,7 @@ define([
                 that.$('.modal').modal('hide');
             });
 
+            this.$('.modal-area').i18n();
             this.$('.modal-area .btn-confirmed').click(wrappedCallback);
         },
 

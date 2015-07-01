@@ -1,0 +1,41 @@
+{
+  "home": "Acceuil",
+
+  "action-btn-create-directory": "Creer repertoire",
+  "action-btn-upload-files": "Charger fichiers",
+  "action-btn-link-documents": "lier documents",
+  "action-btn-link-directory": "lier repertoire",
+
+  "title-create-directory": "Creer un reportoire",
+  "title-upload-files": "Ajouter des fichiers",
+  "title-link-documents": "Lier des documents",
+  "title-link-directory": "Lier un repertoire racine",
+
+  "btn-yes": "Oui",
+  "btn-no": "Non",
+
+  "btn-finish": "Terminer",
+  "btn-ok": "Confirmer",
+  "btn-cancel": "Annuler",
+  "btn-create": "Creer",
+
+  "btn-edit": "Editer",
+  "btn-unlink": "Delier",
+  "btn-delete": "Supprimer",
+
+  "table-header-directory-name": "Nom de repertoire",
+  "table-header-action": "Action",
+
+  "popupinfo-edit": "editer",
+  "popupinfo-download": "telecharger",
+  "popupinfo-unlink": "delier",
+  "popupinfo-delete": "supprimer",
+
+  "placeholder-directory-name": "nom de repertoire",
+
+  "no-sub-dirs-msg": "Il n'y a pas de sous repertoire.",
+  "dir-delete-confirm-msg": "Vous etes sure de supprimer le repertoire? Cette action va supprimer aussi ses sous-repertoire main pas ses documents liers.",
+  "dir-unlink-confirm-msg": "Vous etes sure de delier ce repertoire? Repertoire delier se retrouve dans les racines.",
+
+  "logout": "Deconnexion"
+}

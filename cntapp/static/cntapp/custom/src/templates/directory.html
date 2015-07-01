@@ -8,6 +8,7 @@
     <a class="btn btn-default btn-edit"
        data-toggle="modal"
        data-target="#modal-directory-edit-<%= model.get('id') %>"
+       data-i18n="btn-edit"
        role="button">
         Edit
     </a>
@@ -17,6 +18,7 @@
            data-toggle="modal"
            data-target="#modal-confirm"
            type="button"
+           data-i18n="btn-unlink"
                 >Unlink</a>
     <% } %>
 
@@ -24,7 +26,8 @@
        data-toggle="modal"
        data-target="#modal-confirm"
        type="button"
-            >DELETE</a>
+       data-i18n="btn-delete"
+            >Delete</a>
 
     <div class="modal-area"></div>
 </td>

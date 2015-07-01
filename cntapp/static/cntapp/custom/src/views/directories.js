@@ -24,13 +24,13 @@ define([
             var that = this;
             this.$el.html(TEMPLATE());
             if (this.collection.length === 0) {
-                this.$('tbody').append('<tr><td>there is no sub-directories</td></tr>')
+                this.$('tbody').append('<tr><td data-i18n="no-sub-dirs-msg">there is no sub-directories</td></tr>')
             } else {
                 _.each(this.collection.models, function (dir) {
                     that.$('tbody').append(new DirectoryView({model: dir, path: that.path}).render().el);
                 });
             }
-
+            this.$el.i18n();
             return this;
         },
 
