@@ -39,6 +39,7 @@ define([
             this.$('.main-content').html(contentView.render().el);
             this.$('.action-bar').html(actionBarView.render().el);
             this.$('.state-bar').html(ROOT_STATE_BAR_TEMPLATE());
+            this.$('.state-bar').i18n();
             return this;
         }
     });
