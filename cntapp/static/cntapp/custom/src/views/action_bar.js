@@ -23,6 +23,7 @@ define([
         render: function () {
             var that = this;
             this.$el.html(ACTION_BAR_TEMPLATE({path: this.path, parentId: this.parentId}));
+            this.$el.i18n();
             return this;
         },
 
@@ -30,6 +31,7 @@ define([
             'click .btn-create': function () {
                 var that = this;
                 this.$('.modal-area').html(CREATE_DIRECTORY_MODAL_TEMPLATE());
+                this.$('.modal-area').i18n();
                 this.$('#modal-create').on('shown.bs.modal', function () {
                     that.$('input[name="name"]').focus();
                 });

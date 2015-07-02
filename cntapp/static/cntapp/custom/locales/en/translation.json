@@ -1,0 +1,42 @@
+{
+  "home": "Home",
+
+  "action-btn-create-directory": "Create directory",
+  "action-btn-upload-files": "Upload",
+  "action-btn-link-documents": "Link documents",
+  "action-btn-link-directory": "Link directory",
+
+  "title-root-directories": "Root Directories",
+  "title-create-directory": "Create a new directory",
+  "title-upload-files": "Upload files",
+  "title-link-documents": "Link documents",
+  "title-link-directory": "Link a root directory",
+
+  "btn-yes": "Yes",
+  "btn-no": "No",
+
+  "btn-finish": "Finish",
+  "btn-ok": "Confirm",
+  "btn-cancel": "Cancel",
+  "btn-create": "Create",
+
+  "btn-edit": "Edit",
+  "btn-unlink": "Unlink",
+  "btn-delete": "Delete",
+
+  "table-header-directory-name": "Directory name",
+  "table-header-action": "Action",
+
+  "popupinfo-edit": "edit",
+  "popupinfo-download": "download",
+  "popupinfo-unlink": "unlink",
+  "popupinfo-delete": "delete",
+
+  "placeholder-directory-name": "name",
+
+  "no-sub-dirs-msg": "There is no sub-directory",
+  "dir-delete-confirm-msg": "Are you sure to delete this directory? This will also delete its sub directories, but will not delete the linked documents.",
+  "dir-unlink-confirm-msg": "Are you sure to unlink this directory? Unlinked directory can be found in root directories.",
+
+  "logout": "Logout"
+}

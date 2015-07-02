@@ -4,13 +4,11 @@ define([
     'backbone',
     'text!templates/directory.html',
     'text!templates/edit_directory_modal.html',
-    'text!templates/confirm_modal.html'
+    'text!templates/confirm_modal.html',
 
 ], function ($, _, Backbone, directoryTemplate, editDirectoryModalTemplate, confirmModalTemplate) {
 
     var DirectoryView, TEMPLATE, EDIT_DIRECTORY_MODAL_TEMPLATE, CONFIRM_MODAL_TEMPLATE,
-        DELETE_CONFIRM_MSG = 'Are you sure to delete this directory? ' +
-            'This will also delete its sub directories, but will not delete the linked documents.',
         UNLINK_CONFIRM_MSG = 'Are you sure to unlink this directory? ' +
             'Unlinked directory can be found in root directories.';
 
@@ -39,6 +37,7 @@ define([
                 baseLink: this.baseLink,
                 model: this.model
             }));
+            this.$el.i18n();
             return this;
         },
 
@@ -55,6 +54,7 @@ define([
                 $(this).data('bs.modal', null);
                 $(this).remove();
             });
+            this.$('.modal-area').i18n();
             this.$('.modal-area .btn-confirmed').click(confirmCallback);
         },
 
@@ -93,7 +93,7 @@ define([
             'click .btn-delete-directory': function () {
                 var that = this;
                 this.createInstantConfirmModal(
-                    DELETE_CONFIRM_MSG,
+                    i18n.t('dir-delete-confirm-msg'),
                     function () {
                         console.debug('recursively deleting directory id="' + that.model.get('id') + '"');
                         if (that.path) {  // sub directory
@@ -117,7 +117,7 @@ define([
             'click .btn-unlink-directory': function () {
                 var that = this;
                 this.createInstantConfirmModal(
-                    UNLINK_CONFIRM_MSG,
+                    i18n.t('dir-unlink-confirm-msg'),
                     function () {
                         var pathArray = that.path.split('/');
                         var parentId = pathArray[pathArray.length - 1];

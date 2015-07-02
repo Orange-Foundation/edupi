@@ -169,6 +169,7 @@ define([
         },
         render: function () {
             this.$el.html(TEMPLATE());
+            this.$el.i18n();
             this.$('.modal-body').html(this.documentsTableView.render().el);
             return this;
         },

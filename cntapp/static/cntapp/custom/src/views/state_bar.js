@@ -42,6 +42,7 @@ define([
             this.$el.html(this.template({
                 path: this.collection.models
             }));
+            this.$el.i18n();
             return this;
         },
 

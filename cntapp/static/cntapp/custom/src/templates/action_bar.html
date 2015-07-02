@@ -2,18 +2,22 @@
    class="btn btn-primary btn-create"
    data-toggle="modal"
    data-target="#modal-create"
+   data-i18n="action-btn-create-directory"
    type="button">
     Create Directory
 </a>
 
 <% if (path) { %>
 <a id="btn-upload-to-directory" href="#directories/<%= path %>/upload"
+   data-i18n="action-btn-upload-files"
    class="btn btn-primary btn-upload">Upload</a>
 
 <a id="btn-link-documents-to-directory" role="button"
+   data-i18n="action-btn-link-documents"
    class="btn btn-primary btn-link-documents">Link documents</a>
 
 <a id="btn-link-directory-to-directory" role="button"
+   data-i18n="action-btn-link-directory"
    class="btn btn-primary btn-link-directory">Link directory</a>
 <% }; %>
 
