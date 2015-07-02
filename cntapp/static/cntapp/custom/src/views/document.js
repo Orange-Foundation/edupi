@@ -19,14 +19,6 @@ define([
     var CONFIRM_MODAL_TEMPLATE = _.template(confirmModalTemplate);
     var PATH_LIST_TEMPLATE = _.template(pathListTemplate);
 
-    var DOCUMENT_DELETE_CONFIRM_MSG =
-        "The document will be deleted from the server and from all linked directories." +
-        "Are you sure to delete this document?";
-
-    var DOCUMENT_UNLINK_CONFIRM_MSG =
-        "The document will be unlink from the current directory." +
-        "Are you sure to unlink this document?";
-
     var DocumentView = Backbone.View.extend({
         tagName: "li",
         className: "list-group-item",
@@ -101,7 +93,7 @@ define([
             'click .glyphicon-link': function () {
                 var that = this;
                 this.createInstantConfirmModal(
-                    DOCUMENT_UNLINK_CONFIRM_MSG,
+                    i18n.t('doc-unlink-confirm-msg'),
                     function () {
                         that.model.trigger('unlink', that.model);
                     }
@@ -110,7 +102,7 @@ define([
             'click .glyphicon-trash': function () {
                 var that = this;
                 this.createInstantConfirmModal(
-                    DOCUMENT_DELETE_CONFIRM_MSG,
+                    i18n.t("doc-delete-confirm-msg"),
                     function () {
                         that.model.destroy();
                     }
