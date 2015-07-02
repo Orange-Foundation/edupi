@@ -1,16 +1,16 @@
 {
   "home": "Acceuil",
 
-  "action-btn-create-directory": "Creer repertoire",
+  "action-btn-create-directory": "Créer répertoire",
   "action-btn-upload-files": "Charger fichiers",
-  "action-btn-link-documents": "lier documents",
-  "action-btn-link-directory": "lier repertoire",
+  "action-btn-link-documents": "Lier documents",
+  "action-btn-link-directory": "Lier répertoire",
 
-  "title-root-directories": "Repertoires racines",
-  "title-create-directory": "Creer un reportoire",
+  "title-root-directories": "Répertoires racines",
+  "title-create-directory": "Créer un reportoire",
   "title-upload-files": "Ajouter des fichiers",
   "title-link-documents": "Lier des documents",
-  "title-link-directory": "Lier un repertoire racine",
+  "title-link-directory": "Lier un répertoire racine",
 
   "btn-yes": "Oui",
   "btn-no": "Non",
@@ -18,25 +18,25 @@
   "btn-finish": "Terminer",
   "btn-ok": "Confirmer",
   "btn-cancel": "Annuler",
-  "btn-create": "Creer",
+  "btn-create": "Créer",
 
-  "btn-edit": "Editer",
-  "btn-unlink": "Delier",
+  "btn-edit": "Modifier",
+  "btn-unlink": "Délier",
   "btn-delete": "Supprimer",
 
-  "table-header-directory-name": "Nom de repertoire",
+  "table-header-directory-name": "Nom de répertoire",
   "table-header-action": "Action",
 
-  "popupinfo-edit": "editer",
-  "popupinfo-download": "telecharger",
-  "popupinfo-unlink": "delier",
+  "popupinfo-edit": "éditer",
+  "popupinfo-download": "télécharger",
+  "popupinfo-unlink": "délier",
   "popupinfo-delete": "supprimer",
 
-  "placeholder-directory-name": "nom de repertoire",
+  "placeholder-directory-name": "nom de répertoire",
 
-  "no-sub-dirs-msg": "Il n'y a pas de sous repertoire.",
-  "dir-delete-confirm-msg": "Vous etes sure de supprimer le repertoire? Cette action va supprimer aussi ses sous-repertoire main pas ses documents liers.",
-  "dir-unlink-confirm-msg": "Vous etes sure de delier ce repertoire? Repertoire delier se retrouve dans les racines.",
+  "no-sub-dirs-msg": "Il n'y a pas de sous répertoire.",
+  "dir-delete-confirm-msg": "Vous êtes sûre de supprimer le répertoire? Cet action va supprimer aussi ses sous-répertoire mais pas ses documents liés.",
+  "dir-unlink-confirm-msg": "Vous êtes sûre de delier ce répertoire? Répertoire délié se retrouve dans les racines.",
 
-  "logout": "Deconnexion"
+  "logout": "Déconnexion"
 }
