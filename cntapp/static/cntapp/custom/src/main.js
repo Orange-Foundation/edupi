@@ -13,6 +13,7 @@ require.config({
         'bootstrap_table_editable': '/static/bootstrap-table/src/extensions/editable/bootstrap-table-editable',
         'text': '/static/requirejs-text/text',
         'dropzone': '/static/dropzone/dist/dropzone-amd-module',
+        'i18n': '/static/i18next/i18next',
 
         // shared modules
         'collections': '../../shared/src/collections',
@@ -29,6 +30,10 @@ require.config({
         'bootstrap_table_editable': {
             deps: ['bootstrap_editable'],
             exports: 'bootstrap_table_editable'
+        },
+        'i18n': {
+            deps: ['jquery'],
+            exports: 'i18n'
         }
     }
 });

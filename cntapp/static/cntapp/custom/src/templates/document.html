@@ -65,19 +65,27 @@
 
     <div class="col-sm-4">
         <!-- actions -->
-        <span class="glyphicon glyphicon-pencil" title="edit"></span>
+        <span class="glyphicon glyphicon-pencil"
+              title="edit"
+              data-i18n="[title]popupinfo-edit"
+                ></span>
 
         <a href="<%= model.get('file') %>" style="text-decoration: none;" download>
-            <span class="glyphicon glyphicon-download" title="download"></span>
+            <span  class="glyphicon glyphicon-download"
+                   title="download"
+                   data-i18n="[title]popupinfo-download"
+                    ></span>
         </a>
 
         <span class="glyphicon glyphicon-link"
               title="unlink"
+              data-i18n="[title]popupinfo-unlink"
               data-toggle='modal'
               data-target='#modal-confirm'></span>
 
         <span class="glyphicon glyphicon-trash"
               title="delete"
+              data-i18n="[title]popupinfo-delete"
               data-toggle='modal'
               data-target='#modal-confirm'>
         </span>

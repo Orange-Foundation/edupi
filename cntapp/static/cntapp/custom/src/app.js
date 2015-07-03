@@ -8,12 +8,15 @@ define([
     'bootstrap',
     'bootstrap_editable',
     'bootstrap_table',
-    'bootstrap_table_editable'
+    'bootstrap_table_editable',
+    'i18n'
 ], function (_, Backbone,
              AppRouter,
              NavbarView, PageWrapperView,
              DirectoriesCollection,
-             containerTemplate) {
+             containerTemplate,
+             i18n
+) {
 
     var app,
         csrfToken,
@@ -53,23 +56,36 @@ define([
 
     app = function () {
         // initialization
+
         var router = new AppRouter();
         var navbar, pageWrapper,
             directoriesCollection;
 
         navbar = new NavbarView();
         pageWrapper = new PageWrapperView();
-
         directoriesCollection = new DirectoriesCollection();
-        directoriesCollection.fetch({
-            reset: true,
-            success: function () {
-                $("body").html(_.template(containerTemplate)());
-                $("#navbar").html(navbar.render().el);
-                $("#page-wrapper").html(pageWrapper.render().el);
-                Backbone.history.start();
-            }
+
+        // 1. get i18n resources
+        // 2. get directories
+        // 3. render page structure and start the Backbone app
+
+        $.i18n.init({
+            resGetPath: '/static/cntapp/custom/locales/__lng__/__ns__.json',
+            lng: getCookie('i18next') || navigator.language || navigator.userLanguage
+        }, function () {
+            directoriesCollection.fetch({
+                reset: true,
+                success: function () {
+                    var body = $("body");
+                    body.html(_.template(containerTemplate)());
+                    $("#navbar").html(navbar.render().el);
+                    $("#page-wrapper").html(pageWrapper.render().el);
+                    body.i18n();
+                    Backbone.history.start();
+                }
+            });
         });
+
 
         return {
             router: router,
@@ -84,7 +100,8 @@ define([
                 directories: '/api/directories/',
                 documents: '/api/documents/'
             },
-            csrfToken: csrfToken
+            csrfToken: csrfToken,
+            getCookie: getCookie
         };
     }();
 

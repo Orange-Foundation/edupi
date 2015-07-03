@@ -77,6 +77,7 @@ define([
 
             render: function () {
                 this.$el.html(this.template());
+                this.$el.i18n();
                 initDropzone(this);
                 return this;
             },

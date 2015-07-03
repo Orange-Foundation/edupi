@@ -1,0 +1,67 @@
+{
+  "home": "Acceuil",
+
+  "action-btn-create-directory": "Créer répertoire",
+  "action-btn-upload-files": "Charger fichiers",
+  "action-btn-link-documents": "Lier documents",
+  "action-btn-link-directory": "Lier répertoire",
+
+  "title-root-directories": "Répertoires racines",
+  "title-create-directory": "Créer un reportoire",
+  "title-upload-files": "Ajouter des fichiers",
+  "title-link-documents": "Lier des documents",
+  "title-link-directory": "Lier un répertoire racine",
+
+  "btn-yes": "Oui",
+  "btn-no": "Non",
+
+  "btn-finish": "Terminer",
+  "btn-ok": "Confirmer",
+  "btn-cancel": "Annuler",
+  "btn-create": "Créer",
+
+  "btn-edit": "Modifier",
+  "btn-unlink": "Délier",
+  "btn-delete": "Supprimer",
+
+  "table-header-directory-name": "Nom de répertoire",
+  "table-header-action": "Action",
+
+  "popupinfo-edit": "éditer",
+  "popupinfo-download": "télécharger",
+  "popupinfo-unlink": "délier",
+  "popupinfo-delete": "supprimer",
+
+  "placeholder-directory-name": "nom de répertoire",
+
+  "no-sub-dirs-msg": "Il n'y a pas de sous répertoire.",
+  "dir-delete-confirm-msg": "Vous êtes sûre de supprimer le répertoire? Cet action va supprimer aussi ses sous-répertoire mais pas ses documents liés.",
+  "dir-unlink-confirm-msg": "Vous êtes sûre de delier ce répertoire? Répertoire délié se retrouve dans les racines.",
+  "doc-delete-confirm-msg": "Vous êtes sûre de supprimer ce document? Le document va être supprimé de tous les répertoires liers.",
+  "doc-unlink-confirm-msg": "Vous êtes sûre de délier ce document?",
+
+  "logout": "Déconnexion",
+
+  "__system_information_page__": "-------------------",
+  "title-system-information": "Information du système",
+  "title-storage": "Stockage",
+  "total-size": "Volume totale",
+  "used": "Utilisé",
+  "available": "Disponible",
+
+  "version": "Version courante",
+  "used-storage": "Stockage utilisé",
+  "directories": "Répertoires",
+  "documents": "Documents",
+  "document-references": "Réferences des documents",
+
+  "__Unit__": "------------------",
+  "KB": "Ko",
+  "MB": "Mo",
+  "GB": "Go",
+  "TB": "To",
+  "KiB": "Kio",
+  "MiB": "Mio",
+  "GiB": "Gio",
+  "TiB": "Tio"
+}

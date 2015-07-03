@@ -2,10 +2,12 @@ define([
     'backbone',
     'views/documents_table',
     'views/directories_page', 'views/root_page', 'views/upload_page',
+    'views/sysinfo_page',
     'models/directory'
 ], function (Backbone,
              DocumentsTableView,
              DirectoriesPageView, RootPageView, UploadPageView,
+             SysInfoPageView,
              Directory) {
     var PAGE_WRAPPER = "#page-wrapper";
 
@@ -25,6 +27,8 @@ define([
             // documents
             this.route(/^documents$/, 'listDocuments');
 
+            this.route(/^sysinfo$/, 'showSysInfo');
+
             this.route(/^$/, 'indexRoute');
         },
 
@@ -32,6 +36,10 @@ define([
         renderToContent: function (view) {
             cntapp.views.pageWrapper.setContentView(view);
             cntapp.views.pageWrapper.render();
+        },
+
+        showSysInfo: function () {
+            this.renderToContent(new SysInfoPageView())
         },
 
         showRootPage: function () {
