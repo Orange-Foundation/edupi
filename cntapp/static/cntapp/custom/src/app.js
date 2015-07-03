@@ -93,7 +93,8 @@ define([
                 directories: '/api/directories/',
                 documents: '/api/documents/'
             },
-            csrfToken: csrfToken
+            csrfToken: csrfToken,
+            getCookie: getCookie
         };
     }();
 
