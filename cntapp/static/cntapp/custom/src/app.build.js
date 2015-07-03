@@ -18,6 +18,7 @@
         'bootstrap_table_editable': '../../../../../libs/bower_components/bootstrap-table/src/extensions/editable/bootstrap-table-editable',
         'text': '../../../../../libs/bower_components/requirejs-text/text',
         'dropzone': '../../../../../libs/bower_components/dropzone/dist/dropzone-amd-module',
+        'i18n': '../../../../../libs/bower_components/i18next/i18next',
 
         // shared modules
         'collections': '../../shared/src/collections',
