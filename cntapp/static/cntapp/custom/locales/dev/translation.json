@@ -38,5 +38,28 @@
   "dir-delete-confirm-msg": "Vous êtes sûre de supprimer le répertoire? Cet action va supprimer aussi ses sous-répertoire mais pas ses documents liés.",
   "dir-unlink-confirm-msg": "Vous êtes sûre de delier ce répertoire? Répertoire délié se retrouve dans les racines.",
 
-  "logout": "Déconnexion"
+  "logout": "Déconnexion",
+
+  "__system_information_page__": "-------------------",
+  "title-system-information": "Information du système",
+  "title-storage": "Stockage",
+  "total-size": "Volume totale",
+  "used": "Utilisé",
+  "available": "Disponible",
+
+  "version": "Version courante",
+  "used-storage": "Stockage utilisé",
+  "directories": "Répertoires",
+  "documents": "Documents",
+  "document-references": "Réferences des documents",
+
+  "__Unit__": "------------------",
+  "KB": "Ko",
+  "MB": "Mo",
+  "GB": "Go",
+  "TB": "To",
+  "KiB": "Kio",
+  "MiB": "Mio",
+  "GiB": "Gio",
+  "TiB": "Tio"
 }

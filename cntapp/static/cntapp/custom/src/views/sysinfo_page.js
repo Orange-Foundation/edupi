@@ -13,11 +13,18 @@ define([
             // credit: http://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable
             var thresh = si ? 1000 : 1024;
             if(Math.abs(kBytes) < thresh) {
-                return kBytes + (si ? 'KB' : ' KiB');
+                return kBytes + (si ? i18n.t('KB') : i18n.t(' KiB'));
             }
             var units = si
                 ? ['MB','GB','TB','PB','EB','ZB','YB']
                 : ['MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
+
+            // localization
+            var i, length = units.length;
+            for (i = 0; i < length; i++) {
+                units[i] = i18n.t(units[i])
+            }
+
             var u = -1;
             do {
                 kBytes /= thresh;
@@ -39,19 +46,19 @@ define([
                     fileSystemInfo = result["fileSystem"];
 
                     cntappInfoTable = [
-                        ["Current version", result["CurrentVersion"]],
-                        ["Used Storage", that.toHumanReadableSize(cntappInfo["Used"])],
-                        ["Directories", cntappInfo["TotalDirectories"]],
-                        ["Documents", cntappInfo["TotalDocuments"]],
-                        ["Documents' references", cntappInfo["TotalDocumentsReferences"]],
+                        [i18n.t("version"), result["CurrentVersion"]],
+                        [i18n.t("used-storage"), that.toHumanReadableSize(cntappInfo["Used"])],
+                        [i18n.t("directories"), cntappInfo["TotalDirectories"]],
+                        [i18n.t("documents"), cntappInfo["TotalDocuments"]],
+                        [i18n.t("document-references"), cntappInfo["TotalDocumentsReferences"]],
                     ];
 
                     fileSystemInfoTable = [
-                        ["Total size", that.toHumanReadableSize(fileSystemInfo["TotalSize"])],
-                        ["Used", that.toHumanReadableSize(fileSystemInfo["Used"])
+                        [i18n.t("total-size"), that.toHumanReadableSize(fileSystemInfo["TotalSize"])],
+                        [i18n.t("used"), that.toHumanReadableSize(fileSystemInfo["Used"])
                             + " (" + fileSystemInfo["UsedPercentage"]+ ")"
                         ],
-                        ["Available", that.toHumanReadableSize(fileSystemInfo["Available"])],
+                        [i18n.t("available"), that.toHumanReadableSize(fileSystemInfo["Available"])],
                     ];
 
                     context = {
@@ -60,6 +67,7 @@ define([
                     };
 
                     that.$el.html(that.template(context));
+                    that.$el.i18n();
                 });
             return this;
         }

@@ -38,5 +38,28 @@
   "dir-delete-confirm-msg": "Are you sure to delete this directory? This will also delete its sub directories, but will not delete the linked documents.",
   "dir-unlink-confirm-msg": "Are you sure to unlink this directory? Unlinked directory can be found in root directories.",
 
-  "logout": "Logout"
+  "logout": "Logout",
+
+  "__system_information_page__": "-------------------",
+  "title-system-information": "System Information",
+  "title-storage": "Storage",
+  "total-size": "Total size",
+  "used": "Used",
+  "available": "Available",
+
+  "version": "Current version",
+  "used-storage": "Used storage",
+  "directories": "Directories",
+  "documents": "Documents",
+  "document-references": "Documents' references",
+
+  "__Unit__": "------------------",
+  "KB": "KB",
+  "MB": "MB",
+  "GB": "GB",
+  "TB": "TB",
+  "KiB": "KiB",
+  "MiB": "MiB",
+  "GiB": "GiB",
+  "TiB": "TiB"
 }
