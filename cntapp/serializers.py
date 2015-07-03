@@ -26,10 +26,11 @@ class DirectorySerializer(serializers.ModelSerializer):
 
 class DocumentSerializer(serializers.ModelSerializer):
     directory_set = DirectorySerializer(many=True, read_only=True)
+    size = serializers.IntegerField(read_only=True, source='get_file_size')
 
     class Meta:
         model = Document
-        fields = ('id', 'name', 'description', 'type', 'file', 'thumbnail', 'directory_set')
+        fields = ('id', 'name', 'description', 'type', 'file', 'size', 'thumbnail', 'directory_set')
 
     @staticmethod
     def fill_document_type(validated_data):

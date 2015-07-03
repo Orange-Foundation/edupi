@@ -38,6 +38,14 @@ class Document(models.Model):
                                     format='PNG',
                                     options={'quality': 50})
 
+    def get_file_size(self):
+        try:
+            return self.file.size  # bytes
+        except ValueError as e:
+            logger.error("The document [id=%d, name='%s'] has no file associated with it."
+                         % (self.id, self.name))
+            return 0  # ensure no crash
+
     def __str__(self):
         return self.name
 

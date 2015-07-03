@@ -50,6 +50,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'directory_set': [],
                           'description': '',
                           'file': 'http://testserver/media/book.txt',
+                          'size': 12,
                           'type': 'o',
                           'thumbnail': None},
                          self.render(res))
@@ -74,6 +75,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'name': 'book-1.txt',
                           'description': '',
                           'file': 'http://testserver/media/book-1.txt',
+                          'size': 12,
                           'type': 'o',
                           'directory_set': [],
                           'thumbnail': 'http://testserver/media/thumbnails/wiki_logo_test.png'},
@@ -100,6 +102,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'name': 'hello.pdf',
                           'description': '__description__0',
                           'file': 'http://testserver/media/hello.pdf',
+                          'size': 16,
                           'type': 'p',  # mocked pdf
                           'directory_set': [],
                           'thumbnail': None},
@@ -112,6 +115,7 @@ class DocumentRESTTest(BaseRESTTest):
                           'name': 'not just hello.pdf',
                           'description': 'detailed description',
                           'file': 'http://testserver/media/hello.pdf',
+                          'size': 16,
                           'type': 'p',
                           'directory_set': [],
                           'thumbnail': None},
@@ -318,6 +322,7 @@ class DirDocRelationRESTTest(BaseRESTTest):
                     'file': 'http://testserver' + pdf_0.file.url,
                     'name': pdf_0.name,
                     'type': 'p',
+                    'size': 16,
                     'thumbnail': None,
                     'directory_set': [
                         {
@@ -331,6 +336,7 @@ class DirDocRelationRESTTest(BaseRESTTest):
                     'file': 'http://testserver' + pdf_1.file.url,
                     'name': pdf_1.name,
                     'type': 'p',
+                    'size': 16,
                     'thumbnail': None,
                     'directory_set': [
                         {

@@ -185,7 +185,7 @@ class CustomSiteTestCase(FunctionalTest):
 
     def test_list_documents(self):
         for i in range(10):
-            DocumentFactory()
+            PdfDocumentFactory()
         # ensure that the table is loaded with data
         self.login()
         self.browser.get(self.custom_page_url + '#documents')
