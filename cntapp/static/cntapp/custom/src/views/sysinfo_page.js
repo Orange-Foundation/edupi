@@ -30,7 +30,8 @@ define([
                 kBytes /= thresh;
                 ++u;
             } while(Math.abs(kBytes) >= thresh && u < units.length - 1);
-            return kBytes.toFixed(1)+' '+units[u];
+
+            return Number(kBytes.toFixed(1)).toLocaleString(cntapp.getCookie('i18next') || 'en') + ' ' +units[u];
         },
 
         render: function () {
