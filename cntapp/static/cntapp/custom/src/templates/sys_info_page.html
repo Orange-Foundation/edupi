@@ -1,0 +1,38 @@
+<h1 data-i18n="title-system-information">System information</h1>
+<hr>
+
+<h2 data-i18n="title-storage">Storage</h2>
+<hr>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+            <% _.each(fileSystemInfoTable, function (value) { %>
+            <tr>
+                <td width="60%"> <%= value[0] %> </td>
+                <td width="40%"> <%= value[1] %> </td>
+            </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<hr>
+
+<h2>EduPi</h2>
+<hr>
+<div class="row">
+    <div class="col-md-6">
+        <table class="table">
+            <tbody>
+            <% _.each(cntappInfoTable, function (value) { %>
+                <tr>
+                    <td width="60%"> <%= value[0] %> </td>
+                    <td width="40%"> <%= value[1] %> </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+</div>

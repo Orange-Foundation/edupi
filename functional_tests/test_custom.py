@@ -403,3 +403,15 @@ class CustomSiteTestCase(FunctionalTest):
 
         for e in expected:
             self.assertIn(e, paths.text)
+
+    def test_sys_info(self):
+        self.login()
+        self.browser.find_element_by_link_text('System Information').click()
+        self.assertInBody('Storage')
+        self.assertInBody('Total size')
+        self.assertInBody('Used')
+        self.assertInBody('Available')
+
+        self.assertInBody('EduPi')
+        self.assertInBody('Current version')
+        self.assertInBody("Documents' references")

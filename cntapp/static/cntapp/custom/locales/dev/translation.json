@@ -40,5 +40,28 @@
   "doc-delete-confirm-msg": "Vous êtes sûre de supprimer ce document? Le document va être supprimé de tous les répertoires liers.",
   "doc-unlink-confirm-msg": "Vous êtes sûre de délier ce document?",
 
-  "logout": "Déconnexion"
+  "logout": "Déconnexion",
+
+  "__system_information_page__": "-------------------",
+  "title-system-information": "Information du système",
+  "title-storage": "Stockage",
+  "total-size": "Volume totale",
+  "used": "Utilisé",
+  "available": "Disponible",
+
+  "version": "Version courante",
+  "used-storage": "Stockage utilisé",
+  "directories": "Répertoires",
+  "documents": "Documents",
+  "document-references": "Réferences des documents",
+
+  "__Unit__": "------------------",
+  "KB": "Ko",
+  "MB": "Mo",
+  "GB": "Go",
+  "TB": "To",
+  "KiB": "Kio",
+  "MiB": "Mio",
+  "GiB": "Gio",
+  "TiB": "Tio"
 }
