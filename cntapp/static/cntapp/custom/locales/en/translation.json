@@ -37,6 +37,8 @@
   "no-sub-dirs-msg": "There is no sub-directory",
   "dir-delete-confirm-msg": "Are you sure to delete this directory? This will also delete its sub directories, but will not delete the linked documents.",
   "dir-unlink-confirm-msg": "Are you sure to unlink this directory? Unlinked directory can be found in root directories.",
+  "doc-delete-confirm-msg": "Are you sure to delete this document? The document will be deleted from the server and from all linked directories.",
+  "doc-unlink-confirm-msg": "Are you sure to unlink this document? The document will be unlink from the current directory.",
 
   "logout": "Logout"
 }

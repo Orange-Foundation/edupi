@@ -37,6 +37,8 @@
   "no-sub-dirs-msg": "Il n'y a pas de sous répertoire.",
   "dir-delete-confirm-msg": "Vous êtes sûre de supprimer le répertoire? Cet action va supprimer aussi ses sous-répertoire mais pas ses documents liés.",
   "dir-unlink-confirm-msg": "Vous êtes sûre de delier ce répertoire? Répertoire délié se retrouve dans les racines.",
+  "doc-delete-confirm-msg": "Vous êtes sûre de supprimer ce document? Le document va être supprimé de tous les répertoires liers.",
+  "doc-unlink-confirm-msg": "Vous êtes sûre de délier ce document?",
 
   "logout": "Déconnexion"
 }
