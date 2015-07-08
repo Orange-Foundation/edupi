@@ -8,6 +8,7 @@ custom_urls = patterns('',
                        url(r'^login/$', custom.login_page, name="login"),
                        url(r'^logout/$', custom.logout_admin, name="logout"),
                        url(r'^sys_info/$', custom.sys_info, name="sys_info"),
+                       url(r'^documents_stats/$', custom.documents_stats, name="documents_stats"),
                        )
 
 urlpatterns = patterns('',

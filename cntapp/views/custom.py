@@ -1,15 +1,22 @@
+import logging
+import gzip
+import os
 import subprocess
+import re
 
 from django.shortcuts import render
-
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
+from django.conf import settings
 
 from edupi import VERSION
-
 from cntapp.models import Document, Directory
-from edupi import settings
+
+
+logger = logging.getLogger(__name__)
+
+STATS_REGEX = re.compile(".*\"GET (/media/([^ ]*)) HTTP/1.1\" 200 .*")
 
 
 def index(request):
@@ -76,3 +83,48 @@ def sys_info(request):
     info['cntapp'] = cntapp_info
     info['fileSystem'] = system_info
     return JsonResponse(info)
+
+
+def _update_stats(log_file_path, stats):
+    if not isinstance(stats, dict):
+        raise TypeError()
+
+    logger.debug('update stats with:"%s"' % log_file_path)
+
+    def _record_stat(match):
+        if match is None:
+            return
+
+        media_file = './' + match.group(2)
+        try:
+            d = Document.objects.get(file=media_file)
+            if d.id not in stats.keys():
+                stats[d.id] = {
+                    'name': d.name,
+                    'clicks': 1,
+                    }
+            else:
+                stats[d.id]['clicks'] += 1
+        except Document.DoesNotExist as e:
+            logger.warn('no document found for file "%s"' % media_file)
+
+    if log_file_path.endswith('.gz'):
+        with gzip.open(log_file_path) as log_file:
+            for line in log_file:
+                _record_stat(STATS_REGEX.match(line.decode()))
+    else:
+        with open(log_file_path) as log_file:
+            for line in log_file:
+                _record_stat(STATS_REGEX.match(line))
+    return stats
+
+
+def documents_stats(request):
+    log_files = [os.path.join(settings.NGINX_LOG_DIR, filename)
+                 for filename in os.listdir(settings.NGINX_LOG_DIR)
+                 if filename.startswith(settings.NGINX_MEDIA_ACCESS_LOG_PREFIX)]
+    stats = {}
+    for file in log_files:
+        _update_stats(file, stats)
+
+    return JsonResponse(stats)
