@@ -1,0 +1,253 @@
+import time
+from unittest import skip
+import json
+from datetime import datetime
+import shutil
+import tempfile
+import os
+import gzip
+
+from django.conf import settings
+from django.test import TestCase
+from django.core.urlresolvers import resolve
+
+from cntapp.models import Document
+from .helpers import PdfDocumentFactory
+from cntapp.views.stats import documents_stats, _update_stats, STATS_LOCK_FILE_NAME, StatsLockManager
+
+
+class StatsTest(TestCase):
+
+    def setUp(self):
+        self.data = b"""
+10.0.0.93 - - [06/Jul/2015:14:29:54 +0000] "GET /media/les_propositions.mp4 HTTP/1.1" 404 198 "http://edupi.fondationorange.org:8021/" "Mozilla/5.0 (Linux; Android 4.4.2; T411 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.111 Safari/537.36"
+10.0.0.93 - - [06/Jul/2015:14:29:55 +0000] "GET /media/les_propositions.mp4 HTTP/1.1" 404 198 "http://edupi.fondationorange.org:8021/" "Mozilla/5.0 (Linux; Android 4.4.2; T411 Build/KOT49H) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.111 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:30:22 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:30:22 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:30:23 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:30:52 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:30:53 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+
+192.168.1.29 - - [06/Jul/2015:14:30:56 +0000] "GET /media/puty.apk HTTP/1.1" 404 198 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats.pdf HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats.pdf HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+192.168.1.29 - - [06/Jul/2015:14:31:01 +0000] "GET /media/stats.pdf HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+123123
+        """
+        self.nginx_log_dir = tempfile.mkdtemp(prefix='edupi_nginx_log_')
+        # self.media_root = tempfile.mkdtemp(prefix='edupi_media_root_')
+        self.doc_1 = PdfDocumentFactory(name='stats_test.apk')
+        self.doc_2 = PdfDocumentFactory(name='stats.pdf')
+        self.log_files_count = 52
+
+        # prepare one log file, and (self.log_file_count - 1) zipped log files
+        log_file = tempfile.mktemp(dir=self.nginx_log_dir, prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX, suffix='.log')
+        with open(log_file, 'w') as f:
+            f.write(self.data.decode())
+
+        for x in range(self.log_files_count - 1):
+            zipped_log_file = tempfile.mktemp(dir=self.nginx_log_dir,
+                                              prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX,
+                                              suffix='.gz')
+            with gzip.open(zipped_log_file, 'wb') as zf:
+                zf.write(self.data)
+
+    def tearDown(self):
+        # must delete the document otherwise there will be unexpected filename for new documents
+        self.doc_1.delete()
+        self.doc_2.delete()
+        shutil.rmtree(self.nginx_log_dir)
+
+    def test_url_resolves_to_stats_json(self):
+        found = resolve('/custom/documents_stats/')
+        self.assertEqual(found.func, documents_stats)
+
+    def test_update_stats(self):
+        log_file = tempfile.mktemp(prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX)
+        with open(log_file, mode='w') as f:
+            f.write(self.data.decode())
+
+        stats = {}  # shared object
+        query_set = Document.objects.all()
+        _update_stats(log_file, query_set, stats)
+        self.assertEqual({
+            self.doc_1.id: {
+                'name': self.doc_1.name,
+                'clicks': 8
+            },
+            self.doc_2.id: {
+                'name': self.doc_2.name,
+                'clicks': 3
+            },
+            }, stats)
+
+        # calculate twice, the result should accumulate
+        _update_stats(log_file, query_set, stats)
+        self.assertEqual({
+            self.doc_1.id: {
+                'name': self.doc_1.name,
+                'clicks': 8 * 2
+            },
+            self.doc_2.id: {
+                'name': self.doc_2.name,
+                'clicks': 3 * 2
+            },
+            }, stats)
+
+        # zip the file, the function can still read it
+        zipped_log_file = tempfile.mktemp(prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX, suffix='.gz')
+        with gzip.open(zipped_log_file, 'wb') as zf:
+            zf.write(self.data)
+
+        # the third update :)
+        _update_stats(zipped_log_file, query_set, stats)
+        self.assertEqual({
+            self.doc_1.id: {
+                'name': self.doc_1.name,
+                'clicks': 8 * 3
+            },
+            self.doc_2.id: {
+                'name': self.doc_2.name,
+                'clicks': 3 * 3
+            },
+            }, stats)
+        os.remove(log_file)
+        os.remove(zipped_log_file)
+
+    def _check_response_content(self, response):
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({
+            str(self.doc_1.id): {"clicks": 8 * self.log_files_count, "name": self.doc_1.name},
+            str(self.doc_2.id): {"clicks": 3 * self.log_files_count, "name": self.doc_2.name}
+        }, eval(response.content))
+
+    @skip('cannot find a proper way to test multi threading in django')
+    def test_start_stats(self):
+        if StatsLockManager.is_locked():
+            StatsLockManager.unlock()
+        now = str(datetime.now())
+
+        self.assertTrue(os.path.exists(self.nginx_log_dir))
+        with self.settings(NGINX_LOG_DIR=self.nginx_log_dir):
+            response = self.client.get('/custom/stats/start/', data={'stats_date': now})
+            self.assertEqual(200, response.status_code)
+            self.assertEqual({"status": "started"}, eval(response.content))
+
+
+class StatsJsonDumpTest(TestCase):
+
+    def test_get_json_file(self):
+        stats = {
+            '1': {
+                'name': 'test_1',
+                'clicks': 8
+            },
+            '2': {
+                'name': 'test_2',
+                'clicks': 3
+            },
+        }
+        # json.dumps(stats)
+        now = datetime.now()
+        filename = str(now) + '.json'
+        stats_file_path = os.path.join(settings.STATS_DIR, filename)
+        with open(stats_file_path, 'w') as f:
+            f.write(json.dumps(stats))
+
+        response = self.client.get('/custom/documents_stats/', data={'stats_date': now})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(stats, eval(response.content))
+        os.remove(stats_file_path)
+
+
+class RunStatsTest(TestCase):
+
+    def test_scenario(self):
+        now = str(datetime.now())
+        json_file_path = os.path.join(settings.STATS_DIR, now + '.json')
+        self.assertFalse(os.path.exists(json_file_path))
+
+        resp_0 = self.client.get('/custom/stats/status/', data={'stats_date': now})
+        self.assertEqual({'status': 'idle'}, eval(resp_0.content))
+
+        # no log file
+        nginx_log_dir = tempfile.mkdtemp(prefix='edupi_nginx_log_')
+
+        # start running
+        with self.settings(NGINX_LOG_DIR=nginx_log_dir):
+            response = self.client.get('/custom/stats/start/', data={'stats_date': now})
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({'status': 'started'}, eval(response.content))
+
+        # FIXME: not sure if this will run before starting the thread at each time.
+        # resp_1 = self.client.get('/custom/stats/status/', data={'stats_date': now})
+        # self.assertEqual({'status': 'running'}, eval(resp_1.content))
+
+        time.sleep(0.5)  # wait for a moment
+
+        # check if it's finished
+        resp_2 = self.client.get('/custom/stats/status/', data={'stats_date': now})
+        self.assertEqual({'status': 'finished'}, eval(resp_2.content))
+
+        # check json file generated
+        self.assertTrue(os.path.exists(json_file_path))
+
+        # get json response
+        json_stats_resp = self.client.get('/custom/documents_stats/', data={'stats_date': now})
+        self.assertEqual(200, json_stats_resp.status_code)
+        self.assertEqual({}, eval(json_stats_resp.content))
+
+
+class StatsStatusTest(TestCase):
+
+    def test_running(self):
+        lock_file = os.path.join(settings.STATS_DIR, STATS_LOCK_FILE_NAME)
+        if not os.path.exists(lock_file):
+            # open(lock_file, 'a').closed()
+            os.system('touch %s' % lock_file)
+
+        now = datetime.now().time()
+        response = self.client.get('/custom/stats/status/', data={'stats_date': now})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({'status': 'running'}, eval(response.content))
+        os.remove(lock_file)
+
+    def test_finished(self):
+        lock_file = os.path.join(settings.STATS_DIR, STATS_LOCK_FILE_NAME)
+        if os.path.exists(lock_file):
+            os.remove(lock_file)
+        now = datetime.now().time()
+        os.system('touch %s' % (os.path.join(settings.STATS_DIR, str(now) + '.json')))
+        response = self.client.get('/custom/stats/status/', data={'stats_date': now})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({'status': 'finished'}, eval(response.content))
+
+    def test_idle(self):
+        lock_file = os.path.join(settings.STATS_DIR, STATS_LOCK_FILE_NAME)
+        if os.path.exists(lock_file):
+            os.remove(lock_file)
+        now = datetime.now().time()
+        response = self.client.get('/custom/stats/status/', data={'stats_date': now})
+        self.assertEqual(200, response.status_code)
+        self.assertEqual({'status': 'idle'}, eval(response.content))
+
+
+class TestClass(TestCase):
+
+    def test_class(self):
+        if StatsLockManager.is_locked():
+            StatsLockManager.unlock()
+        self.assertFalse(StatsLockManager.is_locked())
+
+        StatsLockManager.lock()
+        self.assertTrue(StatsLockManager.is_locked())
+
+        StatsLockManager.unlock()
+        self.assertFalse(StatsLockManager.is_locked())
+        pass
