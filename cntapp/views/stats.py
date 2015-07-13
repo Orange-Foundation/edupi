@@ -126,17 +126,21 @@ def start_stats(request):
 
 
 def get_stats_status(request):
-    if 'stats_date' not in request.GET.keys():
-        return HttpResponseBadRequest('"stats_date" is not provided.')
+    if 'stats_date' in request.GET.keys():
+        json_file_name = request.GET['stats_date'] + '.json'
+        st = _get_stats_process_status(json_file_name)
+        if st == Status.running:
+            return JsonResponse({'status': 'running'})
+        elif st == Status.finished:
+            return JsonResponse({'status': 'finished'})
+        elif st == Status.idle:
+            return JsonResponse({'status': 'idle'})
+    else:
+        if StatsLockManager.is_locked():
+            return JsonResponse({'status': 'running'})
+        else:
+            return JsonResponse({'status': 'idle'})
 
-    json_file_name = request.GET['stats_date'] + '.json'
-    status = _get_stats_process_status(json_file_name)
-    if status == Status.running:
-        return JsonResponse({'status': 'running'})
-    elif status == Status.finished:
-        return JsonResponse({'status': 'finished'})
-    elif status == Status.idle:
-        return JsonResponse({'status': 'idle'})
 
 
 def documents_stats(request):
