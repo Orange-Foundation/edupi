@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 
 STATS_LOCK_FILE_NAME = '.running.lock'
 STATS_REGEX = re.compile(".*\"GET (/media/([^ ]*)) HTTP/1.1\" 200 .*")
+STATS_FILE_PATTERN = re.compile('[0-9]{13}\.json')  # milliseconds.json
 
 
 class StatsLockManager(object):
@@ -142,7 +143,6 @@ def get_stats_status(request):
             return JsonResponse({'status': 'idle'})
 
 
-
 def documents_stats(request):
     if 'stats_date' not in request.GET.keys():
         return HttpResponseBadRequest('"stats_date" is not provided.')
@@ -153,7 +153,17 @@ def documents_stats(request):
     if not os.path.exists(json_file_path):
         return HttpResponseBadRequest('stats file not exist!')
 
-    return JsonResponse(_get_stats(json_file_path))
+    def adapt_json_to_list(data):
+        ret = []
+        for k, v in data.items():
+            ret.append({
+                'id': k,
+                'name': v['name'],
+                'clicks': v['clicks']
+            })
+        return ret
+
+    return JsonResponse(adapt_json_to_list(_get_stats(json_file_path)), safe=False)
 
 
 def stats(request):
@@ -167,7 +177,13 @@ def stats(request):
 
 def _list_stats(request):
     # get all json stats file
-    files = [os.path.split(f)[1] for f in glob.glob(os.path.join(settings.STATS_DIR, '*.json'))]
+    # file are named as MILLISECONDS.json
+    files = [
+        os.path.split(f)[1]
+        for f in glob.glob(os.path.join(settings.STATS_DIR, '*.json'))
+    ]
+
+    files = [f for f in files if STATS_FILE_PATTERN.match(f) is not None]
     return JsonResponse(files, safe=False)
 
 

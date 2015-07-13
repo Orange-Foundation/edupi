@@ -1,7 +1,9 @@
 define([
     'underscore',
     'backbone',
-    'text!templates/stats/stats_table.html'
+    'text!templates/stats/stats_table.html',
+
+    'bootstrap_table'
 ], function (_, Backbone,
              statsTableTemplate
 ) {
@@ -14,6 +16,31 @@ define([
                 throw Error('stats_date is not defined.')
             }
             this.statsDate = options.stats_date;
+        },
+
+        showTable: function (data) {
+            this.$('#table').bootstrapTable({
+                data: data,
+                showColumns: 'true',
+                showToggle: 'true',
+                search: 'true',
+                pagination: 'true',
+
+                columns: [{
+                    field: 'id',
+                    title: 'ID',
+                    sortable: true
+                }, {
+                    field: 'name',
+                    title: 'Name',
+                    sortable: true
+                }, {
+                    field: 'clicks',
+                    title: 'Clicks',
+                    sortable: true
+                }]
+            });
+            this.$('#table').bootstrapTable('resetView');
         },
 
         render: function () {
@@ -30,12 +57,7 @@ define([
                     stats_date: that.statsDate
                 },
                 success: function (results) {
-                    console.log(results);
-                    var i;
-                    _.each(results, function (data) {
-                        that.$('.stats-list').append(data['name'] + ":" + data['clicks'] + "<br>");
-                        console.log(data);
-                    });
+                    that.showTable(results);
                 }
             });
 
@@ -44,7 +66,7 @@ define([
 
         events: {
             'click .refresh-stats': function () {
-                var now = (new Date()).getTime();
+                var now = (new Date()).getTime();  // Time in milliseconds
                 var that = this;
                 console.log('run');
                 $.ajax({
@@ -56,16 +78,15 @@ define([
                     },
                     success: function (result) {
                         console.debug(result);
-                        //if (result['status'] === 'running') {
+                        if (result['status'] === 'started') {
                             Backbone.history.loadUrl(Backbone.history.fragment);
-                        //}
-                        cntapp.router.navigate('stats', {trigger: true})
+                        } else {
+                            console.error('cannot start running stats, status:' + result['status']);
+                        }
                     }
                 })
             }
         }
-
-
     });
     return StatsTableView;
 });

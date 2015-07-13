@@ -143,6 +143,15 @@ class StatsTest(TestCase):
 
 class StatsJsonDumpTest(TestCase):
 
+    def adapt_result_to_dict(self, data_list):
+        adapted = {}
+        for d in data_list:
+            adapted[d['id']] = {
+                'name': d['name'],
+                'clicks': d['clicks']
+            }
+        return adapted
+
     def test_get_json_file(self):
         stats = {
             '1': {
@@ -163,7 +172,9 @@ class StatsJsonDumpTest(TestCase):
 
         response = self.client.get('/custom/documents_stats/', data={'stats_date': now})
         self.assertEqual(200, response.status_code)
-        self.assertEqual(stats, eval(response.content))
+
+
+        self.assertEqual(stats, self.adapt_result_to_dict(eval(response.content)))
         os.remove(stats_file_path)
 
 
