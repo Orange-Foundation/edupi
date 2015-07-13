@@ -1,3 +1,5 @@
+from rest_framework import status
+import glob
 import pickle
 from django.views.decorators.csrf import csrf_exempt
 from enum import Enum  # python 3.4
@@ -148,6 +150,39 @@ def documents_stats(request):
         return HttpResponseBadRequest('stats file not exist!')
 
     return JsonResponse(_get_stats(json_file_path))
+
+
+def stats(request):
+    if request.method == 'GET':
+        return _list_stats(request)
+    elif request.method == 'DELETE':
+        return _delete_stats(request)
+    else:
+        return HttpResponse(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+def _list_stats(request):
+    # get all json stats file
+    files = [os.path.split(f)[1] for f in glob.glob(os.path.join(settings.STATS_DIR, '*.json'))]
+    return JsonResponse(files, safe=False)
+
+
+def _delete_stats(request):
+    body = eval(request.body)
+    if 'stats_date' not in body.keys():
+        return HttpResponseBadRequest('no stats_date provided')
+
+    json_file = body['stats_date'] + '.json'
+    json_file_path = os.path.join(settings.STATS_DIR, json_file)
+    if not os.path.exists(json_file_path):
+        return HttpResponseBadRequest('"%s" does not exist!')
+
+    try:
+        os.remove(json_file_path)
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+    except Exception as e:
+        logger.critical(e)
+        return HttpResponse(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 def _get_stats_process_status(json_file_name):

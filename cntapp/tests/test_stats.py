@@ -10,10 +10,12 @@ import gzip
 from django.conf import settings
 from django.test import TestCase
 from django.core.urlresolvers import resolve
+from django.http import HttpRequest
 
 from cntapp.models import Document
 from .helpers import PdfDocumentFactory
-from cntapp.views.stats import documents_stats, _update_stats, STATS_LOCK_FILE_NAME, StatsLockManager
+from cntapp.views.stats import documents_stats, _update_stats, \
+    STATS_LOCK_FILE_NAME, StatsLockManager
 
 
 class StatsTest(TestCase):
@@ -238,9 +240,9 @@ class StatsStatusTest(TestCase):
         self.assertEqual({'status': 'idle'}, eval(response.content))
 
 
-class TestClass(TestCase):
+class StatsLockManagerTest(TestCase):
 
-    def test_class(self):
+    def test_lock_unlock(self):
         if StatsLockManager.is_locked():
             StatsLockManager.unlock()
         self.assertFalse(StatsLockManager.is_locked())
@@ -251,3 +253,21 @@ class TestClass(TestCase):
         StatsLockManager.unlock()
         self.assertFalse(StatsLockManager.is_locked())
         pass
+
+
+class StatsFilesTest(TestCase):
+
+    def test_list_and_delete_stats(self):
+        stats_date = str(time.time())
+        filename = stats_date + '.json'
+        test_file_path = os.path.join(settings.STATS_DIR, filename)
+        open(test_file_path, 'a').close()
+
+        resp = self.client.get('/custom/stats/')
+        self.assertIn(filename, eval(resp.content))
+
+        resp2 = self.client.delete('/custom/stats/', data={'stats_date': stats_date})
+        self.assertEqual(204, resp2.status_code)
+
+        resp3 = self.client.get('/custom/stats/')
+        self.assertNotIn(filename, eval(resp3.content))

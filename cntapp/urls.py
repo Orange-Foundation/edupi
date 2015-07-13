@@ -12,6 +12,7 @@ custom_urls = patterns('',
                        url(r'^documents_stats/$', stats.documents_stats, name="documents_stats"),
                        url(r'^stats/status/$', stats.get_stats_status, name="get_stats_status"),
                        url(r'^stats/start/$', stats.start_stats, name="start_stats"),
+                       url(r'^stats/$', stats.stats, name="stats"),
                        )
 
 urlpatterns = patterns('',
