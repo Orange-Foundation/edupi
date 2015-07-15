@@ -67,7 +67,7 @@ define([
                         }
                     }
                 });
-            }, 1000);
+            }, 2000);
         },
 
         render: function () {
@@ -103,73 +103,16 @@ define([
                         stats_date: now
                     },
                     success: function (result) {
-                        console.debug(result);
-                        //if (result['status'] === 'running') {
-                        Backbone.history.loadUrl(Backbone.history.fragment);
-                        //}
-                        cntapp.router.navigate('stats', {trigger: true})
+                        if (result['status'] === 'started') {
+                            Backbone.history.loadUrl(Backbone.history.fragment);
+                        } else {
+                            console.error('stats fail to start! status:' + result['status']);
+                        }
                     }
                 })
             }
         }
 
-        //events: {
-           /* 'click .generate-stats': function () {
-                var that = this;
-                console.log('run');
-                $.ajax({
-                    type: 'GET',
-                    url: '/custom/stats/start/',
-                    contentType: "application/json",
-                    data: {
-                        stats_date: that.stats_date
-                    },
-                    success: function (result) {
-                        console.log(result);
-                        that.$('.status').html('status: ' + result['status'])
-                    }
-                })
-            },
-
-            'click .get-status': function () {
-                console.log('get status');
-                var that = this;
-                $.ajax({
-                    type: "GET",
-                    url: '/custom/stats/status/',
-                    contentType: "application/json",
-                    data: {
-                        stats_date: that.stats_date
-                    },
-                    success: function (result) {
-                        console.log(result);
-                        that.$('.status').html('status: ' + result['status'])
-                    }
-                });
-            },
-
-            'click .get-stats': function () {
-                console.log('get-stats');
-                var that = this;
-                $.ajax({
-                    type: "GET",
-                    url: '/custom/documents_stats/',
-                    contentType: "application/json",
-                    data: {
-                        stats_date: that.stats_date
-                    },
-                    success: function (results) {
-                        console.log(results);
-                        that.$('.stats').html('stats');
-                        var i;
-                        _.each(results, function (data) {
-                            that.$('.stats').html(data['name'] + ":" + data['clicks'] + "<br>");
-                        });
-                    }
-                });
-            }
-            */
-        //}
     });
     return StatsPageView;
 });
