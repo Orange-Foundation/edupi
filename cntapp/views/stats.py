@@ -27,7 +27,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 STATS_LOCK_FILE_NAME = '.running.lock'
-STATS_REGEX = re.compile(".*\"GET (/media/([^ ]*)) HTTP/1.1\" 200 .*")
+STATS_REGEX = re.compile('.*\"GET (/media/([^/]*)) HTTP/1.1\" 200 .*')
 STATS_FILE_PATTERN = re.compile('[0-9]{13}\.json')  # milliseconds.json
 
 

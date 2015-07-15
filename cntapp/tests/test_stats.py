@@ -282,3 +282,13 @@ class StatsFilesTest(TestCase):
 
         resp3 = self.client.get('/custom/stats/')
         self.assertNotIn(filename, eval(resp3.content))
+
+    def test_stats_regex(self):
+        from cntapp.views.stats import STATS_REGEX
+        s = """192.168.1.29 - - [06/Jul/2015:14:30:22 +0000] "GET /media/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+        """
+        self.assertIsNotNone(STATS_REGEX.match(s))
+
+        s = """192.168.1.29 - - [06/Jul/2015:14:30:22 +0000] "GET /media/thumbnail/stats_test.apk HTTP/1.1" 200 524288 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/43.0.2357.81 Chrome/43.0.2357.81 Safari/537.36"
+        """
+        self.assertIsNone(STATS_REGEX.match(s))
