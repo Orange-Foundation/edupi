@@ -158,7 +158,7 @@ REST_FRAMEWORK_EXTENSIONS = {
 }
 
 NGINX_LOG_DIR = '/var/log/nginx/'
-NGINX_MEDIA_ACCESS_LOG_PREFIX = 'edupi_nginx_media_access_'
+NGINX_MEDIA_ACCESS_LOG_PREFIX = 'edupi_media_access'
 STATS_DIR = os.path.join(BASE_DIR, '../stats/')
 
 LOGGING = {
