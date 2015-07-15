@@ -148,7 +148,10 @@ def documents_stats(request):
             ret.append({
                 'id': k,
                 'name': v['name'],
-                'clicks': v['clicks']
+                'clicks': v['clicks'],
+                'description': v['description'],
+                'file': v['file'],
+                'type': v['type']
             })
         return ret
 
@@ -226,8 +229,11 @@ def _update_stats(log_file_path, query_set, stats):
             if d.id not in stats.keys():
                 stats[d.id] = {
                     'name': d.name,
+                    'description': d.description,
+                    'type': d.type,
+                    'file': d.file.url,
                     'clicks': 1,
-                    }
+                }
             else:
                 stats[d.id]['clicks'] += 1
         except Document.DoesNotExist as e:

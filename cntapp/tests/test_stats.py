@@ -82,29 +82,30 @@ class StatsTest(TestCase):
         stats = {}  # shared object
         query_set = Document.objects.all()
         _update_stats(log_file, query_set, stats)
-        self.assertEqual({
-            self.doc_1.id: {
-                'name': self.doc_1.name,
-                'clicks': 8
-            },
-            self.doc_2.id: {
-                'name': self.doc_2.name,
-                'clicks': 3
-            },
-        }, stats)
+
+        def check_stats(times):
+            self.assertEqual({
+                self.doc_1.id: {
+                    'name': self.doc_1.name,
+                    'file': self.doc_1.file.url,
+                    'description': self.doc_1.description,
+                    'type': self.doc_1.type,
+                    'clicks': 8 * times
+                },
+                self.doc_2.id: {
+                    'name': self.doc_2.name,
+                    'file': self.doc_2.file.url,
+                    'description': self.doc_2.description,
+                    'type': self.doc_2.type,
+                    'clicks': 3 * times
+                },
+            }, stats)
+
+        check_stats(1)
 
         # calculate twice, the result should accumulate
         _update_stats(log_file, query_set, stats)
-        self.assertEqual({
-            self.doc_1.id: {
-                'name': self.doc_1.name,
-                'clicks': 8 * 2
-            },
-            self.doc_2.id: {
-                'name': self.doc_2.name,
-                'clicks': 3 * 2
-            },
-        }, stats)
+        check_stats(2)
 
         # zip the file, the function can still read it
         zipped_log_file = tempfile.mktemp(prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX, suffix='.gz')
@@ -113,16 +114,8 @@ class StatsTest(TestCase):
 
         # the third update :)
         _update_stats(zipped_log_file, query_set, stats)
-        self.assertEqual({
-            self.doc_1.id: {
-                'name': self.doc_1.name,
-                'clicks': 8 * 3
-            },
-            self.doc_2.id: {
-                'name': self.doc_2.name,
-                'clicks': 3 * 3
-            },
-            }, stats)
+        check_stats(3)
+
         os.remove(log_file)
         os.remove(zipped_log_file)
 
@@ -153,7 +146,10 @@ class StatsJsonDumpTest(TestCase):
         for d in data_list:
             adapted[d['id']] = {
                 'name': d['name'],
-                'clicks': d['clicks']
+                'description': d['description'],
+                'clicks': d['clicks'],
+                'type': d['type'],
+                'file': d['file']
             }
         return adapted
 
@@ -161,10 +157,16 @@ class StatsJsonDumpTest(TestCase):
         stats = {
             '1': {
                 'name': 'test_1',
+                'description': '',
+                'file': '',
+                'type': '',
                 'clicks': 8
             },
             '2': {
                 'name': 'test_2',
+                'description': '',
+                'file': '',
+                'type': '',
                 'clicks': 3
             },
         }

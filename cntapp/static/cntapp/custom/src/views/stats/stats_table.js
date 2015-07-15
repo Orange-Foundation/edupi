@@ -1,14 +1,20 @@
 define([
     'underscore',
     'backbone',
+    'models/document',
     'text!templates/stats/stats_table.html',
+    'text!templates/file_play_modal.html',
 
     'bootstrap_table'
 ], function (_, Backbone,
-             statsTableTemplate
+             Document,
+             statsTableTemplate,
+             filePlayModalTemplate
 ) {
 
     var TEMPLATE = _.template(statsTableTemplate);
+    var FILE_PLAY_MODAL_TEMPLATE = _.template(filePlayModalTemplate);
+
     var StatsTableView = Backbone.View.extend({
         initialize: function (options) {
             options = options || {};
@@ -18,7 +24,27 @@ define([
             this.statsDate = options.stats_date;
         },
 
+        showDocumentInModal: function (model) {
+            var that = this;
+            var fileId = '#file-' + model.get('id');
+            this.$('.modal-area').html(FILE_PLAY_MODAL_TEMPLATE({model: model}));
+
+            // auto-play video and audio
+            if (['v', 'a'].indexOf(model.get('type')) > -1) {
+                this.$(".modal").on('hidden.bs.modal', function () {
+                    that.$(fileId).get(0).pause();
+                });
+                this.$(".modal").on('shown.bs.modal', function () {
+                    that.$(fileId).get(0).play();
+                });
+            }
+
+            this.$('.modal').modal('show');
+        },
+
         showTable: function (data) {
+            var that = this;
+
             this.$('#table').bootstrapTable({
                 data: data,
                 showColumns: 'true',
@@ -33,7 +59,52 @@ define([
                 }, {
                     field: 'name',
                     title: 'Name',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return '<a type="button" class="btn-play">' + value + '</a>';
+                    },
+                    events: {
+                        'click .btn-play': function (e, value, row, index) {
+                            console.log(row);
+                            if (['v', 'i', 'a', 'p'].indexOf(row['type']) > -1) {
+                                that.showDocumentInModal(new Document(row));
+                            } else {
+                                var win = window.open(row['file'], '_blank');
+                                win.focus();
+                            }
+                        }
+                    }
+                }, {
+                    field: 'description',
+                    title: 'Description',
                     sortable: true
+                }, {
+                    field: 'type',
+                    title: 'Type',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        var ret;
+                        switch (value) {
+                            case 'p':
+                                ret = 'Pdf';
+                                break;
+                            case 'i':
+                                ret = 'Image';
+                                break;
+                            case 'v':
+                                ret = 'Video';
+                                break;
+                            case 'a':
+                                ret = 'Audio';
+                                break;
+                            case 'g':
+                                ret = 'Apk';
+                                break;
+                            default :
+                                ret = 'Other';
+                        }
+                        return ret;
+                    }
                 }, {
                     field: 'clicks',
                     title: 'Clicks',
