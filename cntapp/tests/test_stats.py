@@ -214,18 +214,25 @@ class RunStatsTest(TestCase):
         # get json response
         json_stats_resp = self.client.get('/custom/documents_stats/', data={'stats_date': now})
         self.assertEqual(200, json_stats_resp.status_code)
-        self.assertEqual({}, eval(json_stats_resp.content))
+        self.assertEqual([], eval(json_stats_resp.content))
 
 
 class StatsStatusTest(TestCase):
 
     def test_running(self):
+        # ATTENTION:
+        # Reload stats module run the test with a separated settings.STATS_DIR.
+        # this is because stats.StatsLockManager was imported in apps.py once,
+        # which is taken place before runner.py
+        import importlib
+        from cntapp.views import stats
+        importlib.reload(stats)
+
         lock_file = os.path.join(settings.STATS_DIR, STATS_LOCK_FILE_NAME)
         if not os.path.exists(lock_file):
-            # open(lock_file, 'a').closed()
-            os.system('touch %s' % lock_file)
+            open(lock_file, 'a').close()
 
-        now = datetime.now().time()
+        now = round(time.time() * 1000)
         response = self.client.get('/custom/stats/status/', data={'stats_date': now})
         self.assertEqual(200, response.status_code)
         self.assertEqual({'status': 'running'}, eval(response.content))
@@ -269,7 +276,7 @@ class StatsLockManagerTest(TestCase):
 class StatsFilesTest(TestCase):
 
     def test_list_and_delete_stats(self):
-        stats_date = str(time.time())
+        stats_date = str(round(time.time() * 1000))  # time in milliseconds
         filename = stats_date + '.json'
         test_file_path = os.path.join(settings.STATS_DIR, filename)
         open(test_file_path, 'a').close()

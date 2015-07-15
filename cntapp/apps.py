@@ -10,6 +10,11 @@ class CntappConfig(AppConfig):
 
     def ready(self):
         # app init code here
+        from django.conf import settings
+        import os
+        if not os.path.exists(settings.STATS_DIR):
+            os.mkdir(settings.STATS_DIR)
+
         # ensure that the lock file is deleted
         from cntapp.views.stats import StatsLockManager
         if StatsLockManager.is_locked():
