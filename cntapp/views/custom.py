@@ -1,26 +1,15 @@
-import pickle
-from django.views.decorators.csrf import csrf_exempt
-from enum import Enum  # python 3.4
-import json
-from django.views.generic import View
-import threading
-import logging
-import gzip
-import os
 import subprocess
-import re
 
 from django.shortcuts import render
+
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponseBadRequest, HttpResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.conf import settings
 
 from edupi import VERSION
+
 from cntapp.models import Document, Directory
-
-
-logger = logging.getLogger(__name__)
 
 
 def index(request):
@@ -87,5 +76,3 @@ def sys_info(request):
     info['cntapp'] = cntapp_info
     info['fileSystem'] = system_info
     return JsonResponse(info)
-
-

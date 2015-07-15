@@ -83,7 +83,6 @@ define([
                         that.$('.info-zone').html('Please wait, the server is crunching data for you ...');
                         that.heartBeatCheck();
                     } else {
-                        that.$('.info-zone').html('The server is available');
                         that.showLatestStats();
                     }
                 }

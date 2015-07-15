@@ -18,6 +18,10 @@ from cntapp.views.stats import documents_stats, _update_stats, \
     STATS_LOCK_FILE_NAME, StatsLockManager
 
 
+def current_milliseconds():
+    return str(round(time.time() * 1000))
+
+
 class StatsTest(TestCase):
 
     def setUp(self):
@@ -42,13 +46,14 @@ class StatsTest(TestCase):
 123123
         """
         self.nginx_log_dir = tempfile.mkdtemp(prefix='edupi_nginx_log_')
-        # self.media_root = tempfile.mkdtemp(prefix='edupi_media_root_')
         self.doc_1 = PdfDocumentFactory(name='stats_test.apk')
         self.doc_2 = PdfDocumentFactory(name='stats.pdf')
         self.log_files_count = 52
 
         # prepare one log file, and (self.log_file_count - 1) zipped log files
-        log_file = tempfile.mktemp(dir=self.nginx_log_dir, prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX, suffix='.log')
+        log_file = tempfile.mktemp(dir=self.nginx_log_dir,
+                                   prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX,
+                                   suffix='.log')
         with open(log_file, 'w') as f:
             f.write(self.data.decode())
 
@@ -86,7 +91,7 @@ class StatsTest(TestCase):
                 'name': self.doc_2.name,
                 'clicks': 3
             },
-            }, stats)
+        }, stats)
 
         # calculate twice, the result should accumulate
         _update_stats(log_file, query_set, stats)
@@ -99,7 +104,7 @@ class StatsTest(TestCase):
                 'name': self.doc_2.name,
                 'clicks': 3 * 2
             },
-            }, stats)
+        }, stats)
 
         # zip the file, the function can still read it
         zipped_log_file = tempfile.mktemp(prefix=settings.NGINX_MEDIA_ACCESS_LOG_PREFIX, suffix='.gz')
@@ -163,16 +168,14 @@ class StatsJsonDumpTest(TestCase):
                 'clicks': 3
             },
         }
-        # json.dumps(stats)
-        now = datetime.now()
-        filename = str(now) + '.json'
+        now = current_milliseconds()
+        filename = now + '.json'
         stats_file_path = os.path.join(settings.STATS_DIR, filename)
         with open(stats_file_path, 'w') as f:
             f.write(json.dumps(stats))
 
         response = self.client.get('/custom/documents_stats/', data={'stats_date': now})
         self.assertEqual(200, response.status_code)
-
 
         self.assertEqual(stats, self.adapt_result_to_dict(eval(response.content)))
         os.remove(stats_file_path)
@@ -181,7 +184,7 @@ class StatsJsonDumpTest(TestCase):
 class RunStatsTest(TestCase):
 
     def test_scenario(self):
-        now = str(datetime.now())
+        now = current_milliseconds()
         json_file_path = os.path.join(settings.STATS_DIR, now + '.json')
         self.assertFalse(os.path.exists(json_file_path))
 
@@ -208,7 +211,7 @@ class RunStatsTest(TestCase):
         resp_2 = self.client.get('/custom/stats/status/', data={'stats_date': now})
         self.assertEqual({'status': 'finished'}, eval(resp_2.content))
 
-        # check json file generated
+        # check if the json file is created
         self.assertTrue(os.path.exists(json_file_path))
 
         # get json response
@@ -232,7 +235,7 @@ class StatsStatusTest(TestCase):
         if not os.path.exists(lock_file):
             open(lock_file, 'a').close()
 
-        now = round(time.time() * 1000)
+        now = current_milliseconds()
         response = self.client.get('/custom/stats/status/', data={'stats_date': now})
         self.assertEqual(200, response.status_code)
         self.assertEqual({'status': 'running'}, eval(response.content))
@@ -270,13 +273,12 @@ class StatsLockManagerTest(TestCase):
 
         StatsLockManager.unlock()
         self.assertFalse(StatsLockManager.is_locked())
-        pass
 
 
 class StatsFilesTest(TestCase):
 
     def test_list_and_delete_stats(self):
-        stats_date = str(round(time.time() * 1000))  # time in milliseconds
+        stats_date = current_milliseconds()
         filename = stats_date + '.json'
         test_file_path = os.path.join(settings.STATS_DIR, filename)
         open(test_file_path, 'a').close()

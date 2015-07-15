@@ -40,7 +40,6 @@ define([
                     sortable: true
                 }]
             });
-            this.$('#table').bootstrapTable('resetView');
         },
 
         render: function () {

@@ -1,28 +1,19 @@
-from rest_framework import status
 import glob
-import pickle
-from django.views.decorators.csrf import csrf_exempt
 from enum import Enum  # python 3.4
 import json
-from django.views.generic import View
 import threading
-import logging
 import gzip
 import os
-import subprocess
 import re
+import logging
 
-from django.shortcuts import render
-from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponseBadRequest, HttpResponse
-from django.contrib.auth import authenticate, login, logout
+from rest_framework import status
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse
 from django.conf import settings
 
-from edupi import VERSION
-from cntapp.models import Document, Directory
+from cntapp.models import Document
 
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -76,7 +67,6 @@ class StatsWorker(threading.Thread):
     def run(self):
         # LOCK the process
         if StatsLockManager.is_locked():
-            # TODO, check the thread pool ? if no worker thread running, release the lock ?
             msg = 'Starting a stats worker while there already one running!'
             logger.critical(msg)
             raise Exception(msg)
