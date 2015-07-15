@@ -91,7 +91,6 @@ class StatsWorker(threading.Thread):
             logger.info('log files path:' + str(self.nginx_log_dir))
             logger.info('log files:' + str(log_files))
             for file in log_files:
-                logger.info('update stat with:' + file)
                 _update_stats(file, self.query_set, stats)
 
             json_file_path = os.path.join(settings.STATS_DIR, self.json_file_name)
@@ -225,7 +224,7 @@ def _update_stats(log_file_path, query_set, stats):
     if not isinstance(stats, dict):
         raise TypeError()
 
-    logger.debug('update stats with:"%s"' % log_file_path)
+    logger.info('update stats with:"%s"' % log_file_path)
 
     def _record_stat(match):
         if match is None:
