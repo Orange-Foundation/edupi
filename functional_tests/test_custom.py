@@ -23,7 +23,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.browser.find_element_by_id('inputUsername').send_keys(self.username)
         self.browser.find_element_by_id('inputPassword').send_keys(self.password)
         self.browser.find_element_by_id('inputPassword').send_keys(Keys.ENTER)
-        WebDriverWait(self.browser, 3).until(
+        WebDriverWait(self.browser, 4).until(
             EC.presence_of_element_located((By.CSS_SELECTOR, '.navbar-brand'))
         )
 
@@ -57,8 +57,12 @@ class CustomSiteTestCase(FunctionalTest):
     def assertInDirectoryTable(self, text):
         self.assertIn(text, self.browser.find_element_by_css_selector('.table tbody').text)
 
-    def go_to_home_page(self):
-        self.browser.get(self.custom_page_url)
+    def go_to_home_page(self, refresh=True):
+        if refresh:
+            self.browser.get(self.custom_page_url)
+        else:
+            self.browser.get(self.custom_page_url + "#")
+
         if self.browser.current_url == self.custom_page_url + 'login/':
             self.login()
 
@@ -97,7 +101,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.create_dir("English")
         self.create_dir("French")
 
-        self.go_to_home_page()
+        self.go_to_home_page(refresh=False)
         self.assertInDirectoryTable("primary")
         self.assertNotInDirectoryTable("Math")
 
@@ -238,7 +242,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertEqual(3, dir_a.documents.count())
 
         # link the document[0] to the directory 'b'
-        self.go_to_home_page()
+        self.go_to_home_page(refresh=False)
         self.enter_into_dir('b')
         doc_table = _get_link_documents_table()
         _toggle_link(doc_table, documents[0].id)
@@ -343,7 +347,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertNotInDirectoryTable(ab_a_a.name)
 
         # we can find it in the home page
-        self.go_to_home_page()
+        self.go_to_home_page(refresh=False)
         self.assertInDirectoryTable(ab_a_a.name)
 
     def test_link_directory(self):
@@ -365,7 +369,7 @@ class CustomSiteTestCase(FunctionalTest):
 
         self.assertInDirectoryTable(b.name)
 
-        self.go_to_home_page()
+        self.go_to_home_page(refresh=False)
         self.assertNotInDirectoryTable(b.name)
         self.assertInDirectoryTable(a.name)
 
