@@ -266,6 +266,7 @@ class StatsStatusTest(TestCase):
 class StatsLockManagerTest(TestCase):
 
     def test_lock_unlock(self):
+        from cntapp.views.stats import logger
         if StatsLockManager.is_locked():
             StatsLockManager.unlock()
         self.assertFalse(StatsLockManager.is_locked())
@@ -273,8 +274,18 @@ class StatsLockManagerTest(TestCase):
         StatsLockManager.lock()
         self.assertTrue(StatsLockManager.is_locked())
 
+        with self.assertLogs(logger=logger, level='ERROR') as m:
+            StatsLockManager.lock()
+            self.assertTrue(StatsLockManager.is_locked())
+            self.assertIn('.running.lock" already exists!', m.output[0])
+
         StatsLockManager.unlock()
         self.assertFalse(StatsLockManager.is_locked())
+
+        with self.assertLogs(logger=logger, level='ERROR') as m:
+            StatsLockManager.unlock()
+            self.assertFalse(StatsLockManager.is_locked())
+            self.assertIn('.running.lock" not found!', m.output[0])
 
 
 class StatsFilesTest(TestCase):
