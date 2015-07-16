@@ -65,7 +65,6 @@ define([
                     },
                     events: {
                         'click .btn-play': function (e, value, row, index) {
-                            console.log(row);
                             if (['v', 'i', 'a', 'p'].indexOf(row['type']) > -1) {
                                 that.showDocumentInModal(new Document(row));
                             } else {
@@ -138,7 +137,6 @@ define([
             'click .refresh-stats': function () {
                 var now = (new Date()).getTime();  // Time in milliseconds
                 var that = this;
-                console.log('run');
                 $.ajax({
                     type: 'GET',
                     url: '/custom/stats/start/',

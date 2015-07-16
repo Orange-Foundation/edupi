@@ -24,7 +24,6 @@ define([
                 type: "GET",
                 url: '/custom/stats/',
                 success: function (statsList) {
-                    console.log(statsList);
                     if (statsList.length < 1) {
                         that.$('.info-zone').html(NO_STATS_TEMPLATE());
                     } else {
@@ -78,7 +77,6 @@ define([
                 type: "GET",
                 url: '/custom/stats/status/',
                 success: function (result) {
-                    console.log(result);
                     if (result['status'] === 'running') {
                         that.$('.info-zone').html('Please wait, the server is crunching data for you ...');
                         that.heartBeatCheck();
