@@ -3,11 +3,13 @@ define([
     'views/documents_table',
     'views/directories_page', 'views/root_page', 'views/upload_page',
     'views/sysinfo_page',
+    'views/stats/stats_page',
     'models/directory'
 ], function (Backbone,
              DocumentsTableView,
              DirectoriesPageView, RootPageView, UploadPageView,
              SysInfoPageView,
+             StatsPageView,
              Directory) {
     var PAGE_WRAPPER = "#page-wrapper";
 
@@ -28,6 +30,7 @@ define([
             this.route(/^documents$/, 'listDocuments');
 
             this.route(/^sysinfo$/, 'showSysInfo');
+            this.route(/^stats$/, 'showStats');
 
             this.route(/^$/, 'indexRoute');
         },
@@ -40,6 +43,10 @@ define([
 
         showSysInfo: function () {
             this.renderToContent(new SysInfoPageView())
+        },
+
+        showStats: function () {
+            this.renderToContent(new StatsPageView())
         },
 
         showRootPage: function () {

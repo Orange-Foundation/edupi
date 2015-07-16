@@ -157,6 +157,10 @@ REST_FRAMEWORK_EXTENSIONS = {
     'DEFAULT_KEY_CONSTRUCTOR_MEMOIZE_FOR_REQUEST': True
 }
 
+NGINX_LOG_DIR = '/var/log/nginx/'
+NGINX_MEDIA_ACCESS_LOG_PREFIX = 'edupi_media_access'
+STATS_DIR = os.path.join(BASE_DIR, '../stats/')
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

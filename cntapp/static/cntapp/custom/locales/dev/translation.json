@@ -11,6 +11,7 @@
   "title-upload-files": "Ajouter des fichiers",
   "title-link-documents": "Lier des documents",
   "title-link-directory": "Lier un répertoire racine",
+  "title-stats": "Statistiques",
 
   "btn-yes": "Oui",
   "btn-no": "Non",
@@ -39,6 +40,8 @@
   "dir-unlink-confirm-msg": "Vous êtes sûre de delier ce répertoire? Répertoire délié se retrouve dans les racines.",
   "doc-delete-confirm-msg": "Vous êtes sûre de supprimer ce document? Le document va être supprimé de tous les répertoires liers.",
   "doc-unlink-confirm-msg": "Vous êtes sûre de délier ce document?",
+  "crunch-data-msg": "Veuillez patienter, le serveur est en train de calculer les statistiques ...",
+  "no-stats-msg": "Il n'y a pas de statistiques. Vous voulez les calculer?",
 
   "logout": "Déconnexion",
 
@@ -63,5 +66,12 @@
   "KiB": "Kio",
   "MiB": "Mio",
   "GiB": "Gio",
-  "TiB": "Tio"
+  "TiB": "Tio",
+
+  "text-latest": "Dernier",
+  "btn-refresh": "Rafraîchir",
+  "btn-crunch-stats": "Calculer",
+
+  "Clicks": "Clics",
+  "Name": "Nom"
 }
