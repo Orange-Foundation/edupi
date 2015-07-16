@@ -58,7 +58,7 @@ define([
                     sortable: true
                 }, {
                     field: 'name',
-                    title: 'Name',
+                    title: i18n.t('Name'),
                     sortable: true,
                     formatter: function (value, row, index) {
                         return '<a type="button" class="btn-play">' + value + '</a>';
@@ -75,7 +75,7 @@ define([
                     }
                 }, {
                     field: 'description',
-                    title: 'Description',
+                    title: i18n.t('Description'),
                     sortable: true
                 }, {
                     field: 'type',
@@ -106,7 +106,7 @@ define([
                     }
                 }, {
                     field: 'clicks',
-                    title: 'Clicks',
+                    title: i18n.t('Clicks'),
                     sortable: true
                 }]
             });
@@ -129,6 +129,8 @@ define([
                     that.showTable(results);
                 }
             });
+
+            this.$el.i18n();
 
             return this;
         },

@@ -26,6 +26,7 @@ define([
                 success: function (statsList) {
                     if (statsList.length < 1) {
                         that.$('.info-zone').html(NO_STATS_TEMPLATE());
+                        that.$el.i18n();
                     } else {
                         var latestJsonStats = statsList[0];
                         var i;
@@ -78,13 +79,15 @@ define([
                 url: '/custom/stats/status/',
                 success: function (result) {
                     if (result['status'] === 'running') {
-                        that.$('.info-zone').html('Please wait, the server is crunching data for you ...');
+                        that.$('.info-zone').html(i18n.t('crunch-data-msg'));
                         that.heartBeatCheck();
                     } else {
                         that.showLatestStats();
                     }
                 }
             });
+
+            this.$el.i18n();
             return this;
         },
 
