@@ -209,6 +209,9 @@ class CustomSiteTestCase(FunctionalTest):
 
         def _get_link_documents_table():
             # open the documents window and return the table
+            WebDriverWait(self.browser, 3).until(
+                EC.presence_of_element_located((By.ID, "btn-link-documents-to-directory"))
+            )
             self.browser.find_element_by_id('btn-link-documents-to-directory').click()
             WebDriverWait(self.browser, 1).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "modal-dialog"))
@@ -242,7 +245,7 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertEqual(3, dir_a.documents.count())
 
         # link the document[0] to the directory 'b'
-        self.go_to_home_page(refresh=False)
+        self.go_to_home_page()
         self.enter_into_dir('b')
         doc_table = _get_link_documents_table()
         _toggle_link(doc_table, documents[0].id)
