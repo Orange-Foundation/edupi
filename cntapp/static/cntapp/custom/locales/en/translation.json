@@ -11,6 +11,7 @@
   "title-upload-files": "Upload files",
   "title-link-documents": "Link documents",
   "title-link-directory": "Link a root directory",
+  "title-stats": "Statistics",
 
   "btn-yes": "Yes",
   "btn-no": "No",
@@ -39,6 +40,8 @@
   "dir-unlink-confirm-msg": "Are you sure to unlink this directory? Unlinked directory can be found in root directories.",
   "doc-delete-confirm-msg": "Are you sure to delete this document? The document will be deleted from the server and from all linked directories.",
   "doc-unlink-confirm-msg": "Are you sure to unlink this document? The document will be unlink from the current directory.",
+  "crunch-data-msg": "Please wait, the server is crunching data for you ...",
+  "no-stats-msg": "There is no stats on the server. Run it?",
 
   "logout": "Logout",
 
@@ -63,5 +66,12 @@
   "KiB": "KiB",
   "MiB": "MiB",
   "GiB": "GiB",
-  "TiB": "TiB"
+  "TiB": "TiB",
+
+  "text-latest": "Latest",
+  "btn-refresh": "Refresh",
+  "btn-crunch-stats": "Crunch stats!",
+
+  "Clicks": "Clicks",
+  "Name": "Name"
 }

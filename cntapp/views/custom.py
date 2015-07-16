@@ -5,11 +5,11 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth import authenticate, login, logout
+from django.conf import settings
 
 from edupi import VERSION
 
 from cntapp.models import Document, Directory
-from edupi import settings
 
 
 def index(request):
