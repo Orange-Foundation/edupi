@@ -67,7 +67,9 @@ class CustomSiteTestCase(FunctionalTest):
             self.login()
 
         # need some time to load the page
-        WebDriverWait(self.browser, 2).until(
+        # FIXME: very long when loading the page for the second time with firefox in the test,
+        # that only happens in local machine. The travis-ci doesn't have this issue.
+        WebDriverWait(self.browser, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "table"))
         )
 
