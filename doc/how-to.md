@@ -1,9 +1,14 @@
+# Document objectives
+
+Some essential information for developers.
+
+
 ## Download, compile and install Python3.4 on a Debian like distribution (Debian, Raspbian)
 
 - install sqlite first
 
         $> sudo apt-get install -y libsqlite3-dev
-        
+
 - get the source
 
         $> cd /tmp
@@ -26,7 +31,7 @@ To make a new release, we need the following steps:
 - Checkout the `release` branch, and merge all new features from `master`.
 
 - Change the js projects' version number in `cntapp/static/custom/src/main.js`
-and `cntapp/static/final/src/main.js` .
+and `cntapp/static/final/src/main.js`, and `edupi/__init__`
 
 - Compile js files, run from the source folder:
 
@@ -43,3 +48,16 @@ and `cntapp/static/final/src/main.js` .
 
         $> git tag -a vN.N.N
         $> git push origin vN.N.N
+
+write the release notes when tagging.
+
+Attention, do not merge the release branch into master.
+
+
+## How to discover the IP address of the Raspberry Pi
+
+By default, SSH is enabled on raspbian. On your linux machine, install nmap. Then run:
+
+        $> map -p 22 --open -sV 192.168.1.0/24
+
+change the network ip and the mask if necessary.
