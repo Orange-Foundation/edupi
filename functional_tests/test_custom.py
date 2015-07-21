@@ -1,3 +1,5 @@
+from enum import Enum
+from cntapp.helpers import get_root_dirs, get_root_dirs_names
 import os
 
 from selenium.webdriver.support.ui import WebDriverWait
@@ -10,6 +12,50 @@ from django.core.cache import cache
 from cntapp.models import Directory, Document
 from .base import FunctionalTest
 from cntapp.tests.helpers import DocumentFactory, init_test_dirs, PdfDocumentFactory, DirectoryFactory
+
+
+class Header(Enum):
+    """
+    OrderedDict([
+        ('\ufeffid_datas', 0),
+        ('titre', 1),
+        ('auteur', 2),
+        ('pays', 3),
+        ('url_doc', 4),
+        ('langue', 5),
+        ('CYCLE', 6),
+        ('CLASSE', 7),
+        ('ID CYCLE', 8),
+        ('ID_CLASSE', 9),
+        ('descriptif', 10),
+        ('url_logo', 11),
+        ('ok', 12),
+        ('date_maj', 13),
+        ('MATIERE', 14),
+        ('NIVEAU_1', 15),
+        ('NIVEAU_2', 16),
+        ('ordre', 17),
+        ('nv', 18),
+        ('', 19),
+        ('Absent : 123', 20),
+        ('MN1N2', 21),
+        ('1893', 22),
+        ('TUNFRFR', 23),
+        ('\n', 24)
+    ])
+    """
+    name = 1
+    filename = 4
+    id_cycle = 8
+    id_class = 9
+    description = 10
+    ok = 12
+
+    cycle = 6
+    klass = 7
+    matiere = 14
+    level_1 = 15
+    level_2 = 16
 
 
 class CustomSiteTestCase(FunctionalTest):
@@ -424,3 +470,122 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertInBody('EduPi')
         self.assertInBody('Current version')
         self.assertInBody("Documents' references")
+
+
+    def setUp(self):
+        ctn_path = "/home/yuancheng/Content/ctn"
+        self.all_files = os.listdir(ctn_path)
+
+    def test_read_file(self):
+        csv_files_path = os.path.join(os.getcwd(), 'csv/')
+        csv_files = [os.path.join(csv_files_path, f) for f in os.listdir(csv_files_path)]
+
+        total = 0
+        for csv in csv_files:
+            print('----------------' + csv)
+            total += self.get_total_and_valid_records(csv)
+
+        print('========================')
+        print(total)
+
+    def get_header_value_set(self, csv_file, header_value):
+        with open(csv_file) as f:
+            head = f.readline()  # skip the header
+            total = 0
+            valid = 0
+            level_set = set()
+            for l in f:
+                record = l.split(';')
+                try:
+                    filename = record[Header.filename.value]
+                    if filename in self.all_files:
+                        level_set.add(record[header_value])
+                except Exception as e:
+                    # print('error in line:' + l)
+                    print(e)
+            return level_set
+
+    def test_get_architecture(self):
+        csv_file = os.path.join(os.getcwd(), 'csv/')
+        csv_file = os.path.join(csv_file, 'mada-7-utf8.csv')
+        print("-----------cycles")
+        print(self.get_header_value_set(csv_file, Header.cycle.value))
+        print("-----------classes")
+        print(self.get_header_value_set(csv_file, Header.klass.value))
+        print("-----------matieres")
+        print(self.get_header_value_set(csv_file, Header.matiere.value))
+        print("-----------level_1")
+        print(self.get_header_value_set(csv_file, Header.level_1.value))
+        print("-----------level_2")
+        print(self.get_header_value_set(csv_file, Header.level_2.value))
+
+    def create_path_and_doc_if_necessary(self, record):
+        # cycle = record[Header.cycle.value]
+        klass = record[Header.klass.value]
+        matiere = record[Header.matiere.value]
+        level_1 = record[Header.level_1.value]
+        level_2 = record[Header.level_2.value]
+
+        roots_names = get_root_dirs_names()
+        if klass in ['Toute classe', 'Any class']:
+            # TODO create doc link later
+            return
+
+        klass_dir = None
+        if klass not in roots_names:
+            klass_dir = Directory.objects.create(name=klass)
+        else:
+            # get root dir by name
+            root_dirs = get_root_dirs()
+            for root in root_dirs:
+                if root.name == klass:
+                    klass_dir = root
+                    break
+
+        if klass_dir is None:
+            raise Exception('No klass dir found nor created!')
+
+        if matiere is not '':
+            matiere_dir = self.get_or_create_dir_if_not_in(klass_dir, matiere)
+            if level_1 is not '':
+                level_1_dir = self.get_or_create_dir_if_not_in(matiere_dir, level_1)
+                if level_2 is not '':
+                    level_2_dir = self.get_or_create_dir_if_not_in(level_1_dir, level_2)
+
+    def get_or_create_dir_if_not_in(self, parent, name):
+        child = None
+        directory_set = parent.directory_set.all()
+        if name not in [d.name for d in directory_set]:
+            child = Directory.objects.create(name=name)
+            parent.add_sub_dir(child)
+
+        if child is None:
+            child = directory_set.get(name=name)
+        return child
+
+    def create_tree(self, csv_file):
+        with open(csv_file) as f:
+            f.readline()  # skip the header
+            for l in f:
+                record = l.split(';')
+                try:
+                    filename = record[Header.filename.value]
+                    if filename in self.all_files and record[Header.ok.value] == 'ok':
+                        self.create_path_and_doc_if_necessary(record)
+                except Exception as e:
+                    print(e)
+
+    def print_directory_in_tree(self):
+        pass
+
+    def test_create_tree(self):
+        csv_file = "/home/yuancheng/source/edupi-dev/edupi/csv/camen-utf8.csv"
+        # csv_file = "/home/yuancheng/source/edupi-dev/edupi/csv/tunisie-conf.csv"
+        self.create_tree(csv_file)
+        print(Directory.objects.all())
+        # self.assertEqual(2, Directory.objects.count())
+        self.login()
+        pass
+
+
+

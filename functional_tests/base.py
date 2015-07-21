@@ -19,6 +19,7 @@ class FunctionalTest(StaticLiveServerTestCase):
                 return
         super().setUpClass()
         cls.server_url = cls.live_server_url
+        # cls.server_url = "http://127.0.0.1:8000"
 
     @classmethod
     def tearDownClass(cls):
