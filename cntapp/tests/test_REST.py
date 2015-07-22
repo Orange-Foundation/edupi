@@ -297,6 +297,39 @@ class DirectoryRESTTest(BaseRESTTest):
 
 
 class DirDocRelationRESTTest(BaseRESTTest):
+
+    def test_get_dir_sub_content(self):
+        d = DirectoryFactory()
+        d1 = DirectoryFactory()
+        doc1 = PdfDocumentFactory()
+
+        d.add_sub_dir(d1)
+        d.documents.add(doc1)
+
+        res = self.client.get('/api/directories/%d/sub_content/' % d.pk)
+        self.assertEqual({
+            'directories': [
+                {
+                    'url': 'http://testserver/api/directories/2/', 'name': d1.name, 'id': d1.id
+                }
+            ],
+            'documents': [
+                {
+                    'name': doc1.name, 'id': doc1.pk,
+                    'file': 'http://testserver' + doc1.file.url,
+                    'type': 'p', 'thumbnail': None,
+                    'description': doc1.description,
+                    'directory_set': [
+                        {
+                            'url': 'http://testserver/api/directories/%d/' % d.id, 'name': d.name,
+                            'id': d.pk
+                        }
+                    ]
+                }
+            ]
+        }, self.render(res))
+        pass
+
     def test_get_documents_from_directory(self):
         d = DirectoryFactory()
         # empty directory

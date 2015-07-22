@@ -20,19 +20,49 @@ define([
 
             this.path = options.path;
             this.parentId = this.path.slice(this.path.lastIndexOf('/') + 1);
+
+            this.directories = new Backbone.Collection({model: Backbone.Model});
+            this.documents = new Backbone.Collection({model: Backbone.Model});
         },
 
         render: function () {
-            var dirsView, documentsView;
+            var that, dirId, url,
+                dirsView, documentsView;
+
             this.$el.html(TEMPLATE());
 
-            // show directories
-            dirsView = new DirectoryListView({path: this.path});
-            this.$("#directories-container").html(dirsView.fetchAndRender().el);
+            that = this;
+            dirId = this.path.slice(this.path.lastIndexOf('/') + 1);
+            url = "/api/directories/" + dirId + "/sub_content/";
+            $.getJSON(url)
+                .done(function (data) {
+                    that.$('.content-info').html("");
 
+                    // show directories and documents
+                    that.directories.reset(data["directories"]);
+                    that.documents.reset(data["documents"]);
 
-            documentsView = new DocumentListView({parentId: this.parentId});
-            this.$("#documents-container").html(documentsView.render().el);
+                    // check if there is any content
+                    if (that.directories.length === 0
+                        && that.documents.length === 0) {
+                        console.log('empty directory');
+                        that.$('.content-info').html("Nothing here :(");
+                        return
+                    }
+
+                    // show content: directories and documents
+                    dirsView = new DirectoryListView({
+                        path: that.path,
+                        directories: that.directories
+                    });
+                    that.$("#directories-container").html(dirsView.render().el);
+
+                    documentsView = new DocumentListView({
+                        parentId: that.parentId,
+                        documents: that.documents
+                    });
+                    that.$("#documents-container").html(documentsView.render().el);
+                });
             return this;
         }
     });
