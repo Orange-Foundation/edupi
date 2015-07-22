@@ -10,6 +10,7 @@ define([
 
 
     var TEMPLATE = _.template(contentStructureTemplate);
+    var CACHE = {};
 
     var ContentStructureView = Backbone.View.extend({
         initialize: function (options) {
@@ -25,6 +26,43 @@ define([
             this.documents = new Backbone.Collection({model: Backbone.Model});
         },
 
+        getAndShowContent: function(url) {
+
+        },
+
+        showContent: function (request) {
+            var that = this,
+                dirsView, documentsView;
+            request.done(function (data) {
+                that.$('.content-info').html("");
+
+                // show directories and documents
+                that.directories.reset(data["directories"]);
+                that.documents.reset(data["documents"]);
+
+                // check if there is any content
+                if (that.directories.length === 0
+                    && that.documents.length === 0) {
+                    console.log('empty directory');
+                    that.$('.content-info').html("Nothing here :(");
+                    return
+                }
+
+                // show content: directories and documents
+                dirsView = new DirectoryListView({
+                    path: that.path,
+                    directories: that.directories
+                });
+                that.$("#directories-container").html(dirsView.render().el);
+
+                documentsView = new DocumentListView({
+                    parentId: that.parentId,
+                    documents: that.documents
+                });
+                that.$("#documents-container").html(documentsView.render().el);
+            });
+        },
+
         render: function () {
             var that, dirId, url,
                 dirsView, documentsView;
@@ -34,35 +72,17 @@ define([
             that = this;
             dirId = this.path.slice(this.path.lastIndexOf('/') + 1);
             url = "/api/directories/" + dirId + "/sub_content/";
-            $.getJSON(url)
-                .done(function (data) {
-                    that.$('.content-info').html("");
 
-                    // show directories and documents
-                    that.directories.reset(data["directories"]);
-                    that.documents.reset(data["documents"]);
+            var cachedRequest = CACHE[url];
+            if (typeof cachedRequest != 'undefined' && cachedRequest !== null) {
+                console.log('render the content from cache');
+                this.showContent(cachedRequest);
+            } else {
+                var request = $.get(url);
+                this.showContent(request);
+                CACHE[url] = request;
+            }
 
-                    // check if there is any content
-                    if (that.directories.length === 0
-                        && that.documents.length === 0) {
-                        console.log('empty directory');
-                        that.$('.content-info').html("Nothing here :(");
-                        return
-                    }
-
-                    // show content: directories and documents
-                    dirsView = new DirectoryListView({
-                        path: that.path,
-                        directories: that.directories
-                    });
-                    that.$("#directories-container").html(dirsView.render().el);
-
-                    documentsView = new DocumentListView({
-                        parentId: that.parentId,
-                        documents: that.documents
-                    });
-                    that.$("#documents-container").html(documentsView.render().el);
-                });
             return this;
         }
     });
