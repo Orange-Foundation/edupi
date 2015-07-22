@@ -26,7 +26,7 @@ define([
             this.documents = new Backbone.Collection({model: Backbone.Model});
         },
 
-        showContent: function (request) {
+        showContent: function (request, url) {
             var that = this,
                 dirsView, documentsView;
             request.done(function (data) {
@@ -40,7 +40,7 @@ define([
                 if (that.directories.length === 0
                     && that.documents.length === 0) {
                     console.log('empty directory');
-                    that.$('.content-info').html("Nothing here :(");
+                    that.showErrorMsg("There is nothing here :(");
                     return
                 }
 
@@ -57,6 +57,23 @@ define([
                 });
                 that.$("#documents-container").html(documentsView.render().el);
             });
+
+            request.error(function (XMLHttpRequest, textStatus, errorThrown) {
+                if (XMLHttpRequest.readyState == 0) {
+                    that.showErrorMsg(
+                        "Failed to retrieve content from the Server, there might be something wrong with your network."
+                    );
+                } else if (XMLHttpRequest.status === 404) {
+                    that.showErrorMsg("The content that you requested does not exist!");
+                } else {
+                    that.showErrorMsg("Failed to retrieve content from the Server, and I don't know why :(");
+                }
+                CACHE[url] = null; // remove failed request from cache.
+            });
+        },
+
+        showErrorMsg: function (msg) {
+            this.$('.content-info').html(msg);
         },
 
         render: function () {
@@ -75,7 +92,7 @@ define([
                 this.showContent(cachedRequest);
             } else {
                 var request = $.get(url);
-                this.showContent(request);
+                this.showContent(request, url);
                 CACHE[url] = request;
             }
 
