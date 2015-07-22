@@ -13,22 +13,28 @@ define([
     app = function () {
         // initialization
         var router = new AppRouter();
-        var directoriesCollection;
+        var directoriesCollection, rootDirectories;
 
         directoriesCollection = new DirectoriesCollection();
-        directoriesCollection.fetch({
-            reset: true,
-            success: function () {
-                $('body').html(new BodyStructureView().render().el);
-                Backbone.history.start();
-            }
-        });
+        rootDirectories = new DirectoriesCollection();
+        $.getJSON("/api/directories/?root=true")
+            .done(function (data) {
+                rootDirectories.reset(data);
+                directoriesCollection.fetch({
+                    reset: true,
+                    success: function () {
+                        $('body').html(new BodyStructureView().render().el);
+                        Backbone.history.start();
+                    }
+                });
+            });
 
         return {
             router: router,
             collections: {
                 directories: directoriesCollection
-            }
+            },
+            rootDirectories: rootDirectories
         };
     }();
 

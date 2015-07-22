@@ -26,10 +26,6 @@ define([
             this.documents = new Backbone.Collection({model: Backbone.Model});
         },
 
-        getAndShowContent: function(url) {
-
-        },
-
         showContent: function (request) {
             var that = this,
                 dirsView, documentsView;

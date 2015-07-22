@@ -5,30 +5,23 @@ define([
 ], function (_, Backbone, indexTemplate) {
 
     var INDEX_TEMPLATE = _.template(indexTemplate);
+    var CACHE = {};
 
     var IndexView = Backbone.View.extend({
 
-        initialize: function () {
-            this.collection = new Backbone.Collection({model: Backbone.Model});
-            this.listenTo(this.collection, 'reset', this.render);
+        initialize: function (options) {
+            options = options || {};
+
+            if (typeof options.rootDirectories === 'undefined') {
+                throw new Error('root directories not defined!');
+            }
+            this.collection = options.rootDirectories;
         },
 
         render: function () {
             this.$el.html(INDEX_TEMPLATE({
                 directories: (this.collection && this.collection.models) || null
             }));
-            return this;
-        },
-
-        fetchAndRender: function () {
-            // get the root directories
-            var that, url;
-            that = this;
-            url = "/api/directories/?root=true";
-            $.getJSON(url)
-                .done(function (data) {
-                    that.collection.reset(data);
-                });
             return this;
         }
     });

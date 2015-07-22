@@ -27,9 +27,9 @@ define([
 
         indexRoute: function () {
             // root directories are shown in the index page
-            var view = new IndexView();
+            var view = new IndexView({rootDirectories: finalApp.rootDirectories});
             $("#state-nav").html("");  // clean the state-nav-bar
-            $("#content").html(view.fetchAndRender().el);
+            this.renderToContent(view);
         },
 
         renderToContent: function (view) {
