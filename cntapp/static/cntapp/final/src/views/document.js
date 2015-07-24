@@ -37,6 +37,7 @@ define([
                 modal_id = '#modal-' + this.model.get('id');
                 file_id = '#file-' + this.model.get('id');
                 this.$el.append(FILE_PLAY_MODAL_TEMPLATE({model: this.model}));
+                this.$el.i18n()
 
                 // auto-play video and audio
                 if (['v', 'a'].indexOf(this.model.get('type')) > -1) {

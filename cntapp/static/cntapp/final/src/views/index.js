@@ -22,6 +22,7 @@ define([
             this.$el.html(INDEX_TEMPLATE({
                 directories: (this.collection && this.collection.models) || null
             }));
+            this.$el.i18n();
             return this;
         }
     });

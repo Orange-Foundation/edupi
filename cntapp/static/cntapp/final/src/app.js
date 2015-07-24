@@ -3,7 +3,8 @@ define([
     'backbone',
     'router',
     'collections/directories',
-    'views/body_structure'
+    'views/body_structure',
+    'i18n'
 ], function (_, Backbone, AppRouter,
              DirectoriesCollection,
              BodyStructureView) {
@@ -17,6 +18,23 @@ define([
         return check;
     };
 
+    // TODO: this should be a shared function.
+    var getCookie = function (name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    };
+
     app = function () {
         // initialization
         var router = new AppRouter();
@@ -26,17 +44,29 @@ define([
 
         directoriesCollection = new DirectoriesCollection();
         rootDirectories = new DirectoriesCollection();
-        $.getJSON("/api/directories/?root=true")
-            .done(function (data) {
-                rootDirectories.reset(data);
-                directoriesCollection.fetch({
-                    reset: true,
-                    success: function () {
-                        $('body').html(new BodyStructureView().render().el);
-                        Backbone.history.start();
-                    }
+
+        /*
+         1. get language package
+         2. get root dirs
+         3. get all directories
+          */
+        $.i18n.init({
+            resGetPath: '/static/cntapp/final/locales/__lng__/__ns__.json',
+            lng: getCookie('i18next') || navigator.language || navigator.userLanguage
+        }, function () {
+            $.getJSON("/api/directories/?root=true")
+                .done(function (data) {
+                    rootDirectories.reset(data);
+                    directoriesCollection.fetch({
+                        reset: true,
+                        success: function () {
+                            $('body').html(new BodyStructureView().render().el);
+                            Backbone.history.start();
+                        }
+                    });
                 });
-            });
+        });
+
 
         return {
             router: router,

@@ -1,0 +1,19 @@
+{
+  "language": "Langues",
+
+  "placeholder-search": "chercher",
+  "link-home": "Accueil",
+  "btn-close": "Fermer",
+  "btn-open-in-new-tab": "Ouvrir dans un nouveau onglet",
+  "btn-download": "Télécharger",
+
+  "link-custom-page": "la page admin",
+
+  "msg-file-not-supported": "Ce fichier n'est pas supporté par votre navigateur. Veuillez le télécharger.",
+  "msg-no-sub-content": "Il n'y a rien ici :(",
+  "msg-no-root-dir": "Il n'y a pas de répertoire, veuillez le configurer via ",
+
+  "msg-retrieve-faulure-because-no-network": "Impossible de récupérer le contenu du serveur, il pourrait y avoir quelque chose de mal avec votre réseau.",
+  "msg-content-not-exist": "Les contenus que vous demandez n'existent pas.",
+  "msg-unknown-retrieve-failure": "Erreur inconnue: impossible de récupérer les contenus du serveur."
+}
