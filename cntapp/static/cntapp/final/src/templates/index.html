@@ -5,12 +5,19 @@
         </div>
 
         <div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-1">
+            <% if (directories.length > 0) { %>
             <% _.each(directories, function (directory) { %>
-            <a class="btn btn-warning btn-block btn-lg btn-root"
-               href="#directories/<%= directory.get('id') %>">
-                <%= directory.get('name') %>
-            </a>
-            <% }); %>
+                <a class="btn btn-warning btn-block btn-lg btn-root"
+                   href="#directories/<%= directory.get('id') %>">
+                    <%= directory.get('name') %>
+                </a>
+                <% }); %>
+            <% } else { %>
+                <p>
+                    No directory found, please do some configuration via
+                    <a href="custom">custom page</a>.
+                </p>
+            <% } %>
         </div>
 
     </div>
