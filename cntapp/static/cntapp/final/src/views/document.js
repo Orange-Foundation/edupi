@@ -26,6 +26,13 @@ define([
         events: {
             'click .document-row': function () {
                 var that, modal_id, file_id;
+
+                // PDF does not display on a mobile, so open it in a new tab and that will trigger downloading the file.
+                if (this.model.get('type') === 'p' && finalApp.isMobile) {
+                    window.open(this.model.get('file'), '_blank');
+                    return;
+                }
+
                 that = this;
                 modal_id = '#modal-' + this.model.get('id');
                 file_id = '#file-' + this.model.get('id');

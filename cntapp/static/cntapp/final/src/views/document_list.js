@@ -19,27 +19,27 @@ define([
         id: "document-list",
 
         initialize: function (options) {
+            options = options || {};
+
             if (!options.parentId) {
                 console.error("no directory id specified");
                 return;
             }
 
+            if (typeof options.documents === 'undefined') {
+                throw new Error("documents not defined!");
+            }
+
             this.parentId = options.parentId;
-            this.collection = new DocumentList();
+            this.collection = options.documents;
         },
 
         render: function () {
             var that = this;
-            var url = '/api/directories/' + this.parentId + '/documents/';
-            $.get(url)
-                .done(function (data) {
-                    _(data).each(function (obj) {
-                        var m = new Document(obj);
-                        that.$el.append(
-                            new DocumentView({model: m, id: "document-" + m.id}).render().el);
-                        that.collection.add(m);
-                    });
-                });
+            _(that.collection.models).each(function (doc) {
+                that.$el.append(
+                    new DocumentView({model: doc, id: "document-" + doc.get('id')}).render().el);
+            });
             return this;
         }
     });

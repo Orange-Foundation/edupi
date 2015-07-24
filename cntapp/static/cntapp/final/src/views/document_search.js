@@ -47,11 +47,11 @@ define([
         render: function () {
             var that = this;
             var fetchUrl = '/api/documents/?' + this.queryString;
-            var start = performance.now();
+            var start = Date.now();
             $.get(fetchUrl)
                 .done(function (data) {
                     var params;
-                    var end =   performance.now();
+                    var end =   Date.now();
                     var diff = (end - start) / 1000;
                     that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + ' seconds)');
                     _(data['rows']).each(function (obj) {

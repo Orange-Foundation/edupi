@@ -76,6 +76,7 @@ class DirectoryViewSet(viewsets.ModelViewSet):
 
     We can also `create_sub_directory`, list `sub_directories`, in detailed objects.
     To access root directories, append `?root=true` on the url.
+    Use `sub_content` to get both `sub_directories` and `documents`
     """
     queryset = Directory.objects.all()
     serializer_class = DirectorySerializer
@@ -111,6 +112,17 @@ class DirectoryViewSet(viewsets.ModelViewSet):
         current_dir = self.get_object()
         serializer = DirectorySerializer(current_dir.get_sub_dirs(), many=True, context={'request': request})
         return Response(serializer.data)
+
+    @detail_route(methods=['get'])
+    @cache_response(key_func=CustomListKeyConstructor())
+    def sub_content(self, request, *args, **kwargs):
+        current_dir = self.get_object()
+        dirs = DirectorySerializer(current_dir.get_sub_dirs(), many=True, context={'request': request})
+        docs = DocumentSerializer(current_dir.documents, many=True, context={'request': request})
+        return Response({
+            'directories': dirs.data,
+            'documents': docs.data
+        })
 
     @transaction.atomic
     def perform_destroy(self, instance):

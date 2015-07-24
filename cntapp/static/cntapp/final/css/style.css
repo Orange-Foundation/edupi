@@ -20,15 +20,21 @@ body {
     margin-top: 5px;
     margin-bottom: 5px;
     font-family: sans-serif;
+
+    white-space: normal; /* separate into multiple lines when the text is too long */
 }
 
 .btn-dir {
     margin-top: 5px;
     margin-bottom: 5px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    min-height: 75px;
+
     font-family: sans-serif;
-    height: 100px;
-    line-height: 60px;
     font-size: 20px;
+
+    white-space: normal;
     color: orange;
     background-color: #ffffff;
 }
@@ -74,4 +80,19 @@ body {
 .loading {
     margin-top: 20%;
     text-align: center;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
 }
