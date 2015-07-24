@@ -31,7 +31,15 @@
                     </div>
                 <% } else { %>
                     <p>
-                        This file cannot be displayed on browser. How about downloading this file?
+                        This file cannot be displayed on your browser. You can download the file.
+                    </p>
+                    <p>
+                        <a role="button"
+                           class="btn btn-lg btn-warning"
+                           href="<%= model.get('file') %>"
+                           download="<%= model.get('name') %>">
+                            <span class="glyphicon glyphicon-download-alt"> Download</span>
+                        </a>
                     </p>
                     <hr/>
                 <% } %>
