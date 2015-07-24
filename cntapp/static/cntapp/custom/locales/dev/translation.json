@@ -1,5 +1,5 @@
 {
-  "home": "Acceuil",
+  "home": "Accueil",
 
   "action-btn-create-directory": "Créer répertoire",
   "action-btn-upload-files": "Charger fichiers",
@@ -7,7 +7,7 @@
   "action-btn-link-directory": "Lier répertoire",
 
   "title-root-directories": "Répertoires racines",
-  "title-create-directory": "Créer un reportoire",
+  "title-create-directory": "Créer un répertoire",
   "title-upload-files": "Ajouter des fichiers",
   "title-link-documents": "Lier des documents",
   "title-link-directory": "Lier un répertoire racine",
@@ -36,19 +36,19 @@
   "placeholder-directory-name": "nom de répertoire",
 
   "no-sub-dirs-msg": "Il n'y a pas de sous répertoire.",
-  "dir-delete-confirm-msg": "Vous êtes sûre de supprimer le répertoire? Cet action va supprimer aussi ses sous-répertoire mais pas ses documents liés.",
-  "dir-unlink-confirm-msg": "Vous êtes sûre de delier ce répertoire? Répertoire délié se retrouve dans les racines.",
-  "doc-delete-confirm-msg": "Vous êtes sûre de supprimer ce document? Le document va être supprimé de tous les répertoires liers.",
-  "doc-unlink-confirm-msg": "Vous êtes sûre de délier ce document?",
+  "dir-delete-confirm-msg": "Etes-vous sûr de supprimer le répertoire? Cette action va supprimer aussi ses sous-répertoires mais pas ses documents liés.",
+  "dir-unlink-confirm-msg": "Etes-vous sûr de délier ce répertoire? Le répertoire délié se retrouve dans les racines.",
+  "doc-delete-confirm-msg": "Etes-vous sûr de supprimer ce document? Le document va être supprimé de tous les répertoires liers.",
+  "doc-unlink-confirm-msg": "Etes-vous sûr de délier ce document?",
   "crunch-data-msg": "Veuillez patienter, le serveur est en train de calculer les statistiques ...",
-  "no-stats-msg": "Il n'y a pas de statistiques. Vous voulez les calculer?",
+  "no-stats-msg": "Il n'y a pas de statistique. Voulez-vous les calculer?",
 
   "logout": "Déconnexion",
 
   "__system_information_page__": "-------------------",
   "title-system-information": "Information du système",
   "title-storage": "Stockage",
-  "total-size": "Volume totale",
+  "total-size": "Volume total",
   "used": "Utilisé",
   "available": "Disponible",
 
@@ -69,7 +69,7 @@
   "TiB": "Tio",
 
   "text-latest": "Dernier",
-  "btn-refresh": "Rafraîchir",
+  "btn-refresh": "Recalculer",
   "btn-crunch-stats": "Calculer",
 
   "Clicks": "Clics",

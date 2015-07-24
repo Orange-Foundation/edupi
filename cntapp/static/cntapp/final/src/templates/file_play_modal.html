@@ -3,7 +3,6 @@
     <div class="modal-dialog custom-class">
         <div class="modal-content text-center">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="modalLabel"><%= model.get('name') %></h4>
             </div>
             <div class="modal-body">
@@ -30,7 +29,7 @@
                         </object>
                     </div>
                 <% } else { %>
-                    <p>
+                    <p data-i18n="msg-file-not-supported">
                         This file cannot be displayed on your browser. You can download the file.
                     </p>
                     <p>
@@ -38,7 +37,8 @@
                            class="btn btn-lg btn-warning"
                            href="<%= model.get('file') %>"
                            download="<%= model.get('name') %>">
-                            <span class="glyphicon glyphicon-download-alt"> Download</span>
+                            <span class="glyphicon glyphicon-download-alt"></span>
+                            <span data-i18n="btn-download"> Download</span>
                         </a>
                     </p>
                     <hr/>
@@ -49,10 +49,18 @@
 
             </div>
             <div class="modal-footer">
-                <a class="btn btn-default" href="<%= model.get('file') %>" target="_blank">
-                    <span class="glyphicon glyphicon-new-window"></span> Open in a new tab </a>
-                <button type="button" class="btn btn-default" data-dismiss="modal">
-                    <span class="glyphicon glyphicon-eye-close"></span> Close</button>
+                <a class="btn btn-default"
+                   href="<%= model.get('file') %>"
+                   target="_blank">
+                    <span class="glyphicon glyphicon-new-window"></span>
+                    <span data-i18n="btn-open-in-new-tab"> Open in a new tab</span>
+                    </a>
+                <button type="button"
+                        class="btn btn-default"
+                        data-dismiss="modal">
+                    <span class="glyphicon glyphicon-eye-close"></span>
+                    <span data-i18n="btn-close"> Close</span>
+                    </button>
             </div>
         </div>
     </div>

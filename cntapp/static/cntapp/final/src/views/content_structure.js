@@ -40,7 +40,7 @@ define([
                 if (that.directories.length === 0
                     && that.documents.length === 0) {
                     console.log('empty directory');
-                    that.showErrorMsg("There is nothing here :(");
+                    that.showErrorMsg(i18n.t("msg-no-sub-content"));
                     return
                 }
 
@@ -61,12 +61,13 @@ define([
             request.error(function (XMLHttpRequest, textStatus, errorThrown) {
                 if (XMLHttpRequest.readyState == 0) {
                     that.showErrorMsg(
-                        "Failed to retrieve content from the Server, there might be something wrong with your network."
+                        i18n.t("msg-retrieve-faulure-because-no-network")
+
                     );
                 } else if (XMLHttpRequest.status === 404) {
-                    that.showErrorMsg("The content that you requested does not exist!");
+                    that.showErrorMsg(i18n.t("msg-content-not-exist"));
                 } else {
-                    that.showErrorMsg("Failed to retrieve content from the Server, and I don't know why :(");
+                    that.showErrorMsg(i18n.t("msg-unknown-retrieve-failure"));
                 }
                 CACHE[url] = null; // remove failed request from cache.
             });
@@ -74,6 +75,7 @@ define([
 
         showErrorMsg: function (msg) {
             this.$('.content-info').html(msg);
+            this.$('.content-info').i18n();
         },
 
         render: function () {

@@ -36,8 +36,12 @@ video {
   padding-top: 15%;
 }
 
-.action-bar, .state-bar {
+.state-bar {
     padding: 10px;
+}
+
+.action-bar {
+    padding-top: 10px;
 }
 
 /* The max width is dependant on the container (more info below) */
