@@ -26,6 +26,7 @@ define([
 
         render: function () {
             this.$el.html(searchPageTemplate);
+            this.$el.i18n();
             this.$('.search-result').html(new DocumentSearchView({queryString: this.queryString}).render().el);
             return this;
         }

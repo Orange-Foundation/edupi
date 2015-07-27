@@ -12,6 +12,7 @@
   "title-link-documents": "Link documents",
   "title-link-directory": "Link a root directory",
   "title-stats": "Statistics",
+  "title-search-result": "Search results",
 
   "btn-yes": "Yes",
   "btn-no": "No",
@@ -73,5 +74,7 @@
   "btn-crunch-stats": "Crunch stats!",
 
   "Clicks": "Clicks",
-  "Name": "Name"
+  "Name": "Name",
+
+  "result-count": "%s results in %s secs."
 }

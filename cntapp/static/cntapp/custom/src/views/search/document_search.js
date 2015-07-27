@@ -52,7 +52,11 @@ define([
                     var params;
                     var end =   Date.now();
                     var diff = (end - start) / 1000;
-                    that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + ' seconds)');
+                    //that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + ' seconds)');
+                    that.$el.append(i18n.t('result-count', {
+                            postProcess: 'sprintf', sprintf: [data['total'], diff.toFixed(3)]
+                        })
+                    );
 
                     _(data['rows']).each(function (obj) {
                         var m = new Document(obj);

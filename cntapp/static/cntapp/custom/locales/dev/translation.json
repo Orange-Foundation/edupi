@@ -12,6 +12,7 @@
   "title-link-documents": "Lier des documents",
   "title-link-directory": "Lier un répertoire racine",
   "title-stats": "Statistiques",
+  "title-search-result": "Résultat de recherche",
 
   "btn-yes": "Oui",
   "btn-no": "Non",
@@ -73,5 +74,7 @@
   "btn-crunch-stats": "Calculer",
 
   "Clicks": "Clics",
-  "Name": "Nom"
+  "Name": "Nom",
+
+  "result-count": "%s résultats trouvés en %s secondes."
 }
