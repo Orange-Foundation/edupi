@@ -76,5 +76,9 @@
   "Clicks": "Clicks",
   "Name": "Name",
 
-  "result-count": "%s results in %s secs."
+  "result-count": "%s results in %s secs.",
+
+  "__check__": "-------------------",
+  "msg-input-error-empty-name": "The name cannot be empty.",
+  "msg-input-error-name-too-long": "The name has %s characters. You cannot surpass %s."
 }

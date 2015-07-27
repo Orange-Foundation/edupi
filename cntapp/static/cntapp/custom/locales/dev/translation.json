@@ -76,5 +76,9 @@
   "Clicks": "Clics",
   "Name": "Nom",
 
-  "result-count": "%s résultats trouvés en %s secondes."
+  "result-count": "%s résultats trouvés en %s secondes.",
+
+  "__check__": "-------------------",
+  "msg-input-error-empty-name": "Le nom ne peut peut pas etre vide.",
+  "msg-input-error-name-too-long": "Le nom a %s characters. Vous ne pouvez pas depasser %s"
 }
