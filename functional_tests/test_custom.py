@@ -189,17 +189,6 @@ class CustomSiteTestCase(FunctionalTest):
         # check in server side
         self.assertEqual(new_name, Directory.objects.get(id=dir_a.id).name)
 
-    def test_list_documents(self):
-        for i in range(10):
-            DocumentFactory()
-        # ensure that the table is loaded with data
-        self.login()
-        self.browser.get(self.custom_page_url + '#documents')
-        WebDriverWait(self.browser, 2).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "table"))
-        )
-        self.assertInBody('Showing 1 to 10 of 10 rows')
-
     def test_link_documents(self):
         # create directories and documents
         init_test_dirs()
@@ -367,7 +356,7 @@ class CustomSiteTestCase(FunctionalTest):
 
         # select and link a root directory
         self.browser.find_element_by_id('btn-link-directory-to-directory').click()
-        radio_group = self.browser.find_element_by_class_name('input-group')
+        radio_group = self.browser.find_element_by_css_selector('.modal-body .input-group')
         radio_b = radio_group.find_element_by_css_selector('input[value="%d"]' % b.id)
         radio_b.click()
         self.browser.find_element_by_css_selector('.modal-footer .btn-confirm').click()
