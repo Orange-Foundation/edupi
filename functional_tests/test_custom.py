@@ -413,3 +413,17 @@ class CustomSiteTestCase(FunctionalTest):
         self.assertInBody('EduPi')
         self.assertInBody('Current version')
         self.assertInBody("Documents' references")
+
+    def test_search(self):
+        self.login()
+        pdf_1 = PdfDocumentFactory()
+        pdf_2 = PdfDocumentFactory()
+        pdf_3 = PdfDocumentFactory()
+        search_input = self.browser.find_element_by_css_selector(".sidebar-search input")
+        search_input.send_keys(pdf_1.name)
+        WebDriverWait(self.browser, 3).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'h1[data-i18n="title-search-result"]'))
+        )
+        self.assertInBody(pdf_1.name)
+        self.assertNotInBody(pdf_2.name)
+        self.assertNotInBody(pdf_3.name)
