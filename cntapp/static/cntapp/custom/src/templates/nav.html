@@ -8,9 +8,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">Edupi Admin</a>
+        <a class="navbar-brand" href="#">EDUPI Admin</a>
     </div>
     <!-- /.navbar-header -->
+
+    <div class="sidebar sidebar-search">
+    </div>
 
     <ul class="nav navbar-top-links navbar-right">
         <li><a class="lang-en">EN</a></li>
@@ -22,13 +25,38 @@
     <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse">
             <ul class="nav" id="side-menu">
-                <li>
-                    <a href="#directories">Structure</a>
+                <li class="sidebar-search">
+                    <form class="" role="search">
+                        <div class="input-group">
+                            <input name="search-text" type="text" class="form-control"
+                                   data-i18n="[placeholder]placeholder-search" placeholder="Search...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                    </span>
+                        </div>
+                    </form>
                 </li>
                 <li>
-                    <a href="#documents">Documents</a>
-                    <a href="#sysinfo" data-i18n="title-system-information">System Information</a>
-                    <a href="#stats" data-i18n="stats">Stats</a>
+                    <a href="#directories">
+                        <span class="glyphicon glyphicon-equalizer"> Structure</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#documents">
+                        <span class="glyphicon glyphicon-folder-open"> Documents</span>
+                    </a>
+                    <a href="#stats">
+                        <span class="glyphicon glyphicon-list-alt">
+                            <span  data-i18n="stats"> Stats </span>
+                        </span>
+                    </a>
+                    <a href="#sysinfo" >
+                        <span class="glyphicon glyphicon-info-sign">
+                            <span data-i18n="title-system-information"> System Information</span>
+                        </span>
+                    </a>
                 </li>
             </ul>
         </div>
