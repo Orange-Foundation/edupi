@@ -23,7 +23,10 @@ define([
         tagName: "li",
         className: "list-group-item",
 
-        initialize: function () {
+        initialize: function (options) {
+            options = options || {};
+
+            this.isSearchResult = typeof options.isSearchResult === "boolean" ? options.isSearchResult : false;
             this.model.on("change", this.render, this);
             this.model.on("destroy", this.destroy, this);
 
@@ -35,7 +38,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(TEMPLATE({model: this.model}));
+            this.$el.html(TEMPLATE({model: this.model, isSearchResult: this.isSearchResult}));
             this.$(".glyphicon").hide();
             this.$(".error-msg").hide();
             this.$el.i18n();

@@ -61,7 +61,7 @@ define([
                     _(data['rows']).each(function (obj) {
                         var m = new Document(obj);
                         that.$el.append(
-                            new DocumentView({model: m, id: "document-" + m.id}).render().el);
+                            new DocumentView({model: m, id: "document-" + m.id, isSearchResult: true}).render().el);
                         that.collection.add(m);
                     });
 
