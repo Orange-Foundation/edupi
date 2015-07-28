@@ -167,8 +167,8 @@ define([
         },
 
         saveDocument: function () {
-            var name = this.$('input[name="name"]').val();
-            var description = this.$('textarea[name="description"]').val();
+            var name = this.$('input[name="name"]').val().trim();
+            var description = this.$('textarea[name="description"]').val().trim();
             if (name !== this.model.get("name") || description !== this.model.get("description")) {
                 this.model.save({
                     "name": name,

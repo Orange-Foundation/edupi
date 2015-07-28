@@ -274,7 +274,7 @@ class CustomSiteTestCase(FunctionalTest):
         name_input = document_li.find_element_by_css_selector("input[name='name']")
         name_input.clear()
         document_li.find_element_by_css_selector(".btn-save").click()
-        self.assertInBody('name must not be empty')
+        self.assertInBody('The name cannot be empty.')
 
         # enter a new name
         name_input.send_keys("new file name")
