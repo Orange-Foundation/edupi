@@ -14,6 +14,7 @@
         'backbone': '../../../../../libs/bower_components/backbone/backbone',
         'bootstrap': '../../../../../libs/bower_components/bootstrap/dist/js/bootstrap',
         'text': '../../../../../libs/bower_components/requirejs-text/text',
+        'i18n': '../../../../../libs/bower_components/i18next/i18next',
 
         // shared modules
         'collections': '../../shared/src/collections',
