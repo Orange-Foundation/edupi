@@ -86,6 +86,7 @@ define([
             },
             'click .glyphicon-pencil': function () {
                 this.$el.html(EDIT_TEMPLATE({model: this.model}));
+                this.$el.i18n();
             },
             'click .btn-cancel': function () {
                 this.render();

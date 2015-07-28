@@ -14,6 +14,12 @@
   "title-stats": "Statistiques",
   "title-search-result": "Résultat de recherche",
 
+  "document-name": "Nom",
+  "document-description": "Description",
+  "placeholder-add-document-description": "Ajouter une description.",
+
+  "btn-save": "Sauvegarder",
+
   "btn-yes": "Oui",
   "btn-no": "Non",
 
