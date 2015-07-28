@@ -23,14 +23,13 @@ define([
             this.pathCollection = new Backbone.Collection({model: Directory});
             this.pathCollection.on('reset', this.render, this);
             this.pathCollection.on('render', this.render, this);
-            console.log('state bar inited');
         },
 
         render: function () {
-            console.log('state bar rendering');
             this.$el.html(STATEBAR_TEMPLATE({
                 path: this.pathCollection.models
             }));
+            this.$el.i18n();
             return this;
         },
 

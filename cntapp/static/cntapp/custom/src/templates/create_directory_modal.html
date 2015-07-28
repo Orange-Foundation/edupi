@@ -9,6 +9,8 @@
             <form id="directory-create-form" action="" method="post">
                 <div class="modal-body">
                     <input id="input-directory-name" class="form-control" tabindex="0"
+                           pattern=".{1,60}"
+                           required title="1 to 60 characters"
                            type="text" name="name" placeholder="name" data-i18n="[placeholder]placeholder-directory-name" />
                 </div>
                 <div class="modal-footer">

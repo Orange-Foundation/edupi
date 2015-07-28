@@ -23,7 +23,10 @@ define([
         tagName: "li",
         className: "list-group-item",
 
-        initialize: function () {
+        initialize: function (options) {
+            options = options || {};
+
+            this.isSearchResult = typeof options.isSearchResult === "boolean" ? options.isSearchResult : false;
             this.model.on("change", this.render, this);
             this.model.on("destroy", this.destroy, this);
 
@@ -35,7 +38,7 @@ define([
         },
 
         render: function () {
-            this.$el.html(TEMPLATE({model: this.model}));
+            this.$el.html(TEMPLATE({model: this.model, isSearchResult: this.isSearchResult}));
             this.$(".glyphicon").hide();
             this.$(".error-msg").hide();
             this.$el.i18n();
@@ -86,6 +89,7 @@ define([
             },
             'click .glyphicon-pencil': function () {
                 this.$el.html(EDIT_TEMPLATE({model: this.model}));
+                this.$el.i18n();
             },
             'click .btn-cancel': function () {
                 this.render();
@@ -166,8 +170,8 @@ define([
         },
 
         saveDocument: function () {
-            var name = this.$('input[name="name"]').val();
-            var description = this.$('textarea[name="description"]').val();
+            var name = this.$('input[name="name"]').val().trim();
+            var description = this.$('textarea[name="description"]').val().trim();
             if (name !== this.model.get("name") || description !== this.model.get("description")) {
                 this.model.save({
                     "name": name,

@@ -1,8 +1,9 @@
 <div class="form-group">
-    <label>Name</label>
+    <label data-i18n="document-name">Name</label>
     <input type='text'
            class="form-control name-text"
-           name='name' value='<%= model.get("name") %>' placeholder="name"/>
+           data-i18n="[placeholder]document-name"
+           name='name' value="<%= model.get('name') %> " placeholder="name"/>
 </div>
 
 <div class="form-group">
@@ -11,11 +12,18 @@
               class="form-control"
               rows="3"
               maxlength="250"
+              data-i18n="[placeholder]placeholder-add-document-description"
               placeholder="add description here"><%= model.get('description') %></textarea>
 </div>
 
 <div class="form-group">
-    <button class="btn btn-primary btn-save">Save</button>
-    <button class="btn btn-default btn-cancel">Cancel</button>
+    <button class="btn btn-primary btn-save" data-i18n="btn-save">
+        Save
+    </button>
+
+    <button class="btn btn-default btn-cancel" data-i18n="btn-cancel">
+        Cancel
+    </button>
+
     <span class="error-msg"></span>
 </div>

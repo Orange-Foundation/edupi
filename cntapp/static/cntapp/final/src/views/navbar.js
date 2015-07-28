@@ -16,6 +16,7 @@ define([
 
         render: function () {
             this.$el.html(NAVBAR_TEMPLATE());
+            this.$el.i18n();
             return this;
         },
 

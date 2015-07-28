@@ -1,0 +1,19 @@
+{
+  "language": "Languages",
+
+  "placeholder-search": "search",
+  "link-home": "Home",
+  "btn-close": "Close",
+  "btn-open-in-new-tab": "Open in a new tab",
+  "btn-download": "Download",
+
+  "link-custom-page": "custom page",
+
+  "msg-file-not-supported": "This file cannot be displayed on your browser. You can download the file.",
+  "msg-no-sub-content": "There is nothing here :(",
+  "msg-no-root-dir": "No directory found, please do some configuration via",
+
+  "msg-retrieve-faulure-because-no-network": "Failed to retrieve content from the Server, there might be something wrong with your network.",
+  "msg-content-not-exist": "The content that you requested does not exist!",
+  "msg-unknown-retrieve-failure": "Failed to retrieve content from the Server, and I don't know why :("
+}

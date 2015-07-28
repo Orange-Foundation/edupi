@@ -1,6 +1,6 @@
 define([
     'underscore', 'backbone',
-    'views/document', 'views/pagination',
+    'views/document', 'views/search/pagination',
     'models/document', 'collections/documents'
 ], function (_, Backbone,
              DocumentView, PaginationView,
@@ -31,7 +31,6 @@ define([
 
     var DocumentSearchView = Backbone.View.extend({
         tagName: "ul",
-        className: "col-sm-offset-2 col-sm-8",
         id: "document-list",
 
         initialize: function (options) {
@@ -53,11 +52,16 @@ define([
                     var params;
                     var end =   Date.now();
                     var diff = (end - start) / 1000;
-                    that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + ' seconds)');
+                    //that.$el.append(data['total'] + ' results (' + diff.toFixed(3) + ' seconds)');
+                    that.$el.append(i18n.t('result-count', {
+                            postProcess: 'sprintf', sprintf: [data['total'], diff.toFixed(3)]
+                        })
+                    );
+
                     _(data['rows']).each(function (obj) {
                         var m = new Document(obj);
                         that.$el.append(
-                            new DocumentView({model: m, id: "document-" + m.id}).render().el);
+                            new DocumentView({model: m, id: "document-" + m.id, isSearchResult: true}).render().el);
                         that.collection.add(m);
                     });
 

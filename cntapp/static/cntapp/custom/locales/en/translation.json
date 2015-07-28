@@ -12,6 +12,13 @@
   "title-link-documents": "Link documents",
   "title-link-directory": "Link a root directory",
   "title-stats": "Statistics",
+  "title-search-result": "Search results",
+
+  "document-name": "Name",
+  "document-description": "Description",
+  "placeholder-add-document-description": "Add description here.",
+
+  "btn-save": "Save",
 
   "btn-yes": "Yes",
   "btn-no": "No",
@@ -73,5 +80,11 @@
   "btn-crunch-stats": "Crunch stats!",
 
   "Clicks": "Clicks",
-  "Name": "Name"
+  "Name": "Name",
+
+  "result-count": "%s results in %s secs.",
+
+  "__check__": "-------------------",
+  "msg-input-error-empty-name": "The name cannot be empty.",
+  "msg-input-error-name-too-long": "The name has %s characters. You cannot surpass %s."
 }

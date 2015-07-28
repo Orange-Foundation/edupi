@@ -7,18 +7,18 @@ video {
     height: auto !important;
 }
 
-.glyphicon {
+.custom-glyphicon {
     font-size: 14px;
     color: #8699A4;
     cursor: pointer;
     outline: 0;
 }
 
-.glyphicon:hover {
+.custom-glyphicon:hover {
     color: #000;
 }
 
-.glyphicon.spaced {
+.custom-glyphicon.spaced {
     letter-spacing: 6px;
 }
 
@@ -26,18 +26,39 @@ video {
     color: red;
 }
 
+/* modal window for small screen*/
 @media screen and (min-width: 768px) {
+    .custom-class {
+        width: 90%;
+    }
+}
+
+/* modal window for medium screen*/
+@media screen and (min-width: 992px) {
+    .custom-class {
+        width: 80%;
+    }
+}
+
+/* modal window for large screen*/
+@media screen and (min-width: 1200px) {
     .custom-class {
         width: 70%;
     }
 }
 
+
+
 .modal-vertical-center {
   padding-top: 15%;
 }
 
-.action-bar, .state-bar {
+.state-bar {
     padding: 10px;
+}
+
+.action-bar {
+    padding-top: 10px;
 }
 
 /* The max width is dependant on the container (more info below) */

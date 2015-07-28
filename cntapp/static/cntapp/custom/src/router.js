@@ -1,15 +1,15 @@
 define([
     'backbone',
-    'views/documents_table',
     'views/directories_page', 'views/root_page', 'views/upload_page',
     'views/sysinfo_page',
     'views/stats/stats_page',
+    'views/search/search_page',
     'models/directory'
 ], function (Backbone,
-             DocumentsTableView,
              DirectoriesPageView, RootPageView, UploadPageView,
              SysInfoPageView,
              StatsPageView,
+             SearchPageView,
              Directory) {
     var PAGE_WRAPPER = "#page-wrapper";
 
@@ -26,19 +26,23 @@ define([
             this.route(/^directories\/((?:\d+)(?:\/\d+)*)$/, 'showDirectoryPage');
             this.route(/^directories\/((?:\d+)(?:\/\d+)*)\/upload$/, 'showUploadPage');
 
-            // documents
-            this.route(/^documents$/, 'listDocuments');
-
             this.route(/^sysinfo$/, 'showSysInfo');
             this.route(/^stats$/, 'showStats');
+
+            // querystring: #documents?queryString
+            this.route(/^documents\?(.*)$/, 'showSearchResult');
 
             this.route(/^$/, 'indexRoute');
         },
 
-
         renderToContent: function (view) {
             cntapp.views.pageWrapper.setContentView(view);
             cntapp.views.pageWrapper.render();
+        },
+
+        showSearchResult: function (queryString) {
+            console.log('search documents with querystring="' + queryString + '"');
+            this.renderToContent(new SearchPageView({queryString: queryString}));
         },
 
         showSysInfo: function () {
@@ -70,10 +74,6 @@ define([
 
         showUploadPage: function (path) {
             this.renderToContent(new UploadPageView({path: path}))
-        },
-
-        listDocuments: function () {
-            this.renderToContent(new DocumentsTableView());
         },
 
         indexRoute: function () {
