@@ -1,9 +1,30 @@
-from cntapp.models import Directory
+from cntapp.models import Directory, SubDirRelation
+
+
+def queryset_to_list(query_set):
+    return [d for d in query_set]
+
+
+def get_root_dirs_query():
+    """
+    Directories that has no parent are root directories.
+
+    steps:
+    1. select all parents' id from SubDirRelation.
+    2. exclude directories that have parents
+    """
+    r = SubDirRelation.objects.values('parent').distinct()
+    l = [d['parent'] for d in r]
+
+    # FIXME:
+    # attention: child is a SubDirRelation object that relates to the directory's parent !
+    # then the parent_id point to it's real parent Directory object.
+    # This was a confuse when building the API.
+    return Directory.objects.exclude(child__parent_id__in=l)
 
 
 def get_root_dirs():
-    all_dirs = Directory.objects.all()
-    return [d for d in all_dirs if d.get_parents().count() == 0]
+    return queryset_to_list(get_root_dirs_query())
 
 
 def get_root_dirs_names():
