@@ -54,14 +54,7 @@ define([
         },
 
         showRootPage: function () {
-            var dirs = cntapp.collections.directories,
-                that = this;
-            dirs.fetch({
-                reset: true,
-                success: function () {
-                    that.renderToContent(new RootPageView());
-                }
-            })
+            this.renderToContent(new RootPageView());
         },
 
         showDirectoryPage: function (path) {

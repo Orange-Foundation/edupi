@@ -41,6 +41,8 @@ define([
             $.getJSON(url)
                 .done(function (data) {
                     that.collection.reset(data);
+                    // update local directory collection.
+                    cntapp.collections.directories.set(data, {remove: false});
                 });
         }
     });
