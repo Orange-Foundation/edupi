@@ -22,6 +22,18 @@ Some essential information for developers.
         $> make                                        # this takes aaages (about an hour)
         $> sudo make install                           # this is rather quick again (~ 7 minutes)
 
+- make a link
+
+        $> sudo ln -s /opt/python3.4/bin/python3.4 /usr/bin/python3.4
+
+- Test
+
+        $> python3.4
+        Python 3.4.1 (default, Jul 31 2015, 14:51:48)
+        [GCC 4.6.3] on linux
+        Type "help", "copyright", "credits" or "license" for more information.
+        >>>
+
 
 ## How to make an EduPi release
 
