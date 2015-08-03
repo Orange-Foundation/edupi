@@ -1,7 +1,7 @@
 For the moment, there is no bash script for installing EduPi on a Raspberry Pi.
 
 You can install it via SSH and fabric.
-Please checkout [`rpi-conf`](https://github.com/yuancheng2013/rpi-conf) for how to deploy EduPi automatically on your Raspberry Pi.
+Please checkout [`deploy`](../deploy/README.md) for how to deploy EduPi automatically on your Raspberry Pi.
 
 Here is a detailed process for installing on a Raspbian, which is in fact the same as the fabric script.
 It may take about 2 hours starting with a clean Raspbian.
@@ -33,11 +33,11 @@ EduPi only works on Python 3.4 or version later.
 However, the raspbian `2015-05-05-raspbian-wheezy.img` only has Python 3.2, so you cannot install it via
 `sudo apt-get install python3`
 
-Please checkout how to install Python 3.4 [here](https://github.com/yuancheng2013/edupi/blob/master/doc/how-to.md#download-compile-and-install-python34-on-a-debian-like-distribution-debian-raspbian)
+Please checkout how to install Python 3.4 [here](how-to.md#download-compile-and-install-python34-on-a-debian-like-distribution-debian-raspbian).
 
 ## Install EduPi
 
-1. create directories
+1. Create directories.
 
     ```
     $> mkdir -p /home/pi/sites/edupi.fondationorange.org
@@ -45,39 +45,37 @@ Please checkout how to install Python 3.4 [here](https://github.com/yuancheng201
     $> mkdir database static media stats virtualenv
     ```
 
-2. create virtualenv
+2. Create virtualenv.
 
     ```
     $> virtualenv --python=python3.4 virtualenv/
     ```
 
-3. get source code
+3. Get the latest release.
 
     ```
     $> git clone https://github.com/yuancheng2013/edupi.git
     $> cd edupi
-    $> git reset --hard RELEASE_COMMIT
+    $> git reset --hard origin/release
     ```
 
-    checkout the latest release commit [here](https://github.com/yuancheng2013/edupi/releases)
+    Checkout the all releases [here](https://github.com/yuancheng2013/edupi/releases).
+    You can replace `origin/release` by a specific commit SHA1 code.
 
-    For example, the `RELEASE_COMMIT` for `v1.4.1` is `d9bdc37827cc360d618060ab8866a58572ca42da`
-
-
-4. update virtualenv, front-end packages, and database
+4. Update virtualenv, front-end packages, and database.
 
     ```
     $> ../virtualenv/bin/pip install -r requirements.txt
     $> ../virtualenv/bin/python3 manage.py bower install
     ```
 
-5. create super user
+5. Create super user.
 
     ```
     $> ../virtualenv/bin/python manage.py createsuperuser
     ```
 
-6. update static files
+6. Update static files.
 
     ```
     $> ../virtualenv/bin/python3 manage.py collectstatic --noinput
