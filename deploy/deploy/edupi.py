@@ -36,6 +36,29 @@ class EdupiDeployManager():
         # reboot the application
         run('sudo restart gunicorn-%s' % EDUPI_SITE_NAME)
 
+    def uninstall(self, purge_data=False):
+        # TODO: kill edupi
+
+        # remove config files
+        if exists(self.nginx_config):
+            run('sudo rm %s' % self.nginx_config)
+
+        if exists(self.upstart_config):
+            run('sudo rm %s' % self.upstart_config)
+
+        def rm_sub_dir(dir_list):
+            for subfolder in dir_list:
+                path = os.path.join(self.site_folder, subfolder)
+                if exists(path):
+                    run('rm -fr %s' % path)
+
+        # remove all the site except data
+        rm_sub_dir(['static', 'virtualenv', SOURCE_DIR_NAME])
+
+        if purge_data:
+            rm_sub_dir(['database', 'media', 'stats'])
+            run('rmdir %s' % self.site_folder)
+
     @staticmethod
     def _create_directory_structure_if_necessary(site_folder):
         for subfolder in ('database', 'static', 'media', 'stats', 'virtualenv', SOURCE_DIR_NAME):

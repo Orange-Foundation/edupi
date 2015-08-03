@@ -90,3 +90,14 @@ There is a default super user account created with this deployment script:
 
     user: pi
     password: raspberry
+
+
+## Uninstall EduPi
+
+Remove edupi's configuration files and source, but not the data. Run:
+
+    $> fab uninstall_edupi:host=pi@RASPBERRY_PI
+
+If you want to remove all the EduPi data on your server:
+
+    $> fab uninstall_edupi:host=pi@RASPBERRY_PI,purge_data=true

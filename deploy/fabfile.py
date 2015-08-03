@@ -14,6 +14,7 @@ __all__ = [
     'config_hotspot',
     'install_deps',
     'deploy_edupi',
+    'uninstall_edupi',
     'deploy_index_page'
 ]
 
@@ -58,6 +59,11 @@ def config_hotspot():
 def deploy_edupi(commit='origin/release'):
     manager = EdupiDeployManager()
     manager.deploy(commit)
+
+
+def uninstall_edupi(purge_data=False):
+    manager = EdupiDeployManager()
+    manager.uninstall(purge_data)
 
 
 def deploy_index_page():
