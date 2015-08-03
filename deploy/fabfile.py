@@ -3,7 +3,7 @@ reference: https://github.com/hjwp/book-example/blob/master/deploy_tools/fabfile
 """
 
 from fabric.contrib.files import exists
-from fabric.api import run
+from fabric.api import run, settings
 
 from deploy.edupi import EdupiDeployManager
 from deploy.settings import RASP_USER_NAME
@@ -24,21 +24,11 @@ PORTAL_SITE_NAME = 'fondationorange.org'
 
 def install_deps():
     run('sudo apt-get update')
-    run('sudo apt-get install -y nginx')
-    run('sudo apt-get install -y python3-pip')
-    run('sudo apt-get install -y libmagickwand-dev')
-    run('sudo apt-get install upstart')  # this will prompt and wait for confirm
-
+    for package in ['nginx', 'python3-pip', 'libmagickwand-dev', 'upstart']:
+        _apt_get_if_not_installed(package)
     run('sudo pip-3.2 install virtualenv')
-
-    # install nodejs, bower
-    nodejs_path = '/tmp/node_latest_armhf.deb'
-    if not exists(nodejs_path):
-        run('wget http://node-arm.herokuapp.com/node_latest_armhf.deb --directory-prefix=/tmp/')
-
-    run('sudo dpkg -i %s' % nodejs_path)
-    run('curl -L https://www.npmjs.com/install.sh | sudo sh')
-    run('sudo npm install -g bower')
+    _install_node_and_npm()
+    _install_bower()
 
 
 def config_hotspot():
@@ -84,3 +74,34 @@ def deploy_index_page():
 
     # force to use latest source on the master branch
     run('cd %s && git reset --hard %s' % (site_folder, 'origin/master'))
+
+
+def _apt_get_if_not_installed(package):
+    with settings(warn_only=True):
+        ret_code = run("dpkg -l %s  > /dev/null 2>&1 && echo $?" % package).strip()
+        if ret_code != '0':
+            run("sudo apt-get install -y %s" % package)
+
+
+def _exec_if_command_not_exists(command, func):
+    with settings(warn_only=True):
+        ret_code = run("command -v %s > /dev/null 2>&1 && echo $?" % command).strip()
+        if ret_code != '0':
+            func()
+
+
+def _install_node_and_npm():
+    def func():
+        nodejs_path = '/tmp/node_latest_armhf.deb'
+        if not exists(nodejs_path):
+            run('wget http://node-arm.herokuapp.com/node_latest_armhf.deb --directory-prefix=/tmp/')
+        run('sudo dpkg -i %s' % nodejs_path)
+        run('curl -L https://www.npmjs.com/install.sh | sudo sh')
+    _exec_if_command_not_exists('node', func)
+
+
+def _install_bower():
+    # depends on node
+    def func():
+        run('sudo npm install -g bower')
+    _exec_if_command_not_exists('bower', func)
