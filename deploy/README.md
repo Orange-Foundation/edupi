@@ -58,15 +58,15 @@ Then you are ready to go:
 By default, the command above will install the latest release from the release branch on your Raspberry.
 
 If you want to install any other version, you can get the commit SHA1 code from Github, and append to the command.
-For example, `912349ef198f8f95d9d75073da3ecf981a95c61c` is a commit for
-[`v1.1.0`](https://github.com/yuancheng2013/edupi/releases/tag/v1.1.0).
+For example, `d9bdc37827cc360d618060ab8866a58572ca42da` is a commit for
+[`v1.4.1`](https://github.com/yuancheng2013/edupi/releases/tag/v1.4.1).
 You can install it by running:
 
-    $> fab deploy_edupi:host=pi@RASPBERRY_IP,commit=912349ef198f8f95d9d75073da3ecf981a95c61c
+    $> fab deploy_edupi:host=pi@RASPBERRY_IP,commit=d9bdc37827cc360d618060ab8866a58572ca42da
 
 or simply:
 
-    $> fab deploy_edupi:host=pi@RASPBERRY_IP,commit=tags/v1.1.0
+    $> fab deploy_edupi:host=pi@RASPBERRY_IP,commit=tags/v1.4.1
 
 EduPi will run automatically after boot.
 
