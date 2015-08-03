@@ -12,6 +12,10 @@ I haven't tested but I think any Linux distribution with `Python3.4` should work
 
 ## Getting started:
 
+* Install MagicWand, this is necessary for image processing in EduPi.
+
+        $> sudo apt-get install libmagickwand-dev
+
 * Prepare a neat directory
 
         $> mkdir ~/edupi-dev/
@@ -34,10 +38,6 @@ I haven't tested but I think any Linux distribution with `Python3.4` should work
         (virtualenv)$> git clone https://github.com/yuancheng2013/edupi.git
         (virtualenv)$> cd edupi
 
-* Install MagicWand, this is necessary for image processing in EduPi.
-
-        (virtualenv)$> sudo apt-get install libmagickwand-dev
-
 * Install required packages
 
     We assume that you have already `node.js`, `npm`, `bower` installed.
@@ -55,14 +55,20 @@ There are some functional tests that is based on FireFox,
 so you might need a FireFox installed on your development machine if you want to test this part.
 
 
+* Create database
+
+        $> python manage.py migrate
+
+* Collect static files
+
+        $> python manage.py collectstatic
+
 * Create a supper user, you need it to go into the admin page
 
         (virtualenv)$> python manage.py createsuperuser
 
+* Run the application in development mode.
 
-* Apply migrations and run the application in development mode.
-
-        (virtualenv)$> python manage.py migrate
         (virtualenv)$> python manage.py runserver
         
 * Open your browser and try to login into the custom 
