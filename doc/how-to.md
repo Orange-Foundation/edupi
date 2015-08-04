@@ -70,6 +70,6 @@ Attention, do not merge the release branch into master.
 
 By default, SSH is enabled on raspbian. On your linux machine, install nmap. Then run:
 
-        $> map -p 22 --open -sV 192.168.1.0/24
+        $> nmap -p 22 --open -sV 192.168.1.0/24
 
 change the network ip and the mask if necessary.

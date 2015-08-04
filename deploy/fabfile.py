@@ -63,7 +63,7 @@ def deploy_index_page():
     site_folder = '/home/%s/sites/www' % RASP_USER_NAME
     repo_url = 'https://github.com/yuancheng2013/raspberry-index-page.git'
     # Nginx conf
-    send_file('/etc/nginx/sites-enabled/%s' % PORTAL_SITE_NAME)
+    send_file('/etc/nginx/sites-enabled/%s' % PORTAL_SITE_NAME, mod='644')
 
     # create site folder
     run('mkdir -p %s' % site_folder)
@@ -77,6 +77,14 @@ def deploy_index_page():
 
     # force to use latest source on the master branch
     run('cd %s && git reset --hard %s' % (site_folder, 'origin/master'))
+
+    # remove default nginx config
+    default_nginx_conf_path = '/etc/nginx/sites-enabled/default'
+    if exists(default_nginx_conf_path):
+        run('sudo rm %s' % default_nginx_conf_path)
+
+    # restart nginx
+    run('sudo service nginx restart')
 
 
 def _apt_get(package, force=True):
