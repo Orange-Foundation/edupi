@@ -21,11 +21,11 @@ class EdupiDeployManager():
 
     def deploy(self, commit):
         # Nginx conf
-        send_file(self.nginx_config)
+        send_file(self.nginx_config, mod='644')
         # Nginx logrotate config
         send_file('/etc/logrotate.d/nginx', mod='644')
         # Upstart
-        send_file(self.upstart_config)
+        send_file(self.upstart_config, mod='644')
 
         self._create_directory_structure_if_necessary(self.site_folder)
         self._get_source(self.source_folder, commit)
