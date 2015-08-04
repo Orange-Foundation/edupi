@@ -24,8 +24,11 @@ PORTAL_SITE_NAME = 'fondationorange.org'
 
 def install_deps():
     run('sudo apt-get update')
-    for package in ['nginx', 'python3-pip', 'libmagickwand-dev', 'upstart']:
-        _apt_get_if_not_installed(package)
+    _apt_get(' '.join(['nginx', 'python3-pip', 'libmagickwand-dev']))
+
+    # cannot force-yes for upstart
+    _apt_get('upstart', force=False)
+
     run('sudo pip-3.2 install virtualenv')
     _install_node_and_npm()
     _install_bower()
@@ -76,11 +79,10 @@ def deploy_index_page():
     run('cd %s && git reset --hard %s' % (site_folder, 'origin/master'))
 
 
-def _apt_get_if_not_installed(package):
+def _apt_get(package, force=True):
     with settings(warn_only=True):
-        ret_code = run("dpkg -l %s  > /dev/null 2>&1 && echo $?" % package).strip()
-        if ret_code != '0':
-            run("sudo apt-get install -y %s" % package)
+        force_param = '-y' if force else ''
+        run("sudo apt-get install %s %s" % (force_param, package))
 
 
 def _exec_if_command_not_exists(command, func):
