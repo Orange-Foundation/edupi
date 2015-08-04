@@ -6,6 +6,9 @@ Please checkout [`deploy`](../deploy/README.md) for how to deploy EduPi automati
 Here is a detailed process for installing on a Raspbian, which is in fact the same as the fabric script.
 It may take about 2 hours starting with a clean Raspbian.
 
+It's highly recommended to read this doc for trouble shooting.
+
+
 ## Install EduPi dependencies
 
 This would be a long process.
@@ -113,6 +116,14 @@ Please checkout how to install Python 3.4 [here](how-to.md#download-compile-and-
     }
     ```
 
+    To `start`, `stop`, `restart` nginx, please use nginx service:
+
+    ```
+    $> sudo service start
+    $> sudo service stop
+    $> sudo service restart
+    ```
+
 2. Nginx logrotate config
 
     Edit file `/etc/logrotate.d/nginx`:
@@ -170,7 +181,15 @@ Please checkout how to install Python 3.4 [here](how-to.md#download-compile-and-
     config your machine's hosts file `/etc/hosts/`
     
     add rule:
-    
-    `192.168.1.26   edupi.fondationorange.org`
-    
+
+    `RASPBERRY_IP   edupi.fondationorange.org`
+
     Start your usage with `http://edupi.fondationorange.org:8021/`
+
+6. log files
+
+    * `/var/log/nginx/access.log` for nginx access log.
+    * `/var/log/nginx/edupi_media_access.log` for media files' access.
+    * `/var/log/upstart/gunicorn-edupi.fondationorange.org.log` for gunicorn log.
+    You should search edupi server crush in this log file.
+    * `/home/pi/sites/edupi.fondationorange.org/edupi/logfile` for edupi logger.
