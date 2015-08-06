@@ -91,7 +91,7 @@ There is a default super user account created with this deployment script:
     user: pi
     password: raspberry
 
-**For developement**
+**For development**
 
 If you have forked edupi, you can deploy with your code after you pushed that on your github.
 
