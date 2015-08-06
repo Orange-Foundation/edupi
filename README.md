@@ -1,5 +1,5 @@
 [![Build Status](https://travis-ci.org/Orange-Foundation/edupi.svg?branch=master)](https://travis-ci.org/Orange-Foundation/edupi)
-[![Coverage Status](https://coveralls.io/repos/Orange-Foundation/edupi/badge.svg?branch=master)](https://coveralls.io/r/Orange-Foundation/edupi?branch=master)
+[![Coverage Status](https://coveralls.io/repos/Orange-Foundation/edupi/badge.svg?branch=master&service=github)](https://coveralls.io/github/Orange-Foundation/edupi?branch=master)
 
 # EduPi
 
