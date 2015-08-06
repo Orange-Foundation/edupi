@@ -119,9 +119,9 @@ Please checkout how to install Python 3.4 [here](how-to.md#download-compile-and-
     To `start`, `stop`, `restart` nginx, please use nginx service:
 
     ```
-    $> sudo service start
-    $> sudo service stop
-    $> sudo service restart
+    $> sudo service nginx start
+    $> sudo service nginx stop
+    $> sudo service nginx restart
     ```
 
 2. Nginx logrotate config
@@ -164,9 +164,9 @@ Please checkout how to install Python 3.4 [here](how-to.md#download-compile-and-
     To `start`, `stop`, and `restart` the service:
 
     ```
-    $> sudo start gunicorn-edupi.fondationorange.org.conf
-    $> sudo stop gunicorn-edupi.fondationorange.org.conf
-    $> sudo restart gunicorn-edupi.fondationorange.org.conf
+    $> sudo start gunicorn-edupi.fondationorange.org
+    $> sudo stop gunicorn-edupi.fondationorange.org
+    $> sudo restart gunicorn-edupi.fondationorange.org
     ```
 
 4. run edupi server
