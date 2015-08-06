@@ -49,9 +49,9 @@ def config_hotspot():
     run('sudo reboot')
 
 
-def deploy_edupi(commit='origin/release'):
+def deploy_edupi(commit='origin/release', user='Orange-Foundation'):
     manager = EdupiDeployManager()
-    manager.deploy(commit)
+    manager.deploy(commit, user.strip())
 
 
 def uninstall_edupi(purge_data=False):
@@ -61,7 +61,7 @@ def uninstall_edupi(purge_data=False):
 
 def deploy_index_page():
     site_folder = '/home/%s/sites/www' % RASP_USER_NAME
-    repo_url = 'https://github.com/yuancheng2013/raspberry-index-page.git'
+    repo_url = 'https://github.com/Orange-Foundation/raspberry-index-page.git'
     # Nginx conf
     send_file('/etc/nginx/sites-enabled/%s' % PORTAL_SITE_NAME, mod='644')
 

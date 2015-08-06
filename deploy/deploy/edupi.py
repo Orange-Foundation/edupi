@@ -5,7 +5,6 @@ from fabric.api import run, put
 from .helper import send_file, get_config_file
 from .settings import RASP_USER_NAME, DEFAULT_PASSWORD
 
-REPO_URL = 'https://github.com/yuancheng2013/edupi.git'
 
 SOURCE_DIR_NAME = 'edupi'
 
@@ -19,7 +18,7 @@ class EdupiDeployManager():
         self.nginx_config = '/etc/nginx/sites-enabled/%s' % EDUPI_SITE_NAME
         self.upstart_config = '/etc/init/gunicorn-%s.conf' % EDUPI_SITE_NAME
 
-    def deploy(self, commit):
+    def deploy(self, commit, user):
         # Nginx conf
         send_file(self.nginx_config, mod='644')
         # Nginx logrotate config
@@ -28,7 +27,7 @@ class EdupiDeployManager():
         send_file(self.upstart_config, mod='644')
 
         self._create_directory_structure_if_necessary(self.site_folder)
-        self._get_source(self.source_folder, commit)
+        self._get_source(self.source_folder, commit, user)
         self._update_virtualenv(self.source_folder)
         self._update_static_files(self.source_folder)
         self._update_database(self.source_folder)
@@ -67,11 +66,24 @@ class EdupiDeployManager():
         run('sudo mkdir -p /var/log/nginx/edupi/')
 
     @staticmethod
-    def _get_source(source_folder, commit):
-        if exists(source_folder + '/.git'):
+    def _get_source(source_folder, commit, user):
+        """ Get code from Github
+
+        Remove the entire source folder if it's not the same user/repo_url
+        """
+        repo_url = "https://github.com/%s/edupi.git" % user
+
+        if not exists(source_folder + '/.git'):
+            run('git clone %s %s' % (repo_url, source_folder))
+
+        # check if it's the same origin,
+        # if not, remove the source folder and clone from the new repo
+        ret = run("cd %s && git ls-remote --get-url" % source_folder).strip()
+        if ret == repo_url:
             run('cd %s && git fetch' % (source_folder,))
         else:
-            run('git clone %s %s' % (REPO_URL, source_folder))
+            run('rm -fr %s' % source_folder)
+            run('git clone %s %s' % (repo_url, source_folder))
 
         run('cd %s && git reset --hard %s' % (source_folder, commit))
 
