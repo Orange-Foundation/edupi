@@ -18,7 +18,7 @@ Dependencies:
 Clone the project on your local machine, go into the project directory and you are ready to go:
 
 
-    $> git clone https://github.com/yuancheng2013/edupi.git
+    $> git clone https://github.com/Orange-Foundation/edupi.git
     $> cd edupi/deploy
 
 
@@ -59,7 +59,7 @@ By default, the command above will install the latest release from the release b
 
 If you want to install any other version, you can get the commit SHA1 code from Github, and append to the command.
 For example, `d9bdc37827cc360d618060ab8866a58572ca42da` is a commit for
-[`v1.4.1`](https://github.com/yuancheng2013/edupi/releases/tag/v1.4.1).
+[`v1.4.1`](https://github.com/Orange-Foundation/edupi/releases/tag/v1.4.1).
 You can install it by running:
 
     $> fab deploy_edupi:host=pi@RASPBERRY_IP,commit=d9bdc37827cc360d618060ab8866a58572ca42da
@@ -91,6 +91,13 @@ There is a default super user account created with this deployment script:
     user: pi
     password: raspberry
 
+**For developement**
+
+If you have forked edupi, you can deploy with your code after you pushed that on your github.
+
+    $> fab deploy_edupi:host=pi@RASPEBRRY_PI,commit=COMMIT_CODE,user=GITHUB_USER
+
+In this case, please always add your username in the command.
 
 ## Uninstall EduPi
 
